@@ -10,6 +10,8 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
+#include <vector>
 
 namespace hv {
 	namespace v2 {
@@ -19,9 +21,11 @@ namespace hv {
 			virtual ~inode() { }
 
 			virtual std::string name() = 0;
-			virtual void name(std::string value) = 0;
-			virtual int type() = 0;
 
+			virtual std::string nick() = 0;
+			virtual void nick(std::string value) = 0;
+
+			virtual int type() = 0;
 			virtual void init() = 0;
 
 		};
