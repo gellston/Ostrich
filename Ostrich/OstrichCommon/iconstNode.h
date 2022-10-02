@@ -21,6 +21,8 @@ namespace hv {
 
 			virtual std::size_t sourceUID() = 0;
 			virtual void sourceUID(std::size_t value) = 0;
+
+
 			virtual std::string sourceName() = 0;
 			virtual void sourceName(std::string value) = 0;
 

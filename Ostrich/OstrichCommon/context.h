@@ -19,7 +19,8 @@ namespace hv {
 			std::unique_ptr<hv::v2::impl_context> _instance;
 
 
-			OSTRICH_COMMON_API void registerAddon(std::shared_ptr<hv::v2::iaddon> addon) override;
+			std::size_t generate_const_unique_key();
+			std::size_t generate_var_unique_key();
 
 
 		public:
@@ -29,9 +30,9 @@ namespace hv {
 
 
 
-
-			OSTRICH_COMMON_API std::shared_ptr<hv::v2::inode> search(std::size_t uid) override;
-			OSTRICH_COMMON_API std::shared_ptr<hv::v2::inode> search(std::string nick) override;
+			//Node manipulation
+			OSTRICH_COMMON_API std::shared_ptr<hv::v2::ivarNode> search(std::size_t uid) override;
+			OSTRICH_COMMON_API std::shared_ptr<hv::v2::ivarNode> search(std::string nick) override;
 
 			OSTRICH_COMMON_API void connect(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) override;
 			OSTRICH_COMMON_API void connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) override;
@@ -72,6 +73,14 @@ namespace hv {
 			OSTRICH_COMMON_API void maxDepth(int value) override;
 			OSTRICH_COMMON_API std::string serialization() override;
 			OSTRICH_COMMON_API void deserialization(std::string value) override;
+
+
+
+
+			//Node Special Lock
+			OSTRICH_COMMON_API void registerAddon(std::shared_ptr<hv::v2::iaddon> addon, int special_lock_key) override;
+			OSTRICH_COMMON_API virtual std::shared_ptr<hv::v2::iconstNode> create(std::string name, int objectType, int special_lock_key) override;
+			OSTRICH_COMMON_API virtual std::shared_ptr<hv::v2::iconstNode> find(std::size_t uid, std::string name, int depth, int special_lock_key) override;
 
 		};
 	}

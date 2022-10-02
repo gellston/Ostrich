@@ -16,7 +16,7 @@ namespace hv {
 			varConstructor() {}
 			virtual ~varConstructor() {}
 
-			std::shared_ptr<hv::v2::ivarNode> create(std::string name, std::shared_ptr<hv::v2::ihandle> context) override {
+			std::shared_ptr<hv::v2::ivarNode> create(std::string name, hv::v2::ihandle * context) override {
 				try {
 					return std::make_shared<hv::v2::ivarNode>(new T(name, context));
 				}

@@ -8,17 +8,19 @@
 #include "ihandle.h"
 #include "inode.h"
 #include "ivarNode.h"
+#include "iconstNode.h"
 #include "iaddon.h"
 #include "contentType.h"
 #include "syncType.h"
+
 
 #include <vector>
 #include <string>
 
 namespace hv {
 	namespace v2 {
-		using addon_info = std::tuple<std::string, std::string>;
 
+		using addon_info = std::tuple<std::string, std::string>;
 		class icontext : public hv::v2::ihandle {
 		public:
 
@@ -48,8 +50,8 @@ namespace hv {
 	
 
 			// Node manipulation
-			virtual std::shared_ptr<hv::v2::inode> search(std::size_t uid) = 0;
-			virtual std::shared_ptr<hv::v2::inode> search(std::string nick) = 0;
+			virtual std::shared_ptr<hv::v2::ivarNode> search(std::size_t uid) = 0;
+			virtual std::shared_ptr<hv::v2::ivarNode> search(std::string nick) = 0;
 
 			virtual void connect(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) = 0;
 			virtual void connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) = 0;
@@ -68,13 +70,10 @@ namespace hv {
 
 
 
-
-
-
-		private:
-
-			virtual void registerAddon(std::shared_ptr<hv::v2::iaddon> addon) = 0;
-
+			// Node Special Lock
+			virtual void registerAddon(std::shared_ptr<hv::v2::iaddon> addon, int special_lock_key) =0;
+			virtual std::shared_ptr<hv::v2::iconstNode> create(std::string name, int objectType, int special_lock_key) = 0;
+			virtual std::shared_ptr<hv::v2::iconstNode> find(std::size_t uid, std::string name, int depth, int special_lock_key) = 0;
 
 		};
 	}

@@ -15,7 +15,7 @@ namespace hv {
 
 		public:
 			virtual ~ivarConstructor() {  };
-			virtual std::shared_ptr<hv::v2::ivarNode> create(std::string name, std::shared_ptr<hv::v2::ihandle> context) = 0;
+			virtual std::shared_ptr<hv::v2::ivarNode> create(std::string name, hv::v2::ihandle* context) = 0;
 		};
 	}
 }

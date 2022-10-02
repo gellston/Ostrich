@@ -27,8 +27,8 @@ namespace hv {
 			virtual int depth() = 0;
 			virtual void depth(int value) = 0;
 
-			virtual std::size_t uid() = 0;
-			virtual void uid(std::size_t value) = 0;
+
+
 
 			virtual bool inCondition() = 0;
 			virtual void inCondition(bool value) = 0;
@@ -47,19 +47,17 @@ namespace hv {
 		protected:
 			virtual void isConditionalNode(bool value) = 0;
 			
-			virtual std::shared_ptr<hv::v2::iconstNode> searchNode(std::string key, int objectType, hv::v2::searchType type)=0;
-			template<typename T> std::shared_ptr<T> searchNode(std::string key, int objectType, hv::v2::searchType type) {
+			virtual std::shared_ptr<hv::v2::iconstNode> search(std::string key, int objectType, hv::v2::searchType type)=0;
+			template<typename T> std::shared_ptr<T> search(std::string key, int objectType, hv::v2::searchType type) {
 				try {
 
-					auto node = this->searchNode(name, objectType, type);
+					auto node = this->search(name, objectType, type);
 					return std::dynamic_pointer_cast<T>(node);
 				}
 				catch (std::exception e) {
 					throw e;
 				}
 			}
-
-
 			virtual void registerNode(std::string key, int objectType, hv::v2::searchType type) = 0;
 		};
 	}

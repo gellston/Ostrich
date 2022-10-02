@@ -25,6 +25,11 @@ namespace hv {
 			virtual std::string nick() = 0;
 			virtual void nick(std::string value) = 0;
 
+
+			virtual std::size_t uid() = 0;
+			virtual void uid(std::size_t value) = 0;
+
+
 			virtual int type() = 0;
 			virtual void init() = 0;
 
