@@ -7,6 +7,11 @@
 #include <Windows.h>
 #include <random>
 #include <algorithm>
+#include <filesystem>
+#include <future>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 
 namespace hv {
@@ -26,7 +31,13 @@ namespace hv {
 			unsigned int _max_task_count;
 
 
+			int _depth;
+
+
 			impl_context() {
+
+				_depth = -1;
+				_max_task_count = 4;
 
 			}
 
@@ -98,10 +109,33 @@ void hv::v2::context::disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode) {
 
 
 std::shared_ptr<hv::v2::ivarNode> hv::v2::context::addNode(std::string name, int objectType) {
+	try {
+		for (auto& addon : this->_instance->_addons) {
+			if (addon->exist(objectType) == true) {
+				auto constructor = addon->varConstructor(objectType);
+				auto node = constructor->create(name, this);
 
+				auto uid = this->generate_var_unique_key();
 
-	return nullptr;
+				node->uid(uid);
+				node->depth(1);
+
+				this->_instance->_var_node_look_up_table[uid] = node;
+
+				return node;
+			}
+		}
+
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Object tpye not exists");
+		throw hv::v2::oexception(message);
+
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
 }
+
 void hv::v2::context::removeNode(std::size_t uid) {
 
 
@@ -120,17 +154,16 @@ void hv::v2::context::verification() {
 
 }
 void hv::v2::context::clear() {
-
-
+	this->_instance->_var_node_look_up_table.clear();
+	this->_instance->_const_node_loook_up_table.clear();
+	this->clearMaxDepth();
 }
 
 int hv::v2::context::maxDepth() {
-
-	return 0;
+	return this->_instance->_depth;
 }
 void hv::v2::context::maxDepth(int value) {
-
-
+	this->_instance->_depth = value;
 }
 
 std::string hv::v2::context::serialization() {
@@ -144,27 +177,132 @@ void hv::v2::context::deserialization(std::string value) {
 }
 
 
+
+
+void hv::v2::context::setAddonPath(std::string path) {
+
+	if (std::filesystem::exists(path) == false) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Addon path is not exists");
+		throw hv::v2::oexception(message);
+	}
+
+
+	this->_instance->_libraryPath = path;
+
+
+}
+
+void hv::v2::context::clearMaxDepth() {
+	this->_instance->_depth = -1;
+}
+
 void hv::v2::context::loadLibrary() {
 
+	if (this->_instance->_addon_handles.size() > 0) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "library is arealdy loaded");
+		throw hv::v2::oexception(message);
+	}
+
+	if (this->_instance->_libraryPath.length() == 0) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid library path.");
+		throw hv::v2::oexception(message);
+	}
+
+	for (const auto& entry : std::filesystem::directory_iterator(this->_instance->_libraryPath)) {
+		if (entry.path().extension().string() == ".dll") {
+			std::string filePath = entry.path().string();
+			std::string fileName = entry.path().filename().string();
+
+			bool check = false;
+			HMODULE module = LoadLibraryA(filePath.c_str());
+
+			if (module != nullptr) {
+				try {
+					auto addon_version = (const char* (*)())GetProcAddress(module, "ostrich_addon_version");
+					auto addon_name = (const char* (*)())GetProcAddress(module, "ostrich_addon_name");
+					auto addon_module = (bool (*)())GetProcAddress(module, "ostrich_addon_module_enable");
+					auto addon_init = (void (*)(hv::v2::icontext*))GetProcAddress(module, "ostrich_init");
+
+
+					if (addon_version == nullptr || addon_name == nullptr || addon_module == nullptr || addon_init == nullptr) {
+						FreeLibrary(module);
+						continue;
+					}
+
+					if (addon_module() == false) {
+						FreeLibrary(module);
+					}
+
+					addon_init(this);
+
+					std::string version = addon_version();
+					std::string name = addon_name();
+
+					this->_instance->_addon_handles[fileName] = module;
+					this->_instance->_addon_info.push_back({ name, version });
+
+				}
+				catch (std::exception e) {
+					FreeLibrary(module);
+				}
+			}
+		}
+	}
 }
 
 void hv::v2::context::unloadLibrary() {
 
-}
+	std::vector<std::string> removedKey;
 
-void hv::v2::context::setAddonPath(std::string path) {
+	bool error = false;
+
+	try {
+
+		this->clearMaxDepth();
+
+		this->_instance->_var_node_look_up_table.clear();
+		this->_instance->_addons.clear();
+
+
+
+		for (auto& pair : this->_instance->_addon_handles) {
+			if ((bool)FreeLibrary(pair.second) == true) {
+				removedKey.push_back(pair.first);
+			}
+			else {
+				error = true;
+			}
+		}
+
+		for (auto& key : removedKey) {
+			this->_instance->_addon_handles.erase(key);
+		}
+
+		if (error) {
+			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Unexpected error detected. please check addon");
+			throw hv::v2::oexception(message);
+		}
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+
+
 
 }
 
 std::vector<hv::v2::addon_info> hv::v2::context::addonInfo() {
-	std::vector<hv::v2::addon_info> temp;
-
-	return temp;
+	return this->_instance->_addon_info;
 }
 
 std::vector<std::shared_ptr<hv::v2::iaddon>> hv::v2::context::addons() {
-	std::vector<std::shared_ptr<hv::v2::iaddon>> temp;
-	return temp;
+	return this->_instance->_addons;
 }
 
 
@@ -182,7 +320,7 @@ void hv::v2::context::initNodes() {
 }
 
 void hv::v2::context::setMaxTaskCount(int num) {
-
+	this->_instance->_max_task_count = num;
 }
 
 void hv::v2::context::run(hv::v2::syncType sync) {

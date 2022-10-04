@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="addon.h" />
     <ClInclude Include="argument.h" />
+    <ClInclude Include="binding.h" />
     <ClInclude Include="commonException.h" />
     <ClInclude Include="common_export.h" />
     <ClInclude Include="constConstructor.h" />

@@ -19,9 +19,12 @@ namespace hv {
 			std::unique_ptr<hv::v2::impl_context> _instance;
 
 
-			std::size_t generate_const_unique_key();
-			std::size_t generate_var_unique_key();
+			OSTRICH_COMMON_API std::size_t generate_const_unique_key();
+			OSTRICH_COMMON_API std::size_t generate_var_unique_key();
+			OSTRICH_COMMON_API void clearMaxDepth();
 
+			OSTRICH_COMMON_API int maxDepth() override;
+			OSTRICH_COMMON_API void maxDepth(int value) override;
 
 		public:
 
@@ -69,8 +72,7 @@ namespace hv {
 
 
 
-			OSTRICH_COMMON_API int maxDepth() override;
-			OSTRICH_COMMON_API void maxDepth(int value) override;
+
 			OSTRICH_COMMON_API std::string serialization() override;
 			OSTRICH_COMMON_API void deserialization(std::string value) override;
 
