@@ -38,6 +38,17 @@ namespace hv {
 
 
 
+			OSTRICH_COMMON_API std::string name() override;
+			OSTRICH_COMMON_API std::string nick() override;
+			OSTRICH_COMMON_API void nick(std::string value) override;
+			OSTRICH_COMMON_API int type() override;
+
+
+			OSTRICH_COMMON_API std::size_t uid() override;
+			OSTRICH_COMMON_API void uid(std::size_t value) override;
+
+
+
 		protected:
 
 			OSTRICH_COMMON_API void isConditionalNode(bool value) override;

@@ -42,20 +42,20 @@ hv::v2::addon::~addon() {
 
 bool hv::v2::addon::exist(int type) {
 
-	bool noVarConstructor = false;
-	bool noConstConstructor = false;
+	bool existVarConstructor = false;
+	bool existConstConstructor = false;
 
 
-	if (this->_instance->_var_constructor_table.find(type) == this->_instance->_var_constructor_table.end()) {
-		noVarConstructor = true;
+	if (this->_instance->_var_constructor_table.find(type) != this->_instance->_var_constructor_table.end()) {
+		existVarConstructor = true;
 	}
 
-	if (this->_instance->_const_constructor_table.find(type) == this->_instance->_const_constructor_table.end()) {
-		noConstConstructor = true;
+	if (this->_instance->_const_constructor_table.find(type) != this->_instance->_const_constructor_table.end()) {
+		existConstConstructor = true;
 	}
 
 
-	if (noVarConstructor == false || noConstConstructor == false)
+	if (existVarConstructor == true || existConstConstructor == true)
 		return true;
 
 

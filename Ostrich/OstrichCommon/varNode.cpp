@@ -32,7 +32,6 @@ namespace hv {
 
 				this->_depth = 0;
 				this->_uid = 0;
-				this->_depth = -1;
 
 				this->_inCondition = false;
 				this->_isConditionalNode = false;
@@ -59,6 +58,31 @@ hv::v2::varNode::varNode(std::string value, int type, hv::v2::ihandle * context)
 hv::v2::varNode::~varNode() {
 
 
+}
+
+
+
+
+std::string hv::v2::varNode::name() {
+
+	return hv::v2::node::name();
+}
+std::string hv::v2::varNode::nick() {
+	return hv::v2::node::nick();
+}
+void hv::v2::varNode::nick(std::string value) {
+	hv::v2::node::nick(value);
+}
+int hv::v2::varNode::type() {
+	return hv::v2::node::type();
+}
+
+
+std::size_t hv::v2::varNode::uid() {
+	return hv::v2::node::uid();
+}
+void hv::v2::varNode::uid(std::size_t value) {
+	hv::v2::node::uid(value);
 }
 
 

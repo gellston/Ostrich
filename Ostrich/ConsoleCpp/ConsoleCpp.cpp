@@ -17,11 +17,11 @@ int main()
     
     try {
         hv::v2::context context;
-
         context.setAddonPath(current_path);
         context.loadLibrary();
+        context.addNode("test", 50001);
 
-        context.addNode("test", 1);
+
     }
     catch (hv::v2::oexception e) {
         std::cout << e.what() << std::endl;

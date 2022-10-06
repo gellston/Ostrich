@@ -39,7 +39,7 @@ hv::v2::node::node(std::string value, int type){
 		throw hv::v2::oexception(message);
 	}
 
-	if (type > (int)hv::v2::objectType::VAR_NODE && type < (int)hv::v2::objectType::DEVICE_NODE) {
+	if (type <= (int)hv::v2::objectType::CONST_NODE || type >= (int)hv::v2::objectType::DEVICE_NODE) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid object type");
 		throw hv::v2::oexception(message);
 	}

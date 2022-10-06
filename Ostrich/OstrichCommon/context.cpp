@@ -193,7 +193,7 @@ void hv::v2::context::setAddonPath(std::string path) {
 }
 
 void hv::v2::context::clearMaxDepth() {
-	this->_instance->_depth = -1;
+	this->_instance->_depth = 0;
 }
 
 void hv::v2::context::loadLibrary() {
@@ -244,6 +244,7 @@ void hv::v2::context::loadLibrary() {
 
 					this->_instance->_addon_handles[fileName] = module;
 					this->_instance->_addon_info.push_back({ name, version });
+			
 
 				}
 				catch (std::exception e) {
@@ -265,6 +266,7 @@ void hv::v2::context::unloadLibrary() {
 		this->clearMaxDepth();
 
 		this->_instance->_var_node_look_up_table.clear();
+		this->_instance->_const_node_loook_up_table.clear();
 		this->_instance->_addons.clear();
 
 
@@ -334,7 +336,6 @@ void hv::v2::context::run(hv::v2::syncType sync) {
 
 
 // Private Function
-
 std::size_t hv::v2::context::generate_const_unique_key() {
 	std::random_device rd;
 	std::mt19937_64 mersenne(rd());
@@ -355,7 +356,6 @@ std::size_t hv::v2::context::generate_const_unique_key() {
 
 
 std::size_t hv::v2::context::generate_var_unique_key() {
-
 	std::random_device rd;
 	std::mt19937_64 mersenne(rd());
 	std::uniform_int_distribution<unsigned long long int> dice(1, INT64_MAX);
@@ -420,6 +420,10 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::context::create(std::string name, in
 				auto constructor = addon->constConstructor(objectType);
 				auto node = constructor->create(name);
 				node->uid(uid);
+
+
+				// 실험이 필요함... 어떻게 될지 모르겠구먼?
+				this->_instance->_const_node_loook_up_table[uid] = node;
 
 				return node;
 			}
