@@ -5,7 +5,7 @@
 //Node
 #include "node.h"
 #include "varNode.h"
-
+#include "constNode.h"
 
 
 //Exception

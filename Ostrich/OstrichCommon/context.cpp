@@ -221,7 +221,7 @@ void hv::v2::context::loadLibrary() {
 					auto addon_version = (const char* (*)())GetProcAddress(module, "ostrich_addon_version");
 					auto addon_name = (const char* (*)())GetProcAddress(module, "ostrich_addon_name");
 					auto addon_module = (bool (*)())GetProcAddress(module, "ostrich_addon_module_enable");
-					auto addon_init = (void (*)(hv::v2::icontext*))GetProcAddress(module, "ostrich_init");
+					auto addon_init = (bool (*)(hv::v2::icontext*))GetProcAddress(module, "ostrich_addon_init");
 
 
 					if (addon_version == nullptr || addon_name == nullptr || addon_module == nullptr || addon_init == nullptr) {
@@ -233,7 +233,11 @@ void hv::v2::context::loadLibrary() {
 						FreeLibrary(module);
 					}
 
-					addon_init(this);
+					
+
+					if (addon_init(this) == false) {
+						FreeLibrary(module);
+					}
 
 					std::string version = addon_version();
 					std::string name = addon_name();

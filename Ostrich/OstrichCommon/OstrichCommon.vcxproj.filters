@@ -39,6 +39,9 @@
     <ClCompile Include="addon.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="constNode.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ihandle.h">
@@ -126,6 +129,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="binding.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="constNode.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -51,7 +51,7 @@ namespace hv {
 			template<typename T> std::shared_ptr<T> search(std::string key, int objectType, hv::v2::searchType type) {
 				try {
 
-					auto node = this->search(name, objectType, type);
+					auto node = this->search(key, objectType, type);
 					return std::dynamic_pointer_cast<T>(node);
 				}
 				catch (std::exception e) {

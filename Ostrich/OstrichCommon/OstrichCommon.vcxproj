@@ -132,6 +132,7 @@
     <ClCompile Include="addon.cpp" />
     <ClCompile Include="argument.cpp" />
     <ClCompile Include="commonExceptioin.cpp" />
+    <ClCompile Include="constNode.cpp" />
     <ClCompile Include="context.cpp" />
     <ClCompile Include="node.cpp" />
     <ClCompile Include="nodeInfo.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="commonException.h" />
     <ClInclude Include="common_export.h" />
     <ClInclude Include="constConstructor.h" />
+    <ClInclude Include="constNode.h" />
     <ClInclude Include="constructorType.h" />
     <ClInclude Include="context.h" />
     <ClInclude Include="contentType.h" />

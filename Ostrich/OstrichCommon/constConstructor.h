@@ -19,7 +19,7 @@ namespace hv {
 
 			std::shared_ptr<hv::v2::iconstNode> create(std::string name) override {
 				try {
-					return std::make_shared<hv::v2::iconstNode>(new T(name));
+					return std::dynamic_pointer_cast<hv::v2::iconstNode>(std::make_shared<T>(name));
 				}
 				catch (hv::v2::oexception e) {
 					throw e;

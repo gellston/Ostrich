@@ -1,11 +1,12 @@
 #pragma once
 
 
-#ifndef OSTRICH_CONST_NODE
-#define OSTRICH_CONST_NODE
+#ifndef OSTRICH_ICONST_NODE
+#define OSTRICH_ICONST_NODE
 
 
 #include "inode.h"
+
 
 namespace hv {
 	namespace v2 {

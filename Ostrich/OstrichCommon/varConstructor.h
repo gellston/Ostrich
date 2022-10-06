@@ -18,7 +18,7 @@ namespace hv {
 
 			std::shared_ptr<hv::v2::ivarNode> create(std::string name, hv::v2::ihandle * context) override {
 				try {
-					return std::make_shared<hv::v2::ivarNode>(new T(name, context));
+					return std::dynamic_pointer_cast<hv::v2::ivarNode>(std::make_shared<T>(name, context));
 				}
 				catch (hv::v2::oexception e) {
 					throw e;
