@@ -27,7 +27,8 @@ namespace hv {
 			virtual int depth() = 0;
 			virtual void depth(int value) = 0;
 
-
+			virtual bool isConnected() = 0;
+			virtual bool checkSourceUID(std::size_t uid) = 0;
 
 
 			virtual bool inCondition() = 0;

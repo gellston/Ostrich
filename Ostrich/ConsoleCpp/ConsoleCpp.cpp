@@ -19,8 +19,14 @@ int main()
         hv::v2::context context;
         context.setAddonPath(current_path);
         context.loadLibrary();
-        context.addNode("test", 50001);
+        auto node = context.addNode("test", 50001);
+        node->nick("there is no cow level");
 
+        auto node2 = context.search(node->uid());
+        auto node3 = context.search(node->nick());
+
+
+        std::cout << "test" << std::endl;
 
     }
     catch (hv::v2::oexception e) {

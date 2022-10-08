@@ -12,6 +12,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <stack>
 
 
 namespace hv {
@@ -22,6 +23,8 @@ namespace hv {
 
 			std::unordered_map< std::size_t, std::shared_ptr<hv::v2::ivarNode>> _var_node_look_up_table;
 			std::unordered_map<std::size_t, std::shared_ptr<hv::v2::iconstNode>> _const_node_loook_up_table;
+			std::unordered_map < std::size_t, std::vector<std::shared_ptr<hv::v2::ivarNode>>> _align_nodes;
+
 
 			std::unordered_map<std::string, HMODULE> _addon_handles;
 			std::vector<hv::v2::addon_info> _addon_info;
@@ -36,7 +39,7 @@ namespace hv {
 
 			impl_context() {
 
-				_depth = -1;
+				_depth = 0;
 				_max_task_count = 4;
 
 			}
@@ -65,23 +68,124 @@ hv::v2::context::~context() {
 }
 
 std::shared_ptr<hv::v2::ivarNode> hv::v2::context::search(std::size_t uid) {
+	if (this->_instance->_var_node_look_up_table.find(uid) == this->_instance->_var_node_look_up_table.end()) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Uid is not exist");
+		throw hv::v2::oexception(message);
+	}
 
 
-	return nullptr;
+
+	return this->_instance->_var_node_look_up_table[uid];
 }
 
 std::shared_ptr<hv::v2::ivarNode> hv::v2::context::search(std::string nick) {
-
-	return nullptr;
+	bool found = false;
+	std::shared_ptr<hv::v2::ivarNode> temp_node;
+	for (auto &node : this->_instance->_var_node_look_up_table) {
+		if (node.second->nick() == nick) {
+			found = true;
+			temp_node = node.second;
+			break;
+		}
+	}
+	return temp_node;
 }
 
 
 void hv::v2::context::connect(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) {
+	
+
+
+	try {
+
+		auto sourceNode = this->search(sourceUID);
+		auto targetNode = this->search(targetUID);
+
+		this->connect(sourceNode, sourceName, targetNode, targetName);
+
+	}
+	catch (hv::v2::oexception e) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
 
 
 }
+
+
+// 여기 Connect 함수가 중요함!!
+// 여기 Connect 함수가 중요함!!
+// 여기 Connect 함수가 중요함!!
+
 void hv::v2::context::connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) {
 
+	if (sourceNode == targetNode) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "source and target node are same");
+		throw hv::v2::oexception(message);
+	}
+
+	if (sourceNode == nullptr || targetNode == nullptr) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null reference node");
+		throw hv::v2::oexception(message);
+	}
+
+	if (sourceNode->type() != targetNode->type()) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Type is not match");
+		throw hv::v2::oexception(message);
+	}
+
+
+	try {
+
+		std::stack<std::size_t> current_node_stack;
+		auto inputNodes = sourceNode->inputs();
+
+		for (auto& node : inputNodes) {
+			if (node->isConnected() == true) {
+				current_node_stack.push(node->uid());
+			}
+		}
+
+		while (current_node_stack.empty() != true) {
+			auto _currentUID = current_node_stack.top();
+			current_node_stack.pop();
+
+			auto _currentSourceNode = this->search(_currentUID);
+			if (_currentSourceNode == targetNode) {
+				std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Its a circular node relationship");
+				throw hv::v2::oexception(message);
+			}
+
+			auto _currentInputNodes = _currentSourceNode->inputs();
+			for (auto& node : _currentInputNodes) {
+				if (node->isConnected() == true) {
+					current_node_stack.push(node->uid());
+				}
+			}
+		}
+
+
+
+		auto sourceConstNode = sourceNode->output(sourceName);
+		auto targetConstNode = targetNode->output(targetName);
+
+		targetConstNode->sourceName(sourceName);
+		targetConstNode->sourceUID(sourceNode->uid());
+		targetConstNode->isConnected(true);
+		
+
+
+		//Depth 정렬
+		this->sortingDepth();
+
+		//Depth 순으로 그룹핑
+		this->groupingDepth();
+
+	}
+	catch (hv::v2::oexception e) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
 
 }
 
@@ -162,8 +266,45 @@ void hv::v2::context::clear() {
 int hv::v2::context::maxDepth() {
 	return this->_instance->_depth;
 }
-void hv::v2::context::maxDepth(int value) {
-	this->_instance->_depth = value;
+
+
+void  hv::v2::context::groupingDepth() {
+	this->_instance->_align_nodes.clear();
+	for (std::size_t depth = 1; depth <= this->maxDepth(); depth++) {
+		for (auto& pair : this->_instance->_var_node_look_up_table) {
+			if (depth == pair.second->depth()) {
+				this->_instance->_align_nodes[depth].push_back(pair.second);
+			}
+		}
+	}
+}
+
+void hv::v2::context::sortingDepth() {
+	//코딩 여기서부터해야함!!! 그 뒤에 sorting 기능 체크해야함.
+
+	std::stack<std::shared_ptr<hv::v2::ivarNode>> current_node_stack;
+	for (auto node : this->_instance->_var_node_look_up_table) {
+		if (node.second->isConnected() == false) {
+			node.second->depth(1);
+			current_node_stack.push(node.second);
+			this->_instance->_depth = 1;
+		}
+	}
+
+	while (current_node_stack.empty() != true) {
+		auto _currentNode = current_node_stack.top();
+		current_node_stack.pop();
+
+		for (auto node : this->_instance->_var_node_look_up_table) {
+			if (node.second->checkSourceUID(_currentNode->uid()) == true) {
+				auto currentDepth = _currentNode->depth() + 1;
+				if(this->_instance->_depth < currentDepth)
+					this->_instance->_depth = currentDepth;
+				node.second->depth(currentDepth);
+				current_node_stack.push(node.second);
+			}
+		}
+	}
 }
 
 std::string hv::v2::context::serialization() {

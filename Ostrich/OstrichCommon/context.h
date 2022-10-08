@@ -22,9 +22,14 @@ namespace hv {
 			OSTRICH_COMMON_API std::size_t generate_const_unique_key();
 			OSTRICH_COMMON_API std::size_t generate_var_unique_key();
 			OSTRICH_COMMON_API void clearMaxDepth();
+			OSTRICH_COMMON_API void groupingDepth();
+			OSTRICH_COMMON_API void sortingDepth();
 
 			OSTRICH_COMMON_API int maxDepth() override;
-			OSTRICH_COMMON_API void maxDepth(int value) override;
+
+
+
+
 
 		public:
 

@@ -114,7 +114,24 @@ void hv::v2::varNode::depth(int value) {
 
 }
 
+bool hv::v2::varNode::isConnected() {
+	for (auto node : this->_instance->_inputNodes) {
+		if (node.second->isConnected() == true)
+			return true;
+	}
 
+	return false;
+}
+
+
+bool hv::v2::varNode::checkSourceUID(std::size_t uid) {
+	for (auto node : this->_instance->_inputNodes) {
+		if (node.second->sourceUID() == uid && node.second->isConnected() == true)
+			return true;
+	}
+
+	return false;
+}
 
 
 std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::varNode::inputs() {
@@ -266,7 +283,7 @@ void hv::v2::varNode::registerNode(std::string key, int objectType, hv::v2::sear
 		switch (type)
 		{
 		case hv::v2::searchType::input: {
-			if (this->_instance->_inputNodes.find(key) == this->_instance->_inputNodes.end()) {
+			if (this->_instance->_inputNodes.find(key) != this->_instance->_inputNodes.end()) {
 				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Exist node key");
 				throw hv::v2::oexception(message);
 			}
@@ -276,7 +293,7 @@ void hv::v2::varNode::registerNode(std::string key, int objectType, hv::v2::sear
 		}
 			
 		case hv::v2::searchType::output: {
-			if (this->_instance->_outputNodes.find(key) == this->_instance->_outputNodes.end()) {
+			if (this->_instance->_outputNodes.find(key) != this->_instance->_outputNodes.end()) {
 				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Exist node key");
 				throw hv::v2::oexception(message);
 			}

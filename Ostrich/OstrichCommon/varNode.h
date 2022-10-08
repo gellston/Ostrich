@@ -25,6 +25,10 @@ namespace hv {
 			OSTRICH_COMMON_API void depth(int value) override;
 
 
+			OSTRICH_COMMON_API bool isConnected() override;
+			OSTRICH_COMMON_API bool checkSourceUID(std::size_t uid) override;
+
+
 			OSTRICH_COMMON_API bool inCondition() override;
 			OSTRICH_COMMON_API void inCondition(bool value) override;
 			OSTRICH_COMMON_API bool isConditionalNode() override;

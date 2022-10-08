@@ -44,7 +44,7 @@ namespace hv {
 			virtual void run(hv::v2::syncType sync = v2::syncType::sequential_execution) = 0;
 
 			virtual int maxDepth() = 0;
-			virtual void maxDepth(int value) = 0;
+	
 			virtual std::string serialization() = 0;
 			virtual void deserialization(std::string value) = 0;
 	
