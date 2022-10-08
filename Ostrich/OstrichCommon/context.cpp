@@ -73,8 +73,6 @@ std::shared_ptr<hv::v2::ivarNode> hv::v2::context::search(std::size_t uid) {
 		throw hv::v2::oexception(message);
 	}
 
-
-
 	return this->_instance->_var_node_look_up_table[uid];
 }
 
@@ -88,6 +86,7 @@ std::shared_ptr<hv::v2::ivarNode> hv::v2::context::search(std::string nick) {
 			break;
 		}
 	}
+
 	return temp_node;
 }
 
@@ -167,7 +166,7 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std:
 
 
 		auto sourceConstNode = sourceNode->output(sourceName);
-		auto targetConstNode = targetNode->output(targetName);
+		auto targetConstNode = targetNode->input(targetName);
 
 		targetConstNode->sourceName(sourceName);
 		targetConstNode->sourceUID(sourceNode->uid());
@@ -189,24 +188,107 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std:
 
 }
 
-void hv::v2::context::disonnect(std::string nick) {
+void hv::v2::context::disconnect(std::string nick) {
 
+	try {
+		for (auto node : this->_instance->_var_node_look_up_table) {
+			if (node.second->nick() == nick) {
+				auto inputs = node.second->inputs();
+				for (auto input : inputs) {
+					input->isConnected(false);
+				}
+
+				//Depth 정렬
+				this->sortingDepth();
+
+				//Depth 순으로 그룹핑
+				this->groupingDepth();
+			}
+		}
+	}
+	catch (hv::v2::oexception e) {
+		throw e;
+	}
 
 }
 void hv::v2::context::disconnect(std::size_t targetUID, std::string targetName) {
 
+	if (this->_instance->_var_node_look_up_table.find(targetUID) == this->_instance->_var_node_look_up_table.end()) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Uid is not exist");
+		throw hv::v2::oexception(message);
+	}
 
+	try {
+		auto node = this->_instance->_var_node_look_up_table[targetUID];
+		auto constNode = node->input(targetName);
+		constNode->isConnected(false);
+
+		//Depth 정렬
+		this->sortingDepth();
+
+		//Depth 순으로 그룹핑
+		this->groupingDepth();
+
+	}
+	catch (hv::v2::oexception e) {
+		throw e;
+	}
 }
 void hv::v2::context::disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) {
 
+	if (targetNode == nullptr) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null pointer exception");
+		throw hv::v2::oexception(message);
+	}
+
+	try {
+		this->disconnect(targetNode->uid(), targetName);
+	}
+	catch (hv::v2::oexception e) {
+		throw e;
+	}
 
 }
 void hv::v2::context::disconnect(std::size_t targetUID) {
 
+	if (this->_instance->_var_node_look_up_table.find(targetUID) == this->_instance->_var_node_look_up_table.end()) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Uid is not exist");
+		throw hv::v2::oexception(message);
+	}
 
+	try {
+		auto node = this->_instance->_var_node_look_up_table[targetUID];
+		auto inputs = node->inputs();
+		for (auto input : inputs) {
+			input->isConnected(false);
+		}
+
+		//Depth 정렬
+		this->sortingDepth();
+
+		//Depth 순으로 그룹핑
+		this->groupingDepth();
+
+	}
+	catch (hv::v2::oexception e) {
+		throw e;
+	}
 }
+
+
 void hv::v2::context::disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode) {
 
+	if (targetNode == nullptr) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null pointer exception");
+		throw hv::v2::oexception(message);
+	}
+
+	try {
+		this->disconnect(targetNode->uid());
+	}
+	catch (hv::v2::oexception e) {
+		throw e;
+	}
 
 }
 
@@ -243,13 +325,58 @@ std::shared_ptr<hv::v2::ivarNode> hv::v2::context::addNode(std::string name, int
 void hv::v2::context::removeNode(std::size_t uid) {
 
 
+	try {
+		this->disconnect(uid);
+		this->_instance->_var_node_look_up_table.erase(uid);
+
+		//Depth 정렬
+		this->sortingDepth();
+
+		//Depth 순으로 그룹핑
+		this->groupingDepth();
+	}
+	catch (hv::v2::oexception e) {
+		throw e;
+	}
+
 }
 void hv::v2::context::removeNode(std::shared_ptr<hv::v2::ivarNode> node) {
 
+	if (node == nullptr) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null pointer exception");
+		throw hv::v2::oexception(message);
+	}
+
+
+	try {
+		this->removeNode(node->uid());
+
+	}
+	catch (hv::v2::oexception e) {
+		throw e;
+	}
 
 }
 void hv::v2::context::removeNode(std::string nick) {
 
+
+	std::vector<std::size_t> _uid;
+
+	for (auto node : this->_instance->_var_node_look_up_table) {
+		if (node.second->nick() == nick) {
+			_uid.push_back(node.second->uid());
+		}
+	}
+
+
+	for (auto uid : _uid) {
+		try {
+			this->removeNode(uid);
+		}
+		catch (hv::v2::oexception e) {
+
+		}
+	}
 
 }
 

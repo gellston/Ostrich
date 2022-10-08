@@ -56,7 +56,7 @@ namespace hv {
 			virtual void connect(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) = 0;
 			virtual void connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) = 0;
 
-			virtual void disonnect(std::string nick) = 0;
+			virtual void disconnect(std::string nick) = 0;
 			virtual void disconnect(std::size_t targetUID, std::string targetName) = 0;
 			virtual void disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) = 0;
 			virtual void disconnect(std::size_t targetUID) = 0;

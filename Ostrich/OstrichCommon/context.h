@@ -45,7 +45,7 @@ namespace hv {
 			OSTRICH_COMMON_API void connect(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) override;
 			OSTRICH_COMMON_API void connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) override;
 
-			OSTRICH_COMMON_API void disonnect(std::string nick) override;
+			OSTRICH_COMMON_API void disconnect(std::string nick) override;
 			OSTRICH_COMMON_API void disconnect(std::size_t targetUID, std::string targetName) override;
 			OSTRICH_COMMON_API void disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) override;
 			OSTRICH_COMMON_API void disconnect(std::size_t targetUID) override;
