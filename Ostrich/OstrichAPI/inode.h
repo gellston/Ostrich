@@ -22,8 +22,8 @@ namespace hv {
 
 			virtual std::string name() = 0;
 
-			virtual std::string nick() = 0;
-			virtual void nick(std::string value) = 0;
+			//virtual std::string nick() = 0;
+			//virtual void nick(std::string value) = 0;
 
 
 			virtual std::size_t uid() = 0;

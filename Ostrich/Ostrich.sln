@@ -3,12 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.32916.344
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OstrichAPI", "OstrichAPI\OstrichAPI.vcxproj", "{1A30B8FE-7E34-4D0C-9AC2-7E54BCE14788}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D3CB5800-1750-4C45-A0DF-1A92DF23EA42} = {D3CB5800-1750-4C45-A0DF-1A92DF23EA42}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OstrichCommon", "OstrichCommon\OstrichCommon.vcxproj", "{D3CB5800-1750-4C45-A0DF-1A92DF23EA42}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OstrichAPI", "OstrichAPI\OstrichAPI.vcxproj", "{D3CB5800-1750-4C45-A0DF-1A92DF23EA42}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleCpp", "ConsoleCpp\ConsoleCpp.vcxproj", "{642C2908-EB2C-4C4A-A9CD-9EC909875086}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -34,14 +29,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1A30B8FE-7E34-4D0C-9AC2-7E54BCE14788}.Debug|x64.ActiveCfg = Debug|x64
-		{1A30B8FE-7E34-4D0C-9AC2-7E54BCE14788}.Debug|x64.Build.0 = Debug|x64
-		{1A30B8FE-7E34-4D0C-9AC2-7E54BCE14788}.Debug|x86.ActiveCfg = Debug|Win32
-		{1A30B8FE-7E34-4D0C-9AC2-7E54BCE14788}.Debug|x86.Build.0 = Debug|Win32
-		{1A30B8FE-7E34-4D0C-9AC2-7E54BCE14788}.Release|x64.ActiveCfg = Release|x64
-		{1A30B8FE-7E34-4D0C-9AC2-7E54BCE14788}.Release|x64.Build.0 = Release|x64
-		{1A30B8FE-7E34-4D0C-9AC2-7E54BCE14788}.Release|x86.ActiveCfg = Release|Win32
-		{1A30B8FE-7E34-4D0C-9AC2-7E54BCE14788}.Release|x86.Build.0 = Release|Win32
 		{D3CB5800-1750-4C45-A0DF-1A92DF23EA42}.Debug|x64.ActiveCfg = Debug|x64
 		{D3CB5800-1750-4C45-A0DF-1A92DF23EA42}.Debug|x64.Build.0 = Debug|x64
 		{D3CB5800-1750-4C45-A0DF-1A92DF23EA42}.Debug|x86.ActiveCfg = Debug|Win32

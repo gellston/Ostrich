@@ -7,7 +7,7 @@
 
 #include "node.h"
 #include "ivarNode.h"
-
+#include "commonException.h"
 
 
 namespace hv {
@@ -41,10 +41,11 @@ namespace hv {
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::iconstNode> output(std::string key) override;
 
 
+			OSTRICH_COMMON_API std::vector<std::size_t> constUID() override;
+
 
 			OSTRICH_COMMON_API std::string name() override;
-			OSTRICH_COMMON_API std::string nick() override;
-			OSTRICH_COMMON_API void nick(std::string value) override;
+
 			OSTRICH_COMMON_API int type() override;
 
 
@@ -63,9 +64,13 @@ namespace hv {
 					auto node = this->search(key, objectType, type);
 					return std::dynamic_pointer_cast<T>(node);
 				}
-				catch (std::exception e) {
+				catch (hv::v2::oexception e) {
 					throw e;
 				}
+				catch (std::exception e) {
+					throw e; 
+				}
+
 			}
 			OSTRICH_COMMON_API void registerNode(std::string key, int objectType, hv::v2::searchType type) override;
 

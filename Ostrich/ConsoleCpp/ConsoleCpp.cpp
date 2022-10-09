@@ -5,7 +5,8 @@
 
 #include <context.h>
 
-
+#include <varNumberNode.h>
+#include <constNumberNode.h>
 
 int main()
 {
@@ -19,14 +20,35 @@ int main()
         hv::v2::context context;
         context.setAddonPath(current_path);
         context.loadLibrary();
-        auto node = context.addNode("test", 50001);
-        node->nick("there is no cow level");
 
-        auto node2 = context.search(node->uid());
-        auto node3 = context.search(node->nick());
+        auto node1 = context.addNode("test1", 50001);
+        auto node2 = context.addNode("test2", 50001);
+
+        context.verification();
+
+        context.connect(node1, "output", node2, "input");
+
+        context.verification();
+
+        auto input = std::dynamic_pointer_cast<hv::v2::constNumberNode>(node1->input("input"));
+        auto output = std::dynamic_pointer_cast<hv::v2::constNumberNode>(node2->output("output"));
+
+        
+        input->data(888);
 
 
-        std::cout << "test" << std::endl;
+        node1->process();
+        node2->process();
+
+
+        context.removeNode("test2");
+
+
+        context.verification();
+
+       
+        std::cout << "result = " << output->data() << std::endl;
+
 
     }
     catch (hv::v2::oexception e) {

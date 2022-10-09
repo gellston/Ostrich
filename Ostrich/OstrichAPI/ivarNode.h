@@ -44,6 +44,8 @@ namespace hv {
 			virtual std::shared_ptr<hv::v2::iconstNode> input(std::string key) = 0;
 			virtual std::shared_ptr<hv::v2::iconstNode> output(std::string key) = 0;
 
+			virtual std::vector<std::size_t> constUID() = 0;
+
 
 		protected:
 			virtual void isConditionalNode(bool value) = 0;

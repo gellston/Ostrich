@@ -10,7 +10,7 @@ namespace hv {
 		class impl_node {
 		public:
 			std::string _name;
-			std::string _nick;
+			//std::string _nick;
 			int _type;
 
 			std::size_t _uid;
@@ -18,7 +18,7 @@ namespace hv {
 			impl_node() {
 				_name = "";
 				_type = -1;
-				_nick = "";
+				//_nick = "";
 				_uid = 0;
 
 			}
@@ -68,18 +68,18 @@ int hv::v2::node::type() {
 }
 
 
-std::string hv::v2::node::nick() {
-	return this->_instance->_nick;
-}
-
-void hv::v2::node::nick(std::string value) {
-
-	if (value.length() == 0) {
-		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid nick name");
-		throw hv::v2::oexception(message);
-	}
-	this->_instance->_nick = value;
-}
+//std::string hv::v2::node::nick() {
+//	return this->_instance->_nick;
+//}
+//
+//void hv::v2::node::nick(std::string value) {
+//
+//	if (value.length() == 0) {
+//		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid nick name");
+//		throw hv::v2::oexception(message);
+//	}
+//	this->_instance->_nick = value;
+//}
 
 std::size_t hv::v2::node::uid() {
 	return this->_instance->_uid;

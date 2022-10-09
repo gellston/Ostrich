@@ -67,12 +67,12 @@ std::string hv::v2::varNode::name() {
 
 	return hv::v2::node::name();
 }
-std::string hv::v2::varNode::nick() {
-	return hv::v2::node::nick();
-}
-void hv::v2::varNode::nick(std::string value) {
-	hv::v2::node::nick(value);
-}
+//std::string hv::v2::varNode::nick() {
+//	return hv::v2::node::nick();
+//}
+//void hv::v2::varNode::nick(std::string value) {
+//	hv::v2::node::nick(value);
+//}
 int hv::v2::varNode::type() {
 	return hv::v2::node::type();
 }
@@ -190,6 +190,20 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::output(std::string key) {
 	return constNode;
 }
 
+std::vector<std::size_t> hv::v2::varNode::constUID() {
+	std::vector<std::size_t> uid;
+
+	for (auto node : this->_instance->_inputNodes) {
+		uid.push_back(node.second->uid());
+	}
+
+	for (auto node : this->_instance->_outputNodes) {
+		uid.push_back(node.second->uid());
+	}
+
+	return uid;
+}
+
 
 
 std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::search(std::string key, int objectType, hv::v2::searchType type) {
@@ -200,7 +214,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::search(std::string key, int
 		throw hv::v2::oexception(message);
 	}
 
-	if (objectType > (int)hv::v2::objectType::CONST_NODE && objectType < (int)hv::v2::objectType::VAR_NODE) {
+	if (objectType <= (int)hv::v2::objectType::CONST_NODE && objectType >= (int)hv::v2::objectType::VAR_NODE) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid object type");
 		throw hv::v2::oexception(message);
 	}
@@ -216,7 +230,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::search(std::string key, int
 		switch (type)
 		{
 		case hv::v2::searchType::input: {
-			if (this->_instance->_inputNodes.find(key) != this->_instance->_inputNodes.end()) {
+			if (this->_instance->_inputNodes.find(key) == this->_instance->_inputNodes.end()) {
 				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Name is not exist");
 				throw hv::v2::oexception(message);
 			}
@@ -235,7 +249,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::search(std::string key, int
 			break;
 		}
 		case hv::v2::searchType::output: {
-			if (this->_instance->_outputNodes.find(key) != this->_instance->_outputNodes.end()) {
+			if (this->_instance->_outputNodes.find(key) == this->_instance->_outputNodes.end()) {
 				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Name is not exist");
 				throw hv::v2::oexception(message);
 			}
@@ -252,6 +266,10 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::search(std::string key, int
 		}
 
 	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
 	catch (std::exception e) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
 		throw hv::v2::oexception(message);
@@ -267,7 +285,7 @@ void hv::v2::varNode::registerNode(std::string key, int objectType, hv::v2::sear
 		throw hv::v2::oexception(message);
 	}
 
-	if (objectType > (int)hv::v2::objectType::CONST_NODE && objectType < (int)hv::v2::objectType::VAR_NODE) {
+	if (objectType <= (int)hv::v2::objectType::CONST_NODE && objectType >= (int)hv::v2::objectType::VAR_NODE) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid object type");
 		throw hv::v2::oexception(message);
 	}
@@ -307,9 +325,14 @@ void hv::v2::varNode::registerNode(std::string key, int objectType, hv::v2::sear
 			break;
 		}
 	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
 	catch (std::exception e) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
 		throw hv::v2::oexception(message);
 	}
+
 }
 

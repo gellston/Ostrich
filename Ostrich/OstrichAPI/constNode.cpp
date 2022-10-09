@@ -66,12 +66,12 @@ std::string hv::v2::constNode::name() {
 
 	return hv::v2::node::name();
 }
-std::string hv::v2::constNode::nick() {
-	return hv::v2::node::nick();
-}
-void hv::v2::constNode::nick(std::string value) {
-	hv::v2::node::nick(value);
-}
+//std::string hv::v2::constNode::nick() {
+//	return hv::v2::node::nick();
+//}
+//void hv::v2::constNode::nick(std::string value) {
+//	hv::v2::node::nick(value);
+//}
 int hv::v2::constNode::type() {
 	return hv::v2::node::type();
 }

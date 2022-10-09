@@ -51,12 +51,12 @@ namespace hv {
 
 			// Node manipulation
 			virtual std::shared_ptr<hv::v2::ivarNode> search(std::size_t uid) = 0;
-			virtual std::shared_ptr<hv::v2::ivarNode> search(std::string nick) = 0;
+			virtual std::shared_ptr<hv::v2::ivarNode> search(std::string name) = 0;
 
 			virtual void connect(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) = 0;
 			virtual void connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) = 0;
 
-			virtual void disconnect(std::string nick) = 0;
+			virtual void disconnect(std::string name) = 0;
 			virtual void disconnect(std::size_t targetUID, std::string targetName) = 0;
 			virtual void disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) = 0;
 			virtual void disconnect(std::size_t targetUID) = 0;
@@ -65,7 +65,7 @@ namespace hv {
 			virtual std::shared_ptr<hv::v2::ivarNode> addNode(std::string name, int objectType) = 0;
 			virtual void removeNode(std::size_t uid) = 0;
 			virtual void removeNode(std::shared_ptr<hv::v2::ivarNode> node) = 0;
-			virtual void removeNode(std::string nick) = 0;
+			virtual void removeNode(std::string name) = 0;
 
 
 

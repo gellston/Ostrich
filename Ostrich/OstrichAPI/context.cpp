@@ -76,11 +76,11 @@ std::shared_ptr<hv::v2::ivarNode> hv::v2::context::search(std::size_t uid) {
 	return this->_instance->_var_node_look_up_table[uid];
 }
 
-std::shared_ptr<hv::v2::ivarNode> hv::v2::context::search(std::string nick) {
+std::shared_ptr<hv::v2::ivarNode> hv::v2::context::search(std::string name) {
 	bool found = false;
 	std::shared_ptr<hv::v2::ivarNode> temp_node;
 	for (auto &node : this->_instance->_var_node_look_up_table) {
-		if (node.second->nick() == nick) {
+		if (node.second->name() == name) {
 			found = true;
 			temp_node = node.second;
 			break;
@@ -188,11 +188,11 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std:
 
 }
 
-void hv::v2::context::disconnect(std::string nick) {
+void hv::v2::context::disconnect(std::string name) {
 
 	try {
 		for (auto node : this->_instance->_var_node_look_up_table) {
-			if (node.second->nick() == nick) {
+			if (node.second->name() == name) {
 				auto inputs = node.second->inputs();
 				for (auto input : inputs) {
 					input->isConnected(false);
@@ -308,6 +308,15 @@ std::shared_ptr<hv::v2::ivarNode> hv::v2::context::addNode(std::string name, int
 
 				this->_instance->_var_node_look_up_table[uid] = node;
 
+
+				//Depth 정렬
+				this->sortingDepth();
+
+				//Depth 순으로 그룹핑
+				this->groupingDepth();
+
+
+
 				return node;
 			}
 		}
@@ -327,6 +336,14 @@ void hv::v2::context::removeNode(std::size_t uid) {
 
 	try {
 		this->disconnect(uid);
+
+
+		auto node = this->_instance->_var_node_look_up_table[uid];
+		auto uids = node->constUID();
+
+		for (auto uid : uids)
+			this->_instance->_const_node_loook_up_table.erase(uid);
+
 		this->_instance->_var_node_look_up_table.erase(uid);
 
 		//Depth 정렬
@@ -357,13 +374,13 @@ void hv::v2::context::removeNode(std::shared_ptr<hv::v2::ivarNode> node) {
 	}
 
 }
-void hv::v2::context::removeNode(std::string nick) {
+void hv::v2::context::removeNode(std::string name) {
 
 
 	std::vector<std::size_t> _uid;
 
 	for (auto node : this->_instance->_var_node_look_up_table) {
-		if (node.second->nick() == nick) {
+		if (node.second->name() == name) {
 			_uid.push_back(node.second->uid());
 		}
 	}
@@ -382,7 +399,21 @@ void hv::v2::context::removeNode(std::string nick) {
 
 void hv::v2::context::verification() {
 
+	std::cout << "+====================================+" << std::endl;
+	for (int depth = 1; depth <= this->_instance->_depth; depth++) {
 
+		std::cout << "+ depth : " << depth << std::endl;
+		for (auto node : this->_instance->_align_nodes[depth]) {
+			std::cout << "\tname:";
+			std::cout << node->name() << ",";
+			std::cout << "uid:";
+			std::cout << node->uid() << ",";
+			std::cout << "type:";
+			std::cout << node->type() << std::endl;
+		}
+
+	}
+	std::cout << "+====================================+" << std::endl;
 }
 void hv::v2::context::clear() {
 	this->_instance->_var_node_look_up_table.clear();
