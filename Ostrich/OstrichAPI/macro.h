@@ -19,7 +19,7 @@ namespace hv {
 			full_context += "\n";
 			full_context += _context;
 			full_context += "\n";
-			full_context += "==========================";
+			full_context += "==========================\n";
 			return full_context;
 		}
 	}
