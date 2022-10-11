@@ -33,6 +33,13 @@ namespace hv {
 
 			virtual bool inCondition() = 0;
 			virtual void inCondition(bool value) = 0;
+
+
+			virtual bool isFreezed() = 0;
+			virtual void isFreezed(bool value) = 0;
+
+
+
 			virtual bool isConditionalNode() = 0;
 			virtual void process() = 0;
 		

@@ -23,8 +23,8 @@ namespace hv {
 			OSTRICH_COMMON_API virtual ~node() override;
 
 			OSTRICH_COMMON_API std::string name() override;
-			//OSTRICH_COMMON_API std::string nick() override;
-			//OSTRICH_COMMON_API void nick(std::string value) override;
+
+
 			OSTRICH_COMMON_API int type() override;
 
 

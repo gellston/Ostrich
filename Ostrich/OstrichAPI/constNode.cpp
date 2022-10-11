@@ -10,11 +10,13 @@ namespace hv {
 			std::size_t _sourceUID;
 			std::string _sourceName;
 
+			bool _isFreezed;
 
 			impl_constNode() {
 				_isConnected = false;
 				_sourceUID = 0;
 				_sourceName = "";
+				_isFreezed = false;
 			}
 		};
 	}
@@ -40,6 +42,7 @@ bool hv::v2::constNode::isConnected() {
 void hv::v2::constNode::isConnected(bool value) {
 	this->_instance->_isConnected = value;
 }
+
 
 
 std::size_t hv::v2::constNode::sourceUID() {

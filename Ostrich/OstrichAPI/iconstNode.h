@@ -20,6 +20,8 @@ namespace hv {
 			virtual bool isConnected() = 0;
 			virtual void isConnected(bool value) = 0;
 
+
+
 			virtual std::size_t sourceUID() = 0;
 			virtual void sourceUID(std::size_t value) = 0;
 

@@ -31,6 +31,8 @@ namespace hv {
 
 
 			virtual int type() = 0;
+
+
 			virtual void init() = 0;
 
 		};

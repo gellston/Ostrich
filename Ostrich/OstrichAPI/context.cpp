@@ -621,6 +621,35 @@ void hv::v2::context::save(std::string path) {
 
 void hv::v2::context::initNodes() {
 	//작업 해야됨.
+
+
+	concurrency::concurrent_vector<std::string> error_message;
+	volatile bool errorDetected = false;
+
+
+	for (auto& node : this->_instance->_var_node_look_up_table) {
+		try {
+			node.second->init();
+
+		}
+		catch (hv::v2::oexception e) {
+			error_message.push_back(e.what());
+			errorDetected = true;
+		}
+		catch (std::exception e) {
+			error_message.push_back(e.what());
+			errorDetected = true;
+		}
+	}
+
+	if (errorDetected == true) {
+		std::string all_message;
+		for (auto& message : error_message) {
+			all_message += message;
+		}
+		throw hv::v2::oexception(all_message);
+	}
+
 }
 
 void hv::v2::context::setMaxTaskCount(int num) {
@@ -640,7 +669,13 @@ void hv::v2::context::run(hv::v2::syncType sync) {
 				try {
 					if (node->inCondition() == true) continue;
 
-					node->process();
+					if (node->isFreezed() == false) {
+						node->process();
+					}
+					else {
+						//작업해야 됨.
+					}
+						
 				}
 				catch (hv::v2::oexception e) {
 					error_message.push_back(e.what());
@@ -668,7 +703,12 @@ void hv::v2::context::run(hv::v2::syncType sync) {
 				_futures.push_back(std::async(std::launch::async, [&](auto index) {
 
 					try {
-						_tasks[index]->process();
+						if (_tasks[index]->isFreezed() == false) {
+							_tasks[index]->process();
+						}
+						else {
+							//작업해야 됨.
+						}
 					}
 					catch (hv::v2::oexception e) {
 						error_message.push_back(e.what());

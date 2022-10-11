@@ -37,11 +37,7 @@ int main()
         input->data(888);
 
 
-        node1->process();
-        node2->process();
-
-
-        context.removeNode("test2");
+        context.run(hv::v2::syncType::sequential_execution);
 
 
         context.verification();

@@ -18,6 +18,7 @@ namespace hv {
 			std::size_t _uid;
 			bool _inCondition;
 			bool _isConditionalNode;
+			bool _isFreezed;
 
 
 			std::unordered_map<std::string, std::shared_ptr<hv::v2::iconstNode>> _inputNodes;
@@ -35,6 +36,7 @@ namespace hv {
 
 				this->_inCondition = false;
 				this->_isConditionalNode = false;
+				this->_isFreezed = false;
 				this->_context = nullptr;
 			}
 
@@ -67,12 +69,9 @@ std::string hv::v2::varNode::name() {
 
 	return hv::v2::node::name();
 }
-//std::string hv::v2::varNode::nick() {
-//	return hv::v2::node::nick();
-//}
-//void hv::v2::varNode::nick(std::string value) {
-//	hv::v2::node::nick(value);
-//}
+
+
+
 int hv::v2::varNode::type() {
 	return hv::v2::node::type();
 }
@@ -95,6 +94,13 @@ void hv::v2::varNode::inCondition(bool value) {
 	this->_instance->_inCondition = value;
 }
 
+bool hv::v2::varNode::isFreezed() {
+	return this->_instance->_isFreezed;
+}
+
+void hv::v2::varNode::isFreezed(bool value) {
+	this->_instance->_isFreezed = value;
+}
 
 
 void hv::v2::varNode::isConditionalNode(bool value) {
@@ -104,6 +110,11 @@ void hv::v2::varNode::isConditionalNode(bool value) {
 bool hv::v2::varNode::isConditionalNode() {
 	return this->_instance->_isConditionalNode;
 }
+
+
+
+
+
 
 int hv::v2::varNode::depth() {
 	return this->_instance->_depth;

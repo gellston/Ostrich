@@ -31,6 +31,12 @@ namespace hv {
 
 			OSTRICH_COMMON_API bool inCondition() override;
 			OSTRICH_COMMON_API void inCondition(bool value) override;
+
+
+			OSTRICH_COMMON_API bool isFreezed() override;
+			OSTRICH_COMMON_API void isFreezed(bool value) override;
+
+
 			OSTRICH_COMMON_API bool isConditionalNode() override;
 
 
