@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef OSTRICH_IVARNODE
-#define OSTRICH_IVARNODE
+#ifndef OSTRICH_ICOMPOSITENODE
+#define OSTRICH_ICOMPOSITENODE
 
 
 #include "inode.h"
@@ -17,10 +17,10 @@
 
 namespace hv {
 	namespace v2 {
-		class ivarNode : public hv::v2::inode {
+		class icompositeNode : public hv::v2::inode {
 		public:
 
-			virtual ~ivarNode() { }
+			virtual ~icompositeNode() { }
 
 
 
@@ -37,8 +37,6 @@ namespace hv {
 
 			virtual bool isFreezed() = 0;
 			virtual void isFreezed(bool value) = 0;
-
-
 
 			virtual bool isConditionalNode() = 0;
 			virtual void process() = 0;

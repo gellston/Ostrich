@@ -5,7 +5,7 @@
 
 #include <context.h>
 
-#include <varNumberNode.h>
+#include <compositeNumberNode.h>
 #include <constNumberNode.h>
 
 int main()

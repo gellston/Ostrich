@@ -6,7 +6,7 @@
 
 
 #include "ihandle.h"
-#include "ivarConstructor.h"
+#include "icompositeConstructor.h"
 #include "iconstConstructor.h"
 #include "nodeInfo.h"
 
@@ -22,7 +22,7 @@ namespace hv {
 			virtual ~iaddon() {}
 
 			virtual bool exist(int type) = 0;
-			virtual std::shared_ptr<hv::v2::ivarConstructor> varConstructor(int type) = 0;
+			virtual std::shared_ptr<hv::v2::icompositeConstructor> compositeConstructor(int type) = 0;
 			virtual std::shared_ptr<hv::v2::iconstConstructor> constConstructor(int type) = 0;
 			virtual std::vector<std::shared_ptr<hv::v2::nodeInfo>> information() = 0;
 

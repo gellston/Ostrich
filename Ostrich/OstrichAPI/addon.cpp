@@ -12,7 +12,7 @@ namespace hv {
 		class impl_addon {
 		public:
 
-			std::unordered_map<int, std::shared_ptr<hv::v2::ivarConstructor>> _var_constructor_table;
+			std::unordered_map<int, std::shared_ptr<hv::v2::icompositeConstructor>> _composite_constructor_table;
 			std::unordered_map<int, std::shared_ptr<hv::v2::iconstConstructor>> _const_constructor_table;
 
 			std::vector<std::shared_ptr<hv::v2::nodeInfo>> _information;
@@ -46,7 +46,7 @@ bool hv::v2::addon::exist(int type) {
 	bool existConstConstructor = false;
 
 
-	if (this->_instance->_var_constructor_table.find(type) != this->_instance->_var_constructor_table.end()) {
+	if (this->_instance->_composite_constructor_table.find(type) != this->_instance->_composite_constructor_table.end()) {
 		existVarConstructor = true;
 	}
 
@@ -65,16 +65,16 @@ bool hv::v2::addon::exist(int type) {
 
 
 //varConstructor
-std::shared_ptr<hv::v2::ivarConstructor> hv::v2::addon::varConstructor(int type) {
+std::shared_ptr<hv::v2::icompositeConstructor> hv::v2::addon::compositeConstructor(int type) {
 
-	if (this->_instance->_var_constructor_table.find(type) == this->_instance->_var_constructor_table.end()) {
+	if (this->_instance->_composite_constructor_table.find(type) == this->_instance->_composite_constructor_table.end()) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Type is not exist");
 		throw hv::v2::oexception(message);
 	}
 
 	try {
 
-		return this->_instance->_var_constructor_table[type];
+		return this->_instance->_composite_constructor_table[type];
 
 	}
 	catch (hv::v2::oexception e) {
@@ -82,14 +82,14 @@ std::shared_ptr<hv::v2::ivarConstructor> hv::v2::addon::varConstructor(int type)
 	}
 }
 
-void hv::v2::addon::varConstructor(int type, std::shared_ptr<hv::v2::ivarConstructor> _constructor) {
+void hv::v2::addon::compositeConstructor(int type, std::shared_ptr<hv::v2::icompositeConstructor> _constructor) {
 
-	if (this->_instance->_var_constructor_table.find(type) != this->_instance->_var_constructor_table.end()) {
+	if (this->_instance->_composite_constructor_table.find(type) != this->_instance->_composite_constructor_table.end()) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Type already exist in this addon");
 		throw hv::v2::oexception(message);
 	}
 
-	this->_instance->_var_constructor_table[type] = _constructor;
+	this->_instance->_composite_constructor_table[type] = _constructor;
 }
 
 

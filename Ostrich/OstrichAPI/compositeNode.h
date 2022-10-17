@@ -1,25 +1,25 @@
 #pragma once
 
 
-#ifndef OSTRICH_VAR_NODE
-#define OSTRICH_VAR_NODE
+#ifndef OSTRICH_COMPOSITE_NODE
+#define OSTRICH_COMPOSITE_NODE
 
 
 #include "node.h"
-#include "ivarNode.h"
+#include "icompositeNode.h"
 #include "commonException.h"
 
 
 namespace hv {
 	namespace v2 {
-		class impl_varNode;
-		class varNode : public hv::v2::node, public hv::v2::ivarNode {
+		class impl_compositeNode;
+		class compositeNode : public hv::v2::node, public hv::v2::icompositeNode {
 		private:
-			std::unique_ptr<hv::v2::impl_varNode> _instance;
+			std::unique_ptr<hv::v2::impl_compositeNode> _instance;
 
 		public:
-			OSTRICH_COMMON_API varNode(std::string value, int type, hv::v2::ihandle * context);
-			OSTRICH_COMMON_API virtual ~varNode() override;
+			OSTRICH_COMMON_API compositeNode(std::string value, int type, hv::v2::ihandle * context);
+			OSTRICH_COMMON_API virtual ~compositeNode() override;
 
 			OSTRICH_COMMON_API int depth() override;
 			OSTRICH_COMMON_API void depth(int value) override;

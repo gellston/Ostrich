@@ -137,7 +137,7 @@
     <ClCompile Include="node.cpp" />
     <ClCompile Include="nodeInfo.cpp" />
     <ClCompile Include="OstrichAPI.cpp" />
-    <ClCompile Include="varNode.cpp" />
+    <ClCompile Include="compositeNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="addon.h" />
@@ -150,17 +150,18 @@
     <ClInclude Include="constructorType.h" />
     <ClInclude Include="context.h" />
     <ClInclude Include="contentType.h" />
+    <ClInclude Include="contextStatus.h" />
     <ClInclude Include="iaddon.h" />
     <ClInclude Include="icondNode.h" />
     <ClInclude Include="iconstConstructor.h" />
     <ClInclude Include="iconstNode.h" />
     <ClInclude Include="iconstructor.h" />
-    <ClInclude Include="ivarConstructor.h" />
+    <ClInclude Include="icompositeConstructor.h" />
     <ClInclude Include="icontext.h" />
     <ClInclude Include="ihandle.h" />
     <ClInclude Include="inode.h" />
     <ClInclude Include="iengine.h" />
-    <ClInclude Include="ivarNode.h" />
+    <ClInclude Include="icompositeNode.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="nodeInfo.h" />
@@ -168,8 +169,8 @@
     <ClInclude Include="objectType.h" />
     <ClInclude Include="serialType.h" />
     <ClInclude Include="syncType.h" />
-    <ClInclude Include="varConstructor.h" />
-    <ClInclude Include="varNode.h" />
+    <ClInclude Include="compositeConstructor.h" />
+    <ClInclude Include="compositeNode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

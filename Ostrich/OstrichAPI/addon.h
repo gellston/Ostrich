@@ -7,7 +7,7 @@
 
 #include "iaddon.h"
 
-#include "varConstructor.h"
+#include "compositeConstructor.h"
 #include "nodeInfo.h"
 #include "constConstructor.h"
 
@@ -21,7 +21,7 @@ namespace hv {
 
 		protected:
 
-			OSTRICH_COMMON_API void varConstructor(int type, std::shared_ptr<hv::v2::ivarConstructor> _constructor);
+			OSTRICH_COMMON_API void compositeConstructor(int type, std::shared_ptr<hv::v2::icompositeConstructor> _constructor);
 			OSTRICH_COMMON_API void constConstructor(int type, std::shared_ptr<hv::v2::iconstConstructor> _constructor);
 			OSTRICH_COMMON_API void information(std::shared_ptr<hv::v2::nodeInfo> info);
 
@@ -31,15 +31,15 @@ namespace hv {
 			OSTRICH_COMMON_API virtual ~addon() override;
 
 			OSTRICH_COMMON_API bool exist(int type) override;
-			OSTRICH_COMMON_API std::shared_ptr<hv::v2::ivarConstructor> varConstructor(int type) override;
+			OSTRICH_COMMON_API std::shared_ptr<hv::v2::icompositeConstructor> compositeConstructor(int type) override;
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::iconstConstructor> constConstructor(int type) override;
 			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::nodeInfo>> information() override;
 
-			template<typename T> void addVar(int type, std::string category) {
+			template<typename T> void addComposite(int type, std::string category) {
 				try {
 
-					auto constructor = std::make_shared<hv::v2::varConstructor<T>>();
-					this->varConstructor(type, constructor);
+					auto constructor = std::make_shared<hv::v2::compositeConstructor<T>>();
+					this->compositeConstructor(type, constructor);
 
 					auto arg = std::make_shared<hv::v2::argument>();
 					arg->add("category", category);

@@ -1,4 +1,4 @@
-#include "varNode.h"
+#include "compositeNode.h"
 
 #include "macro.h"
 #include "commonException.h"
@@ -11,7 +11,7 @@
 
 namespace hv {
 	namespace v2 {
-		class impl_varNode {
+		class impl_compositeNode {
 		public:
 
 			int _depth;
@@ -29,7 +29,7 @@ namespace hv {
 			hv::v2::icontext * _context;
 
 
-			impl_varNode() {
+			impl_compositeNode() {
 
 				this->_depth = 0;
 				this->_uid = 0;
@@ -45,9 +45,9 @@ namespace hv {
 	}
 }
 
-hv::v2::varNode::varNode(std::string value, int type, hv::v2::ihandle * context) : hv::v2::node(value, type) {
+hv::v2::compositeNode::compositeNode(std::string value, int type, hv::v2::ihandle * context) : hv::v2::node(value, type) {
 
-	this->_instance = std::make_unique<hv::v2::impl_varNode>();
+	this->_instance = std::make_unique<hv::v2::impl_compositeNode>();
 
 	if (context == nullptr) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid node context");
@@ -57,7 +57,7 @@ hv::v2::varNode::varNode(std::string value, int type, hv::v2::ihandle * context)
 	this->_instance->_context = (hv::v2::icontext *)context;
 }
 
-hv::v2::varNode::~varNode() {
+hv::v2::compositeNode::~compositeNode() {
 
 
 }
@@ -65,49 +65,49 @@ hv::v2::varNode::~varNode() {
 
 
 
-std::string hv::v2::varNode::name() {
+std::string hv::v2::compositeNode::name() {
 
 	return hv::v2::node::name();
 }
 
 
 
-int hv::v2::varNode::type() {
+int hv::v2::compositeNode::type() {
 	return hv::v2::node::type();
 }
 
 
-std::size_t hv::v2::varNode::uid() {
+std::size_t hv::v2::compositeNode::uid() {
 	return hv::v2::node::uid();
 }
-void hv::v2::varNode::uid(std::size_t value) {
+void hv::v2::compositeNode::uid(std::size_t value) {
 	hv::v2::node::uid(value);
 }
 
 
-bool hv::v2::varNode::inCondition() {
+bool hv::v2::compositeNode::inCondition() {
 	return this->_instance->_inCondition;
 
 }
 
-void hv::v2::varNode::inCondition(bool value) {
+void hv::v2::compositeNode::inCondition(bool value) {
 	this->_instance->_inCondition = value;
 }
 
-bool hv::v2::varNode::isFreezed() {
+bool hv::v2::compositeNode::isFreezed() {
 	return this->_instance->_isFreezed;
 }
 
-void hv::v2::varNode::isFreezed(bool value) {
+void hv::v2::compositeNode::isFreezed(bool value) {
 	this->_instance->_isFreezed = value;
 }
 
 
-void hv::v2::varNode::isConditionalNode(bool value) {
+void hv::v2::compositeNode::isConditionalNode(bool value) {
 	this->_instance->_isConditionalNode = value;
 }
 
-bool hv::v2::varNode::isConditionalNode() {
+bool hv::v2::compositeNode::isConditionalNode() {
 	return this->_instance->_isConditionalNode;
 }
 
@@ -116,16 +116,16 @@ bool hv::v2::varNode::isConditionalNode() {
 
 
 
-int hv::v2::varNode::depth() {
+int hv::v2::compositeNode::depth() {
 	return this->_instance->_depth;
 }
 
-void hv::v2::varNode::depth(int value) {
+void hv::v2::compositeNode::depth(int value) {
 	this->_instance->_depth = value;
 
 }
 
-bool hv::v2::varNode::isConnected() {
+bool hv::v2::compositeNode::isConnected() {
 	for (auto node : this->_instance->_inputNodes) {
 		if (node.second->isConnected() == true)
 			return true;
@@ -135,7 +135,7 @@ bool hv::v2::varNode::isConnected() {
 }
 
 
-bool hv::v2::varNode::checkSourceUID(std::size_t uid) {
+bool hv::v2::compositeNode::checkSourceUID(std::size_t uid) {
 	for (auto node : this->_instance->_inputNodes) {
 		if (node.second->sourceUID() == uid && node.second->isConnected() == true)
 			return true;
@@ -145,7 +145,7 @@ bool hv::v2::varNode::checkSourceUID(std::size_t uid) {
 }
 
 
-std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::varNode::inputs() {
+std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::inputs() {
 
 	std::vector<std::shared_ptr<hv::v2::iconstNode>> nodes;
 
@@ -157,7 +157,7 @@ std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::varNode::inputs() {
 
 }
 
-std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::varNode::outputs() {
+std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::outputs() {
 
 	std::vector<std::shared_ptr<hv::v2::iconstNode>> nodes;
 
@@ -168,7 +168,7 @@ std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::varNode::outputs() {
 	return nodes;
 }
 
-std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::input(std::string key) {
+std::shared_ptr<hv::v2::iconstNode> hv::v2::compositeNode::input(std::string key) {
 
 	if (key.length() == 0) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
@@ -184,7 +184,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::input(std::string key) {
 	return constNode;
 }
 
-std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::output(std::string key) {
+std::shared_ptr<hv::v2::iconstNode> hv::v2::compositeNode::output(std::string key) {
 
 	if (key.length() == 0) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
@@ -201,7 +201,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::output(std::string key) {
 	return constNode;
 }
 
-std::vector<std::size_t> hv::v2::varNode::constUID() {
+std::vector<std::size_t> hv::v2::compositeNode::constUID() {
 	std::vector<std::size_t> uid;
 
 	for (auto node : this->_instance->_inputNodes) {
@@ -217,7 +217,7 @@ std::vector<std::size_t> hv::v2::varNode::constUID() {
 
 
 
-std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::search(std::string key, int objectType, hv::v2::searchType type) {
+std::shared_ptr<hv::v2::iconstNode> hv::v2::compositeNode::search(std::string key, int objectType, hv::v2::searchType type) {
 
 
 	if (key.length() == 0) {
@@ -225,7 +225,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::search(std::string key, int
 		throw hv::v2::oexception(message);
 	}
 
-	if (objectType <= (int)hv::v2::objectType::CONST_NODE && objectType >= (int)hv::v2::objectType::VAR_NODE) {
+	if (objectType <= (int)hv::v2::objectType::CONST_NODE && objectType >= (int)hv::v2::objectType::COMPOSITE_NODE) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid object type");
 		throw hv::v2::oexception(message);
 	}
@@ -288,7 +288,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::varNode::search(std::string key, int
 }
 
 
-void hv::v2::varNode::registerNode(std::string key, int objectType, hv::v2::searchType type) {
+void hv::v2::compositeNode::registerNode(std::string key, int objectType, hv::v2::searchType type) {
 
 
 	if (key.length() == 0) {
@@ -296,7 +296,7 @@ void hv::v2::varNode::registerNode(std::string key, int objectType, hv::v2::sear
 		throw hv::v2::oexception(message);
 	}
 
-	if (objectType <= (int)hv::v2::objectType::CONST_NODE && objectType >= (int)hv::v2::objectType::VAR_NODE) {
+	if (objectType <= (int)hv::v2::objectType::CONST_NODE && objectType >= (int)hv::v2::objectType::COMPOSITE_NODE) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid object type");
 		throw hv::v2::oexception(message);
 	}

@@ -1,13 +1,13 @@
-#include "varNumberNode.h"
+#include "compositeNumberNode.h"
 #include "commonException.h"
 #include "constNumberNode.h"
 
 namespace hv {
 	namespace v2 {
-		class impl_varNumberNode {
+		class impl_compositeNumberNode {
 		public:
 
-			impl_varNumberNode() {
+			impl_compositeNumberNode() {
 
 			}
 
@@ -16,9 +16,9 @@ namespace hv {
 }
 
 
-hv::v2::varNumberNode::varNumberNode(std::string name, hv::v2::ihandle* context) : hv::v2::varNode(name, 50001,  context) {
+hv::v2::compositeNumberNode::compositeNumberNode(std::string name, hv::v2::ihandle* context) : hv::v2::compositeNode(name, 50001,  context) {
 
-	this->_instance = std::unique_ptr<hv::v2::impl_varNumberNode>();
+	this->_instance = std::unique_ptr<hv::v2::impl_compositeNumberNode>();
 
 
 	try {
@@ -35,12 +35,12 @@ hv::v2::varNumberNode::varNumberNode(std::string name, hv::v2::ihandle* context)
 
 }
 
-hv::v2::varNumberNode::~varNumberNode() {
+hv::v2::compositeNumberNode::~compositeNumberNode() {
 
 }
 
 
-void hv::v2::varNumberNode::init() {
+void hv::v2::compositeNumberNode::init() {
 	try {
 
 	}
@@ -52,7 +52,7 @@ void hv::v2::varNumberNode::init() {
 	}
 }
 
-void hv::v2::varNumberNode::process() {
+void hv::v2::compositeNumberNode::process() {
 	try {
 
 		auto input = this->search<hv::v2::constNumberNode>("input", 1, hv::v2::searchType::input);

@@ -7,11 +7,10 @@
 
 #include "ihandle.h"
 #include "inode.h"
-#include "ivarNode.h"
+#include "icompositeNode.h"
 #include "iconstNode.h"
 #include "iaddon.h"
 #include "contentType.h"
-#include "syncType.h"
 
 
 #include <vector>
@@ -41,7 +40,7 @@ namespace hv {
 			virtual void setMaxTaskCount(int num) = 0;
 			virtual void verification() = 0;
 			virtual void clear() = 0;
-			virtual void run(hv::v2::syncType sync = v2::syncType::sequential_execution) = 0;
+			virtual void run() = 0;
 
 			virtual int maxDepth() = 0;
 	
@@ -50,21 +49,21 @@ namespace hv {
 	
 
 			// Node manipulation
-			virtual std::shared_ptr<hv::v2::ivarNode> search(std::size_t uid) = 0;
-			virtual std::shared_ptr<hv::v2::ivarNode> search(std::string name) = 0;
+			virtual std::shared_ptr<hv::v2::icompositeNode> search(std::size_t uid) = 0;
+			virtual std::shared_ptr<hv::v2::icompositeNode> search(std::string name) = 0;
 
 			virtual void connect(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) = 0;
-			virtual void connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) = 0;
+			virtual void connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::icompositeNode> targetNode, std::string targetName) = 0;
 
 			virtual void disconnect(std::string name) = 0;
 			virtual void disconnect(std::size_t targetUID, std::string targetName) = 0;
-			virtual void disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) = 0;
+			virtual void disconnect(std::shared_ptr<hv::v2::icompositeNode> targetNode, std::string targetName) = 0;
 			virtual void disconnect(std::size_t targetUID) = 0;
-			virtual void disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode) = 0;
+			virtual void disconnect(std::shared_ptr<hv::v2::icompositeNode> targetNode) = 0;
 
-			virtual std::shared_ptr<hv::v2::ivarNode> addNode(std::string name, int objectType) = 0;
+			virtual std::shared_ptr<hv::v2::icompositeNode> addNode(std::string name, int objectType) = 0;
 			virtual void removeNode(std::size_t uid) = 0;
-			virtual void removeNode(std::shared_ptr<hv::v2::ivarNode> node) = 0;
+			virtual void removeNode(std::shared_ptr<hv::v2::icompositeNode> node) = 0;
 			virtual void removeNode(std::string name) = 0;
 
 
@@ -74,6 +73,13 @@ namespace hv {
 			virtual void registerAddon(std::shared_ptr<hv::v2::iaddon> addon, int special_lock_key) =0;
 			virtual std::shared_ptr<hv::v2::iconstNode> create(std::string name, int objectType, int special_lock_key) = 0;
 			virtual std::shared_ptr<hv::v2::iconstNode> find(std::size_t uid, std::string name, int depth, int special_lock_key) = 0;
+			virtual void loopBack(std::string key, int special_lock_key) = 0;
+			virtual void foward(std::string key, int special_lock_key) = 0;
+			virtual bool isLoopContinue(int special_lock_key) = 0;
+			virtual bool isLoopBreak(int special_lock_key) = 0;
+			virtual void loopContinue(int special_lock_key) = 0;
+			virtual void loopBreak(int special_lock_key) = 0;
+			virtual void stop(int special_lock_key) = 0;
 
 		};
 	}

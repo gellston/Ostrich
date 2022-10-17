@@ -1,7 +1,7 @@
 #include "context.h"
 #include "commonException.h"
 #include "macro.h"
-
+#include "contextStatus.h"
 
 #include <unordered_map>
 #include <Windows.h>
@@ -22,9 +22,9 @@ namespace hv {
 		class impl_context {
 		public:
 
-			std::unordered_map< std::size_t, std::shared_ptr<hv::v2::ivarNode>> _var_node_look_up_table;
+			std::unordered_map< std::size_t, std::shared_ptr<hv::v2::icompositeNode>> _composite_node_look_up_table;
 			std::unordered_map<std::size_t, std::shared_ptr<hv::v2::iconstNode>> _const_node_loook_up_table;
-			std::unordered_map < std::size_t, std::vector<std::shared_ptr<hv::v2::ivarNode>>> _align_nodes;
+			std::unordered_map < std::size_t, std::vector<std::shared_ptr<hv::v2::icompositeNode>>> _align_nodes;
 
 
 			std::unordered_map<std::string, HMODULE> _addon_handles;
@@ -35,6 +35,9 @@ namespace hv {
 			unsigned int _max_task_count;
 
 
+			hv::v2::contextStatus _currentContextStatus;
+
+
 			int _depth;
 
 
@@ -42,6 +45,8 @@ namespace hv {
 
 				_depth = 0;
 				_max_task_count = 4;
+
+				_currentContextStatus = hv::v2::contextStatus::CONTINUE;
 
 			}
 
@@ -68,19 +73,19 @@ hv::v2::context::~context() {
 
 }
 
-std::shared_ptr<hv::v2::ivarNode> hv::v2::context::search(std::size_t uid) {
-	if (this->_instance->_var_node_look_up_table.find(uid) == this->_instance->_var_node_look_up_table.end()) {
+std::shared_ptr<hv::v2::icompositeNode> hv::v2::context::search(std::size_t uid) {
+	if (this->_instance->_composite_node_look_up_table.find(uid) == this->_instance->_composite_node_look_up_table.end()) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Uid is not exist");
 		throw hv::v2::oexception(message);
 	}
 
-	return this->_instance->_var_node_look_up_table[uid];
+	return this->_instance->_composite_node_look_up_table[uid];
 }
 
-std::shared_ptr<hv::v2::ivarNode> hv::v2::context::search(std::string name) {
+std::shared_ptr<hv::v2::icompositeNode> hv::v2::context::search(std::string name) {
 	bool found = false;
-	std::shared_ptr<hv::v2::ivarNode> temp_node;
-	for (auto &node : this->_instance->_var_node_look_up_table) {
+	std::shared_ptr<hv::v2::icompositeNode> temp_node;
+	for (auto &node : this->_instance->_composite_node_look_up_table) {
 		if (node.second->name() == name) {
 			found = true;
 			temp_node = node.second;
@@ -114,7 +119,7 @@ void hv::v2::context::connect(std::size_t sourceUID, std::string sourceName, std
 
 
 
-void hv::v2::context::connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) {
+void hv::v2::context::connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::icompositeNode> targetNode, std::string targetName) {
 
 	if (sourceNode == targetNode) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "source and target node are same");
@@ -191,7 +196,7 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::ivarNode> sourceNode, std:
 void hv::v2::context::disconnect(std::string name) {
 
 	try {
-		for (auto node : this->_instance->_var_node_look_up_table) {
+		for (auto node : this->_instance->_composite_node_look_up_table) {
 			if (node.second->name() == name) {
 				auto inputs = node.second->inputs();
 				for (auto input : inputs) {
@@ -213,13 +218,13 @@ void hv::v2::context::disconnect(std::string name) {
 }
 void hv::v2::context::disconnect(std::size_t targetUID, std::string targetName) {
 
-	if (this->_instance->_var_node_look_up_table.find(targetUID) == this->_instance->_var_node_look_up_table.end()) {
+	if (this->_instance->_composite_node_look_up_table.find(targetUID) == this->_instance->_composite_node_look_up_table.end()) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Uid is not exist");
 		throw hv::v2::oexception(message);
 	}
 
 	try {
-		auto node = this->_instance->_var_node_look_up_table[targetUID];
+		auto node = this->_instance->_composite_node_look_up_table[targetUID];
 		auto constNode = node->input(targetName);
 		constNode->isConnected(false);
 
@@ -234,7 +239,7 @@ void hv::v2::context::disconnect(std::size_t targetUID, std::string targetName) 
 		throw e;
 	}
 }
-void hv::v2::context::disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode, std::string targetName) {
+void hv::v2::context::disconnect(std::shared_ptr<hv::v2::icompositeNode> targetNode, std::string targetName) {
 
 	if (targetNode == nullptr) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null pointer exception");
@@ -251,13 +256,13 @@ void hv::v2::context::disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode, s
 }
 void hv::v2::context::disconnect(std::size_t targetUID) {
 
-	if (this->_instance->_var_node_look_up_table.find(targetUID) == this->_instance->_var_node_look_up_table.end()) {
+	if (this->_instance->_composite_node_look_up_table.find(targetUID) == this->_instance->_composite_node_look_up_table.end()) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Uid is not exist");
 		throw hv::v2::oexception(message);
 	}
 
 	try {
-		auto node = this->_instance->_var_node_look_up_table[targetUID];
+		auto node = this->_instance->_composite_node_look_up_table[targetUID];
 		auto inputs = node->inputs();
 		for (auto input : inputs) {
 			input->isConnected(false);
@@ -276,7 +281,7 @@ void hv::v2::context::disconnect(std::size_t targetUID) {
 }
 
 
-void hv::v2::context::disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode) {
+void hv::v2::context::disconnect(std::shared_ptr<hv::v2::icompositeNode> targetNode) {
 
 	if (targetNode == nullptr) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null pointer exception");
@@ -294,11 +299,11 @@ void hv::v2::context::disconnect(std::shared_ptr<hv::v2::ivarNode> targetNode) {
 
 
 
-std::shared_ptr<hv::v2::ivarNode> hv::v2::context::addNode(std::string name, int objectType) {
+std::shared_ptr<hv::v2::icompositeNode> hv::v2::context::addNode(std::string name, int objectType) {
 	try {
 		for (auto& addon : this->_instance->_addons) {
 			if (addon->exist(objectType) == true) {
-				auto constructor = addon->varConstructor(objectType);
+				auto constructor = addon->compositeConstructor(objectType);
 				auto node = constructor->create(name, this);
 
 				auto uid = this->generate_var_unique_key();
@@ -306,7 +311,7 @@ std::shared_ptr<hv::v2::ivarNode> hv::v2::context::addNode(std::string name, int
 				node->uid(uid);
 				node->depth(1);
 
-				this->_instance->_var_node_look_up_table[uid] = node;
+				this->_instance->_composite_node_look_up_table[uid] = node;
 
 
 				//Depth 정렬
@@ -338,13 +343,13 @@ void hv::v2::context::removeNode(std::size_t uid) {
 		this->disconnect(uid);
 
 
-		auto node = this->_instance->_var_node_look_up_table[uid];
+		auto node = this->_instance->_composite_node_look_up_table[uid];
 		auto uids = node->constUID();
 
 		for (auto uid : uids)
 			this->_instance->_const_node_loook_up_table.erase(uid);
 
-		this->_instance->_var_node_look_up_table.erase(uid);
+		this->_instance->_composite_node_look_up_table.erase(uid);
 
 		//Depth 정렬
 		this->sortingDepth();
@@ -357,7 +362,7 @@ void hv::v2::context::removeNode(std::size_t uid) {
 	}
 
 }
-void hv::v2::context::removeNode(std::shared_ptr<hv::v2::ivarNode> node) {
+void hv::v2::context::removeNode(std::shared_ptr<hv::v2::icompositeNode> node) {
 
 	if (node == nullptr) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null pointer exception");
@@ -379,7 +384,7 @@ void hv::v2::context::removeNode(std::string name) {
 
 	std::vector<std::size_t> _uid;
 
-	for (auto node : this->_instance->_var_node_look_up_table) {
+	for (auto node : this->_instance->_composite_node_look_up_table) {
 		if (node.second->name() == name) {
 			_uid.push_back(node.second->uid());
 		}
@@ -416,7 +421,7 @@ void hv::v2::context::verification() {
 	std::cout << "+====================================+" << std::endl;
 }
 void hv::v2::context::clear() {
-	this->_instance->_var_node_look_up_table.clear();
+	this->_instance->_composite_node_look_up_table.clear();
 	this->_instance->_const_node_loook_up_table.clear();
 	this->clearMaxDepth();
 }
@@ -429,7 +434,7 @@ int hv::v2::context::maxDepth() {
 void  hv::v2::context::groupingDepth() {
 	this->_instance->_align_nodes.clear();
 	for (std::size_t depth = 1; depth <= this->maxDepth(); depth++) {
-		for (auto& pair : this->_instance->_var_node_look_up_table) {
+		for (auto& pair : this->_instance->_composite_node_look_up_table) {
 			if (depth == pair.second->depth()) {
 				this->_instance->_align_nodes[depth].push_back(pair.second);
 			}
@@ -439,8 +444,8 @@ void  hv::v2::context::groupingDepth() {
 
 void hv::v2::context::sortingDepth() {
 
-	std::stack<std::shared_ptr<hv::v2::ivarNode>> current_node_stack;
-	for (auto node : this->_instance->_var_node_look_up_table) {
+	std::stack<std::shared_ptr<hv::v2::icompositeNode>> current_node_stack;
+	for (auto node : this->_instance->_composite_node_look_up_table) {
 		if (node.second->isConnected() == false) {
 			node.second->depth(1);
 			current_node_stack.push(node.second);
@@ -452,7 +457,7 @@ void hv::v2::context::sortingDepth() {
 		auto _currentNode = current_node_stack.top();
 		current_node_stack.pop();
 
-		for (auto node : this->_instance->_var_node_look_up_table) {
+		for (auto node : this->_instance->_composite_node_look_up_table) {
 			if (node.second->checkSourceUID(_currentNode->uid()) == true) {
 				auto currentDepth = _currentNode->depth() + 1;
 				if(this->_instance->_depth < currentDepth)
@@ -563,7 +568,7 @@ void hv::v2::context::unloadLibrary() {
 
 		this->clearMaxDepth();
 
-		this->_instance->_var_node_look_up_table.clear();
+		this->_instance->_composite_node_look_up_table.clear();
 		this->_instance->_const_node_loook_up_table.clear();
 		this->_instance->_addons.clear();
 
@@ -627,7 +632,7 @@ void hv::v2::context::initNodes() {
 	volatile bool errorDetected = false;
 
 
-	for (auto& node : this->_instance->_var_node_look_up_table) {
+	for (auto& node : this->_instance->_composite_node_look_up_table) {
 		try {
 			node.second->init();
 
@@ -656,101 +661,10 @@ void hv::v2::context::setMaxTaskCount(int num) {
 	this->_instance->_max_task_count = num;
 }
 
-void hv::v2::context::run(hv::v2::syncType sync) {
+void hv::v2::context::run() {
 
 	concurrency::concurrent_vector<std::string> error_message;
 	volatile bool errorDetected = false;
-
-	switch (sync)
-	{
-	case hv::v2::syncType::sequential_execution: {
-		for (std::size_t depth = 1; depth <= this->_instance->_depth; depth++) {
-			for (auto& node : this->_instance->_align_nodes[depth]) {
-				try {
-					if (node->inCondition() == true) continue;
-
-					if (node->isFreezed() == false) {
-						node->process();
-					}
-					else {
-						//작업해야 됨.
-					}
-						
-				}
-				catch (hv::v2::oexception e) {
-					error_message.push_back(e.what());
-					errorDetected = true;
-				}
-				catch (std::exception e) {
-					error_message.push_back(e.what());
-					errorDetected = true;
-				}
-			}
-		}
-		break;
-	}
-
-	case hv::v2::syncType::parallel_execution: {
-
-		auto maxCount = this->_instance->_max_task_count;
-		for (std::size_t depth = 1; depth <= this->_instance->_depth; depth++) {
-
-			auto _tasks = this->_instance->_align_nodes[depth];
-			std::vector<std::future<void>> _futures;
-			
-			for (unsigned int currentIndex = 0; currentIndex < _tasks.size(); currentIndex++) {
-
-				_futures.push_back(std::async(std::launch::async, [&](auto index) {
-
-					try {
-						if (_tasks[index]->isFreezed() == false) {
-							_tasks[index]->process();
-						}
-						else {
-							//작업해야 됨.
-						}
-					}
-					catch (hv::v2::oexception e) {
-						error_message.push_back(e.what());
-						errorDetected = true;
-					}
-					catch (std::exception e) {
-						error_message.push_back(e.what());
-						errorDetected = true;
-					}
-
-				}, currentIndex));
-
-				if (_futures.size() == maxCount) {
-					for (auto& future : _futures) {
-						future.wait();
-					}
-					_futures.clear();
-				}
-
-			}
-
-			for (auto& future : _futures) {
-				future.wait();
-			}
-		}
-		
-		break;
-	}
-
-	default:
-		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid execution enum.");
-		throw hv::v2::oexception(message);
-		break;
-	}
-
-	if (errorDetected == true) {
-		std::string all_message;
-		for (auto& message : error_message) {
-			all_message += message;
-		}
-		throw hv::v2::oexception(all_message);
-	}
 
 }
 
@@ -788,7 +702,7 @@ std::size_t hv::v2::context::generate_var_unique_key() {
 		unique_id = dice(rd);
 		if (unique_id == 0)
 			continue;
-	} while (this->_instance->_var_node_look_up_table.find(unique_id) != this->_instance->_var_node_look_up_table.end());
+	} while (this->_instance->_composite_node_look_up_table.find(unique_id) != this->_instance->_composite_node_look_up_table.end());
 
 
 	return unique_id;
@@ -874,7 +788,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::context::find(std::size_t uid, std::
 		throw hv::v2::oexception(message);
 	}
 
-	if (this->_instance->_var_node_look_up_table.find(uid) == this->_instance->_var_node_look_up_table.end()) {
+	if (this->_instance->_composite_node_look_up_table.find(uid) == this->_instance->_composite_node_look_up_table.end()) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "uid is not exist");
 		throw hv::v2::oexception(message);
 	}
@@ -882,7 +796,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::context::find(std::size_t uid, std::
 
 	try {
 
-		auto node = this->_instance->_var_node_look_up_table[uid];
+		auto node = this->_instance->_composite_node_look_up_table[uid];
 
 		if (node->depth() >= depth) {
 			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invaliid graph depth");
@@ -899,4 +813,75 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::context::find(std::size_t uid, std::
 	}
 
 
+}
+
+
+void hv::v2::context::loopBack(std::string key, int special_lock_key) {
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+	if (key.length() == 0) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
+		throw hv::v2::oexception(message);
+	}
+
+}
+void hv::v2::context::foward(std::string key, int special_lock_key) {
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+	if (key.length() == 0) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
+		throw hv::v2::oexception(message);
+	}
+
+
+}
+bool hv::v2::context::isLoopContinue(int special_lock_key) {
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+
+	return this->_instance->_currentContextStatus == hv::v2::contextStatus::LOOP_CONTINUE;
+
+}
+bool hv::v2::context::isLoopBreak(int special_lock_key) {
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+	return this->_instance->_currentContextStatus == hv::v2::contextStatus::LOOP_BREAK;
+}
+
+void hv::v2::context::loopContinue(int special_lock_key) {
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+	this->_instance->_currentContextStatus = hv::v2::contextStatus::LOOP_CONTINUE;
+}
+void hv::v2::context::loopBreak(int special_lock_key) {
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+	this->_instance->_currentContextStatus = hv::v2::contextStatus::LOOP_BREAK;
+}
+
+void hv::v2::context::stop(int special_lock_key) {
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+	this->_instance->_currentContextStatus = hv::v2::contextStatus::STOP;
 }

@@ -9,7 +9,7 @@ namespace hv {
 
 		enum class constructorType {
 			constConstructor,
-			varConstructor
+			compositeConstructor
 		};
 
 	}

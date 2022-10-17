@@ -141,11 +141,11 @@
   <ItemGroup>
     <ClCompile Include="constNumberNode.cpp" />
     <ClCompile Include="PrimitiveNode.cpp" />
-    <ClCompile Include="varNumberNode.cpp" />
+    <ClCompile Include="compositeNumberNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="constNumberNode.h" />
-    <ClInclude Include="varNumberNode.h" />
+    <ClInclude Include="compositeNumberNode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
