@@ -2,6 +2,8 @@
 #include "commonException.h"
 #include "macro.h"
 #include "contextStatus.h"
+#include "objectType.h"
+#include "constExecutionNode.h"
 
 #include <unordered_map>
 #include <Windows.h>
@@ -35,7 +37,6 @@ namespace hv {
 			unsigned int _max_task_count;
 
 
-			hv::v2::contextStatus _currentContextStatus;
 
 
 			int _depth;
@@ -46,7 +47,6 @@ namespace hv {
 				_depth = 0;
 				_max_task_count = 4;
 
-				_currentContextStatus = hv::v2::contextStatus::CONTINUE;
 
 			}
 
@@ -139,7 +139,7 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode
 
 		for (auto& node : inputNodes) {
 			if (node->isConnected() == true) {
-				current_node_stack.push(node->uid());
+				current_node_stack.push(node->sourceUID());
 			}
 		}
 
@@ -156,7 +156,7 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode
 			auto _currentInputNodes = _currentSourceNode->inputs();
 			for (auto& node : _currentInputNodes) {
 				if (node->isConnected() == true) {
-					current_node_stack.push(node->uid());
+					current_node_stack.push(node->sourceUID());
 				}
 			}
 		}
@@ -168,9 +168,30 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode
 
 
 		if (sourceConstNode->type() != targetConstNode->type()) {
-				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Type is not match");
-				throw hv::v2::oexception(message);
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Type is not match");
+			throw hv::v2::oexception(message);
 		}
+
+
+		// Flow Node Connection Check
+		for (auto& pair : this->_instance->_composite_node_look_up_table) {
+
+			if (pair.second->checkSourceUID(sourceNode->uid()) == true) {
+				auto inputs = pair.second->inputs();
+				for (auto& input : inputs) {
+					if (input->type() == (int)hv::v2::objectType::CONST_EXECUTION) {
+						if (input->sourceName() == sourceName && input->isConnected() == true && input->sourceUID() == sourceNode->uid()) {
+							auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Execution node already connected");
+							throw hv::v2::oexception(message);
+						}
+					}
+				}
+			}	
+		}
+		// Flow Node Connection Check
+
+
+
 
 
 		targetConstNode->sourceName(sourceName);
@@ -661,13 +682,41 @@ void hv::v2::context::setMaxTaskCount(int num) {
 	this->_instance->_max_task_count = num;
 }
 
-void hv::v2::context::run() {
 
-	concurrency::concurrent_vector<std::string> error_message;
-	volatile bool errorDetected = false;
 
+
+
+void hv::v2::context::run(std::size_t uid) {
+
+	for (auto& node : this->_instance->_composite_node_look_up_table) {
+		if (node.second->uid() == uid) {
+
+			try {
+				node.second->process();
+				return;
+			}
+			catch (hv::v2::oexception e) {
+				throw e;
+			}
+		}
+	}
 }
 
+void hv::v2::context::run(int objectType, std::string name) {
+	for (auto& node : this->_instance->_composite_node_look_up_table) {
+		if (node.second->type() == objectType) {
+			if (node.second->name() == name) {
+				try {
+					node.second->process();
+					return;
+				}
+				catch (hv::v2::oexception e) {
+					throw e;
+				}
+			}
+		}
+	}
+}
 
 
 // Private Function
@@ -746,6 +795,14 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::context::create(std::string name, in
 		throw hv::v2::oexception(message);
 	}
 
+	if (objectType == (int)hv::v2::objectType::CONST_EXECUTION) {
+		auto uid = this->generate_const_unique_key();
+		auto executionNode = std::make_shared<hv::v2::constExecutionNode>(name);
+		executionNode->uid(uid);
+		this->_instance->_const_node_loook_up_table[uid] = executionNode;
+		return executionNode;
+	}
+
 
 	try {
 		for (auto addon : this->_instance->_addons) {
@@ -816,72 +873,50 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::context::find(std::size_t uid, std::
 }
 
 
-void hv::v2::context::loopBack(std::string key, int special_lock_key) {
+std::shared_ptr<hv::v2::irunable> hv::v2::context::findExecution(std::size_t uid, std::string name, int depth, int special_lock_key) {
+
+	std::shared_ptr<hv::v2::irunable> temp;
+
 	if (special_lock_key != 9999) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
 		throw hv::v2::oexception(message);
 	}
 
-	if (key.length() == 0) {
+	if (name.length() == 0) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
 		throw hv::v2::oexception(message);
 	}
 
-}
-void hv::v2::context::foward(std::string key, int special_lock_key) {
-	if (special_lock_key != 9999) {
-		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
-		throw hv::v2::oexception(message);
-	}
-
-	if (key.length() == 0) {
-		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
+	if (this->_instance->_composite_node_look_up_table.find(uid) == this->_instance->_composite_node_look_up_table.end()) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "uid is not exist");
 		throw hv::v2::oexception(message);
 	}
 
 
-}
-bool hv::v2::context::isLoopContinue(int special_lock_key) {
-	if (special_lock_key != 9999) {
-		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+	try {
+
+		for (auto& pair : this->_instance->_composite_node_look_up_table) {
+
+			if (pair.second->checkSourceUID(uid) == true) {
+				auto inputs = pair.second->inputs();
+				for (auto& input : inputs) {
+					if (input->type() == (int)hv::v2::objectType::CONST_EXECUTION) {
+						if (input->sourceName() == name) {
+							return pair.second;
+						}
+					}
+				}
+			}
+		}
+
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Can't find flow node");
+		throw hv::v2::oexception(message);
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
 		throw hv::v2::oexception(message);
 	}
 
-
-	return this->_instance->_currentContextStatus == hv::v2::contextStatus::LOOP_CONTINUE;
-
-}
-bool hv::v2::context::isLoopBreak(int special_lock_key) {
-	if (special_lock_key != 9999) {
-		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
-		throw hv::v2::oexception(message);
-	}
-
-	return this->_instance->_currentContextStatus == hv::v2::contextStatus::LOOP_BREAK;
+	return temp;
 }
 
-void hv::v2::context::loopContinue(int special_lock_key) {
-	if (special_lock_key != 9999) {
-		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
-		throw hv::v2::oexception(message);
-	}
-
-	this->_instance->_currentContextStatus = hv::v2::contextStatus::LOOP_CONTINUE;
-}
-void hv::v2::context::loopBreak(int special_lock_key) {
-	if (special_lock_key != 9999) {
-		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
-		throw hv::v2::oexception(message);
-	}
-
-	this->_instance->_currentContextStatus = hv::v2::contextStatus::LOOP_BREAK;
-}
-
-void hv::v2::context::stop(int special_lock_key) {
-	if (special_lock_key != 9999) {
-		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
-		throw hv::v2::oexception(message);
-	}
-
-	this->_instance->_currentContextStatus = hv::v2::contextStatus::STOP;
-}

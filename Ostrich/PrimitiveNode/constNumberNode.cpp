@@ -34,6 +34,10 @@ void hv::v2::constNumberNode::init() {
 
 }
 
+void hv::v2::constNumberNode::process() {
+
+}
+
 double hv::v2::constNumberNode::data() {
 	return this->_instance->_value;
 }

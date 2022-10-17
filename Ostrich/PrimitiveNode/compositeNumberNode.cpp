@@ -22,8 +22,15 @@ hv::v2::compositeNumberNode::compositeNumberNode(std::string name, hv::v2::ihand
 
 
 	try {
-		this->registerNode("input", 1, hv::v2::searchType::input);
-		this->registerNode("output", 1, hv::v2::searchType::output);
+
+
+		this->registerExecutionNode("Exec", hv::v2::searchType::input);
+		this->registerExecutionNode("Exec", hv::v2::searchType::output);
+
+
+
+		this->registerNode("input", 2, hv::v2::searchType::input);
+		this->registerNode("output", 2, hv::v2::searchType::output);
 
 	}
 	catch (hv::v2::oexception e) {
@@ -55,11 +62,16 @@ void hv::v2::compositeNumberNode::init() {
 void hv::v2::compositeNumberNode::process() {
 	try {
 
-		auto input = this->search<hv::v2::constNumberNode>("input", 1, hv::v2::searchType::input);
-		auto output = this->search<hv::v2::constNumberNode>("output", 1, hv::v2::searchType::output);
+		auto input = this->search<hv::v2::constNumberNode>("input", 2, hv::v2::searchType::input);
+		auto output = this->search<hv::v2::constNumberNode>("output", 2, hv::v2::searchType::output);
 
 
 		output->data(input->data());
+
+
+		auto execution = this->execution("Exec");
+		execution->process();
+
 
 
 	}

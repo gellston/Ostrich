@@ -29,16 +29,8 @@ namespace hv {
 			OSTRICH_COMMON_API bool checkSourceUID(std::size_t uid) override;
 
 
-			OSTRICH_COMMON_API bool inCondition() override;
-			OSTRICH_COMMON_API void inCondition(bool value) override;
-
-
 			OSTRICH_COMMON_API bool isFreezed() override;
 			OSTRICH_COMMON_API void isFreezed(bool value) override;
-
-
-			OSTRICH_COMMON_API bool isConditionalNode() override;
-
 
 			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> inputs() override;
 			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> outputs() override;
@@ -62,7 +54,6 @@ namespace hv {
 
 		protected:
 
-			OSTRICH_COMMON_API void isConditionalNode(bool value) override;
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::iconstNode> search(std::string key, int objectType, hv::v2::searchType type)override;
 			template<typename T> std::shared_ptr<T> search(std::string key, int objectType, hv::v2::searchType type) {
 				try {
@@ -79,6 +70,8 @@ namespace hv {
 
 			}
 			OSTRICH_COMMON_API void registerNode(std::string key, int objectType, hv::v2::searchType type) override;
+			OSTRICH_COMMON_API void registerExecutionNode(std::string key, hv::v2::searchType type) override;
+			OSTRICH_COMMON_API std::shared_ptr<hv::v2::irunable> execution(std::string key) override;
 
 		};
 	}

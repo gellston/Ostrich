@@ -132,6 +132,7 @@
     <ClCompile Include="addon.cpp" />
     <ClCompile Include="argument.cpp" />
     <ClCompile Include="commonExceptioin.cpp" />
+    <ClCompile Include="constExecutionNode.cpp" />
     <ClCompile Include="constNode.cpp" />
     <ClCompile Include="context.cpp" />
     <ClCompile Include="node.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="commonException.h" />
     <ClInclude Include="common_export.h" />
     <ClInclude Include="constConstructor.h" />
+    <ClInclude Include="constExecutionNode.h" />
     <ClInclude Include="constNode.h" />
     <ClInclude Include="constructorType.h" />
     <ClInclude Include="context.h" />
@@ -162,13 +164,13 @@
     <ClInclude Include="inode.h" />
     <ClInclude Include="iengine.h" />
     <ClInclude Include="icompositeNode.h" />
+    <ClInclude Include="irunable.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="nodeInfo.h" />
     <ClInclude Include="searchType.h" />
     <ClInclude Include="objectType.h" />
     <ClInclude Include="serialType.h" />
-    <ClInclude Include="syncType.h" />
     <ClInclude Include="compositeConstructor.h" />
     <ClInclude Include="compositeNode.h" />
   </ItemGroup>

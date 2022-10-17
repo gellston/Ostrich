@@ -94,7 +94,9 @@ namespace hv {
 			OSTRICH_COMMON_API void save(std::string path) override;
 			OSTRICH_COMMON_API void initNodes() override;
 			OSTRICH_COMMON_API void setMaxTaskCount(int num) override;
-			OSTRICH_COMMON_API void run() override;
+			OSTRICH_COMMON_API void run(std::size_t uid) override;
+			OSTRICH_COMMON_API void run(int objectType, std::string name) override;
+
 
 
 
@@ -110,13 +112,7 @@ namespace hv {
 			OSTRICH_COMMON_API void registerAddon(std::shared_ptr<hv::v2::iaddon> addon, int special_lock_key) override;
 			OSTRICH_COMMON_API virtual std::shared_ptr<hv::v2::iconstNode> create(std::string name, int objectType, int special_lock_key) override;
 			OSTRICH_COMMON_API virtual std::shared_ptr<hv::v2::iconstNode> find(std::size_t uid, std::string name, int depth, int special_lock_key) override;
-			OSTRICH_COMMON_API void loopBack(std::string key, int special_lock_key) override;
-			OSTRICH_COMMON_API void foward(std::string key, int special_lock_key) override;
-			OSTRICH_COMMON_API bool isLoopContinue(int special_lock_key) override;
-			OSTRICH_COMMON_API bool isLoopBreak(int special_lock_key) override;
-			OSTRICH_COMMON_API void loopContinue(int special_lock_key) override;
-			OSTRICH_COMMON_API void loopBreak(int special_lock_key) override;
-			OSTRICH_COMMON_API void stop(int special_lock_key) override;
+			OSTRICH_COMMON_API std::shared_ptr<hv::v2::irunable> findExecution(std::size_t uid, std::string name, int depth, int special_lock_key) override;
 
 		};
 	}

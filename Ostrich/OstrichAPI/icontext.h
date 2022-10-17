@@ -40,7 +40,9 @@ namespace hv {
 			virtual void setMaxTaskCount(int num) = 0;
 			virtual void verification() = 0;
 			virtual void clear() = 0;
-			virtual void run() = 0;
+			virtual void run(std::size_t uid) = 0;
+			virtual void run(int objectType, std::string name) = 0;
+			
 
 			virtual int maxDepth() = 0;
 	
@@ -73,13 +75,7 @@ namespace hv {
 			virtual void registerAddon(std::shared_ptr<hv::v2::iaddon> addon, int special_lock_key) =0;
 			virtual std::shared_ptr<hv::v2::iconstNode> create(std::string name, int objectType, int special_lock_key) = 0;
 			virtual std::shared_ptr<hv::v2::iconstNode> find(std::size_t uid, std::string name, int depth, int special_lock_key) = 0;
-			virtual void loopBack(std::string key, int special_lock_key) = 0;
-			virtual void foward(std::string key, int special_lock_key) = 0;
-			virtual bool isLoopContinue(int special_lock_key) = 0;
-			virtual bool isLoopBreak(int special_lock_key) = 0;
-			virtual void loopContinue(int special_lock_key) = 0;
-			virtual void loopBreak(int special_lock_key) = 0;
-			virtual void stop(int special_lock_key) = 0;
+			virtual std::shared_ptr<hv::v2::irunable> findExecution(std::size_t uid, std::string name, int depth, int special_lock_key) = 0;
 
 		};
 	}

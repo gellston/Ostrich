@@ -5,6 +5,7 @@
 #include "icontext.h"
 
 
+
 #include <unordered_map>
 
 
@@ -16,8 +17,6 @@ namespace hv {
 
 			int _depth;
 			std::size_t _uid;
-			bool _inCondition;
-			bool _isConditionalNode;
 			bool _isFreezed;
 
 
@@ -34,8 +33,6 @@ namespace hv {
 				this->_depth = 0;
 				this->_uid = 0;
 
-				this->_inCondition = false;
-				this->_isConditionalNode = false;
 				this->_isFreezed = false;
 				this->_context = nullptr;
 			}
@@ -85,15 +82,6 @@ void hv::v2::compositeNode::uid(std::size_t value) {
 }
 
 
-bool hv::v2::compositeNode::inCondition() {
-	return this->_instance->_inCondition;
-
-}
-
-void hv::v2::compositeNode::inCondition(bool value) {
-	this->_instance->_inCondition = value;
-}
-
 bool hv::v2::compositeNode::isFreezed() {
 	return this->_instance->_isFreezed;
 }
@@ -101,18 +89,6 @@ bool hv::v2::compositeNode::isFreezed() {
 void hv::v2::compositeNode::isFreezed(bool value) {
 	this->_instance->_isFreezed = value;
 }
-
-
-void hv::v2::compositeNode::isConditionalNode(bool value) {
-	this->_instance->_isConditionalNode = value;
-}
-
-bool hv::v2::compositeNode::isConditionalNode() {
-	return this->_instance->_isConditionalNode;
-}
-
-
-
 
 
 
@@ -335,6 +311,90 @@ void hv::v2::compositeNode::registerNode(std::string key, int objectType, hv::v2
 			throw hv::v2::oexception(message);
 			break;
 		}
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+
+}
+
+void hv::v2::compositeNode::registerExecutionNode(std::string key, hv::v2::searchType type) {
+
+	if (key.length() == 0) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
+		throw hv::v2::oexception(message);
+	}
+
+	if (this->_instance->_context == nullptr) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null context exception");
+		throw hv::v2::oexception(message);
+
+	}
+
+	try {
+		switch (type)
+		{
+		case hv::v2::searchType::input: {
+			if (this->_instance->_inputNodes.find(key) != this->_instance->_inputNodes.end()) {
+				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Exist node key");
+				throw hv::v2::oexception(message);
+			}
+
+			auto node = this->_instance->_context->create(key, (int)hv::v2::objectType::CONST_EXECUTION, 9999);
+			this->_instance->_inputNodes[key] = node;
+			break;
+		}
+
+		case hv::v2::searchType::output: {
+			if (this->_instance->_outputNodes.find(key) != this->_instance->_outputNodes.end()) {
+				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Exist node key");
+				throw hv::v2::oexception(message);
+			}
+			
+
+			auto node = this->_instance->_context->create(key, (int)hv::v2::objectType::CONST_EXECUTION, 9999);
+			this->_instance->_outputNodes[key] = node;
+			break;
+		}
+		default:
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid search type");
+			throw hv::v2::oexception(message);
+			break;
+		}
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+
+
+std::shared_ptr<hv::v2::irunable> hv::v2::compositeNode::execution(std::string key) {
+
+	if (key.length() == 0) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
+		throw hv::v2::oexception(message);
+	}
+
+	if (this->_instance->_context == nullptr) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null context exception");
+		throw hv::v2::oexception(message);
+
+	}
+
+	try {
+
+		return this->_instance->_context->findExecution(this->uid(), key, this->depth(), 9999);
+		
 	}
 	catch (hv::v2::oexception e) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());

@@ -42,6 +42,9 @@
     <ClCompile Include="OstrichAPI.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="constExecutionNode.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ihandle.h">
@@ -110,9 +113,6 @@
     <ClInclude Include="contentType.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="syncType.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="iconstructor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -135,6 +135,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="contextStatus.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="irunable.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="constExecutionNode.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

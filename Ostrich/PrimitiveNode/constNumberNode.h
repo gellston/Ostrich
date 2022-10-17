@@ -23,6 +23,7 @@ namespace hv {
 			void data(double value);
 			
 			void init() override;
+			void process() override;
 		};
 
 	}
