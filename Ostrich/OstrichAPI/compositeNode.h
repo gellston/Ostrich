@@ -28,6 +28,8 @@ namespace hv {
 			OSTRICH_COMMON_API bool isConnected() override;
 			OSTRICH_COMMON_API bool checkSourceUID(std::size_t uid) override;
 
+			OSTRICH_COMMON_API bool isConditionalNode() override;
+
 
 			OSTRICH_COMMON_API bool isFreezed() override;
 			OSTRICH_COMMON_API void isFreezed(bool value) override;

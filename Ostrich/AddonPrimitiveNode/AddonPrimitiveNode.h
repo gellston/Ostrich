@@ -10,6 +10,7 @@
 #include <compositeEndNode.h>
 #include <compositeForNode.h>
 #include <compositeSleepNode.h>
+#include <compositeAddNumberNode.h>
 
 OSTRICH_MODULE()
 OSTRICH_VERSION(1.0)
@@ -23,8 +24,10 @@ OSTRICH_ADDON_INIT(context) {
 		_addon->addComposite<hv::v2::compositeNumberNode>(50001, "Variable");
 		_addon->addComposite<hv::v2::compositeStartNode>(50002, "Condition");
 		_addon->addComposite<hv::v2::compositeEndNode>(50003, "Condition");
-		_addon->addComposite<hv::v2::compositeForNode>(50004, "Condition");
+		_addon->addComposite<hv::v2::compositeForNode>(50004, "Loop");
 		_addon->addComposite<hv::v2::compositeSleepNode>(50005, "Function");
+		_addon->addComposite<hv::v2::compositeAddNumberNode>(50006, "Function");
+
 
 		context->registerAddon(_addon, 9999);
 

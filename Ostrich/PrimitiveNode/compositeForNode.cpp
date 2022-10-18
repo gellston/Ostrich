@@ -45,48 +45,39 @@ hv::v2::compositeForNode::~compositeForNode() {
 
 
 void hv::v2::compositeForNode::init() {
-	try {
+	START_ERROR_HANDLE()
 
-	}
-	catch (hv::v2::oexception e) {
-		throw e;
-	}
-	catch (std::exception e) {
-		throw e;
-	}
+
+
+	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 }
 
 void hv::v2::compositeForNode::process() {
 
-	try {
+	START_ERROR_HANDLE()
 
-		auto count = this->search<hv::v2::constNumberNode>("count", 2, hv::v2::searchType::input);
-		auto index = this->search<hv::v2::constNumberNode>("index", 2, hv::v2::searchType::output);
+	auto count = this->search<hv::v2::constNumberNode>("count", 2, hv::v2::searchType::input);
+	auto index = this->search<hv::v2::constNumberNode>("index", 2, hv::v2::searchType::output);
 
-		auto loop = this->execution("Loop");
-		auto complete = this->execution("Complete");
-		auto _max_iternation = count->data();
-		for (double _index = 0; _index < _max_iternation; _index+= 1.0) {
-			try {
-				std::cout << "for loop counting : " << _index << std::endl;
-				index->data(_index);
-				loop->process();
-			}
-			catch (hv::v2::oexception e) {
-				throw e;
-			}
-			catch (std::exception e) {
-				throw e;
-			}
+	auto loop = this->execution("Loop");
+	auto complete = this->execution("Complete");
+	auto _max_iternation = count->data();
+	for (double _index = 0; _index < _max_iternation; _index += 1.0) {
+		try {
+			std::cout << "for loop counting : " << _index << std::endl;
+			index->data(_index);
+			loop->process();
 		}
+		catch (hv::v2::oexception e) {
+			throw e;
+		}
+		catch (std::exception e) {
+			throw e;
+		}
+	}
 
-		complete->process();
+	complete->process();
 
-	}
-	catch (hv::v2::oexception e) {
-		throw e;
-	}
-	catch (std::exception e) {
-		throw e;
-	}
+	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
+
 }

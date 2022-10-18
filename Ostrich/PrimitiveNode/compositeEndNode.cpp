@@ -38,27 +38,18 @@ hv::v2::compositeEndNode::~compositeEndNode() {
 
 
 void hv::v2::compositeEndNode::init() {
-	try {
+	START_ERROR_HANDLE()
 
-	}
-	catch (hv::v2::oexception e) {
-		throw e;
-	}
-	catch (std::exception e) {
-		throw e;
-	}
+
+
+	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 }
 
 void hv::v2::compositeEndNode::process() {
-	try {
+	START_ERROR_HANDLE()
+		
 
 
-	
-	}
-	catch (hv::v2::oexception e) {
-		throw e;
-	}
-	catch (std::exception e) {
-		throw e;
-	}
+	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
+
 }

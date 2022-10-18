@@ -139,6 +139,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="compositeAddNumberNode.cpp" />
     <ClCompile Include="compositeEndNode.cpp" />
     <ClCompile Include="compositeForNode.cpp" />
     <ClCompile Include="compositeStartNode.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="constNumberNode.h" />
     <ClInclude Include="compositeNumberNode.h" />
     <ClInclude Include="compositeForNode.h" />
+    <ClInclude Include="compositeAddNumberNode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

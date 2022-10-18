@@ -860,11 +860,18 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::context::find(std::size_t uid, std::
 			throw hv::v2::oexception(message);
 		}
 
+		if (node->isConditionalNode() == false) {
+			node->process();
+		}
 		auto const_output = node->output(name);
 
 		return const_output;
 	}
 	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
 		throw hv::v2::oexception(message);
 	}

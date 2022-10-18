@@ -154,7 +154,6 @@
     <ClInclude Include="contentType.h" />
     <ClInclude Include="contextStatus.h" />
     <ClInclude Include="iaddon.h" />
-    <ClInclude Include="icondNode.h" />
     <ClInclude Include="iconstConstructor.h" />
     <ClInclude Include="iconstNode.h" />
     <ClInclude Include="iconstructor.h" />

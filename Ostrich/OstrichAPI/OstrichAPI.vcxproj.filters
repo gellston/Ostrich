@@ -68,9 +68,6 @@
     <ClInclude Include="objectType.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="icondNode.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="searchType.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>

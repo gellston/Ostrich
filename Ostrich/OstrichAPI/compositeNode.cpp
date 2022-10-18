@@ -110,6 +110,21 @@ bool hv::v2::compositeNode::isConnected() {
 	return false;
 }
 
+bool hv::v2::compositeNode::isConditionalNode() {
+
+	for (auto& node : this->_instance->_inputNodes) {
+		if (node.second->type() == (int)hv::v2::objectType::CONST_EXECUTION)
+			return true;
+	}
+
+	for (auto& node : this->_instance->_outputNodes) {
+		if (node.second->type() == (int)hv::v2::objectType::CONST_EXECUTION)
+			return true;
+	}
+
+	return false;
+}
+
 
 bool hv::v2::compositeNode::checkSourceUID(std::size_t uid) {
 	for (auto node : this->_instance->_inputNodes) {

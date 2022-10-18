@@ -38,31 +38,17 @@ hv::v2::compositeStartNode ::~compositeStartNode() {
 
 
 void hv::v2::compositeStartNode::init() {
-	try {
+	START_ERROR_HANDLE()
 
-	}
-	catch (hv::v2::oexception e) {
-		throw e;
-	}
-	catch (std::exception e) {
-		throw e;
-	}
+	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 }
 
 void hv::v2::compositeStartNode::process() {
-	try {
+	START_ERROR_HANDLE()
+
+	auto execution = this->execution("Exec");
+	execution->process();
 
 
-		auto execution = this->execution("Exec");
-		execution->process();
-
-
-
-	}
-	catch (hv::v2::oexception e) {
-		throw e;
-	}
-	catch (std::exception e) {
-		throw e;
-	}
+	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 }

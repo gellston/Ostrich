@@ -28,6 +28,8 @@ namespace hv {
 			virtual bool isConnected() = 0;
 			virtual bool checkSourceUID(std::size_t uid) = 0;
 
+			virtual bool isConditionalNode() = 0;
+
 			virtual bool isFreezed() = 0;
 			virtual void isFreezed(bool value) = 0;
 
