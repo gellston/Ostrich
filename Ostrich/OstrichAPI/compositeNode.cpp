@@ -18,6 +18,7 @@ namespace hv {
 			int _depth;
 			std::size_t _uid;
 			bool _isFreezed;
+			bool _isEventNode;
 
 
 			std::unordered_map<std::string, std::shared_ptr<hv::v2::iconstNode>> _inputNodes;
@@ -34,6 +35,7 @@ namespace hv {
 				this->_uid = 0;
 
 				this->_isFreezed = false;
+				this->_isEventNode = false;
 				this->_context = nullptr;
 			}
 
@@ -90,6 +92,14 @@ void hv::v2::compositeNode::isFreezed(bool value) {
 	this->_instance->_isFreezed = value;
 }
 
+
+bool hv::v2::compositeNode::isEventNode() {
+	return this->_instance->_isEventNode;
+}
+
+void hv::v2::compositeNode::isEventNode(bool check) {
+	this->_instance->_isEventNode = check;
+}
 
 
 int hv::v2::compositeNode::depth() {

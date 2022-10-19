@@ -20,6 +20,8 @@ hv::v2::compositeStartNode::compositeStartNode(std::string name, hv::v2::ihandle
 
 	this->_instance = std::unique_ptr<hv::v2::impl_compositeStartNode>();
 
+	this->isEventNode(true);
+
 	try {
 		this->registerExecutionNode("Exec", hv::v2::searchType::output);
 	}
@@ -43,11 +45,11 @@ void hv::v2::compositeStartNode::init() {
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 }
 
-void hv::v2::compositeStartNode::process() {
+hv::v2::resultType hv::v2::compositeStartNode::process() {
 	START_ERROR_HANDLE()
 
-	auto execution = this->execution("Exec");
-	execution->process();
+		auto execution = this->execution("Exec");
+		return execution->process();
 
 
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)

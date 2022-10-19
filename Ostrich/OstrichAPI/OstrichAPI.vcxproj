@@ -167,6 +167,7 @@
     <ClInclude Include="macro.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="nodeInfo.h" />
+    <ClInclude Include="resultType.h" />
     <ClInclude Include="searchType.h" />
     <ClInclude Include="objectType.h" />
     <ClInclude Include="serialType.h" />

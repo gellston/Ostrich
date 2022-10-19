@@ -47,22 +47,23 @@ hv::v2::compositeAddNumberNode::~compositeAddNumberNode() {
 
 void hv::v2::compositeAddNumberNode::init() {
 	START_ERROR_HANDLE()
-
+		auto y = this->search<hv::v2::constNumberNode>("y", 2, hv::v2::searchType::output);
+		y->data(0);
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 }
 
-void hv::v2::compositeAddNumberNode::process() {
+hv::v2::resultType hv::v2::compositeAddNumberNode::process() {
 
 	START_ERROR_HANDLE()
 
-	auto x1 = this->search<hv::v2::constNumberNode>("x1", 2, hv::v2::searchType::input);
-	auto x2 = this->search<hv::v2::constNumberNode>("x2", 2, hv::v2::searchType::input);
-	auto y = this->search<hv::v2::constNumberNode>("y", 2, hv::v2::searchType::output);
+		auto x1 = this->search<hv::v2::constNumberNode>("x1", 2, hv::v2::searchType::input);
+		auto x2 = this->search<hv::v2::constNumberNode>("x2", 2, hv::v2::searchType::input);
+		auto y = this->search<hv::v2::constNumberNode>("y", 2, hv::v2::searchType::output);
 
-	y->data(x1->data() + x2->data());
+		y->data(x1->data() + x2->data());
 
-	auto execution = this->execution("Exec");
-	execution->process();
+		auto execution = this->execution("Exec");
+		return execution->process();
 
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 

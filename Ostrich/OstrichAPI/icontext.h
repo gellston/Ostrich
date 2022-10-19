@@ -42,6 +42,7 @@ namespace hv {
 			virtual void clear() = 0;
 			virtual void run(std::size_t uid) = 0;
 			virtual void run(int objectType, std::string name) = 0;
+			virtual void run() = 0;
 			
 
 			virtual int maxDepth() = 0;

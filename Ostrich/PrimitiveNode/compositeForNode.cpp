@@ -47,36 +47,55 @@ hv::v2::compositeForNode::~compositeForNode() {
 void hv::v2::compositeForNode::init() {
 	START_ERROR_HANDLE()
 
-
+		auto index = this->search<hv::v2::constNumberNode>("index", 2, hv::v2::searchType::output);
+		index->data(0);
 
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 }
 
-void hv::v2::compositeForNode::process() {
+hv::v2::resultType hv::v2::compositeForNode::process() {
 
 	START_ERROR_HANDLE()
 
-	auto count = this->search<hv::v2::constNumberNode>("count", 2, hv::v2::searchType::input);
-	auto index = this->search<hv::v2::constNumberNode>("index", 2, hv::v2::searchType::output);
+		auto count = this->search<hv::v2::constNumberNode>("count", 2, hv::v2::searchType::input);
+		auto index = this->search<hv::v2::constNumberNode>("index", 2, hv::v2::searchType::output);
 
-	auto loop = this->execution("Loop");
-	auto complete = this->execution("Complete");
-	auto _max_iternation = count->data();
-	for (double _index = 0; _index < _max_iternation; _index += 1.0) {
-		try {
-			std::cout << "for loop counting : " << _index << std::endl;
-			index->data(_index);
-			loop->process();
+		auto loop = this->execution("Loop");
+		auto complete = this->execution("Complete");
+		auto _max_iternation = count->data();
+		for (double _index = 0; _index < _max_iternation; _index += 1.0) {
+			try {
+				std::cout << "for loop counting : " << _index << std::endl;
+				index->data(_index);
+	
+				
+				auto result = loop->process();
+				switch (result)
+				{
+				case hv::v2::resultType::continue_:
+					continue;
+					break;
+				case hv::v2::resultType::break_:
+					break;
+					break;
+				case hv::v2::resultType::exit:
+					return hv::v2::resultType::exit;
+					break;
+				case hv::v2::resultType::done:
+					break;
+				default:
+					break;
+				}
+			}
+			catch (hv::v2::oexception e) {
+				throw e;
+			}
+			catch (std::exception e) {
+				throw e;
+			}
 		}
-		catch (hv::v2::oexception e) {
-			throw e;
-		}
-		catch (std::exception e) {
-			throw e;
-		}
-	}
 
-	complete->process();
+		return complete->process();
 
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 

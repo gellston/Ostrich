@@ -10,6 +10,8 @@
 #include <memory>
 #include <vector>
 
+#include "resultType.h"
+
 namespace hv {
 	namespace v2 {
 		class irunable {
@@ -17,7 +19,7 @@ namespace hv {
 
 			virtual ~irunable() { }
 
-			virtual void process() = 0;
+			virtual hv::v2::resultType process() = 0;
 
 		};
 	}

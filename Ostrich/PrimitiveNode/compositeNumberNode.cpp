@@ -43,18 +43,21 @@ hv::v2::compositeNumberNode::~compositeNumberNode() {
 void hv::v2::compositeNumberNode::init() {
 	START_ERROR_HANDLE()
 
+		auto output = this->search<hv::v2::constNumberNode>("output", 2, hv::v2::searchType::output);
+		output->data(0);
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 }
 
-void hv::v2::compositeNumberNode::process() {
+hv::v2::resultType hv::v2::compositeNumberNode::process() {
 
 	START_ERROR_HANDLE()
 
-	auto input = this->search<hv::v2::constNumberNode>("input", 2, hv::v2::searchType::input);
-	auto output = this->search<hv::v2::constNumberNode>("output", 2, hv::v2::searchType::output);
+		auto input = this->search<hv::v2::constNumberNode>("input", 2, hv::v2::searchType::input);
+		auto output = this->search<hv::v2::constNumberNode>("output", 2, hv::v2::searchType::output);
 
-	output->data(input->data());
+		output->data(input->data());
 
+		return hv::v2::resultType::done;
 
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 

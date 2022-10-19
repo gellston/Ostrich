@@ -24,6 +24,7 @@ namespace hv {
 			OSTRICH_COMMON_API void clearMaxDepth();
 			OSTRICH_COMMON_API void groupingDepth();
 			OSTRICH_COMMON_API void sortingDepth();
+			OSTRICH_COMMON_API void searchingEventNode();
 
 			OSTRICH_COMMON_API int maxDepth() override;
 
@@ -96,7 +97,7 @@ namespace hv {
 			OSTRICH_COMMON_API void setMaxTaskCount(int num) override;
 			OSTRICH_COMMON_API void run(std::size_t uid) override;
 			OSTRICH_COMMON_API void run(int objectType, std::string name) override;
-
+			OSTRICH_COMMON_API void run() override;
 
 
 

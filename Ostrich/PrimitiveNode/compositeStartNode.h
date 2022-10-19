@@ -20,7 +20,7 @@ namespace hv {
 
 
 			void init() override;
-			void process() override;
+			hv::v2::resultType process() override;
 		};
 
 	}

@@ -34,6 +34,8 @@ namespace hv {
 			OSTRICH_COMMON_API bool isFreezed() override;
 			OSTRICH_COMMON_API void isFreezed(bool value) override;
 
+			OSTRICH_COMMON_API bool isEventNode() override;
+
 			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> inputs() override;
 			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> outputs() override;
 
@@ -55,6 +57,8 @@ namespace hv {
 
 
 		protected:
+
+			OSTRICH_COMMON_API void isEventNode(bool check) override;
 
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::iconstNode> search(std::string key, int objectType, hv::v2::searchType type)override;
 			template<typename T> std::shared_ptr<T> search(std::string key, int objectType, hv::v2::searchType type) {

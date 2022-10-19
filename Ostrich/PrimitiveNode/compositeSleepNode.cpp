@@ -57,18 +57,18 @@ void hv::v2::compositeSleepNode::init() {
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__);
 }
 
-void hv::v2::compositeSleepNode::process() {
+hv::v2::resultType hv::v2::compositeSleepNode::process() {
 
 	START_ERROR_HANDLE()
 
 
-	auto time = this->search<hv::v2::constNumberNode>("us", 2, hv::v2::searchType::input);
-	auto execution = this->execution("Exec");
+		auto time = this->search<hv::v2::constNumberNode>("us", 2, hv::v2::searchType::input);
+		auto execution = this->execution("Exec");
 
 
-	std::this_thread::sleep_for(std::chrono::milliseconds((long long)time->data()));
+		std::this_thread::sleep_for(std::chrono::milliseconds((long long)time->data()));
 
-	execution->process();
+		return execution->process();
 
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 

@@ -27,12 +27,18 @@ namespace hv {
 			std::unordered_map< std::size_t, std::shared_ptr<hv::v2::icompositeNode>> _composite_node_look_up_table;
 			std::unordered_map<std::size_t, std::shared_ptr<hv::v2::iconstNode>> _const_node_loook_up_table;
 			std::unordered_map < std::size_t, std::vector<std::shared_ptr<hv::v2::icompositeNode>>> _align_nodes;
+			
+
+			std::vector<std::shared_ptr<hv::v2::icompositeNode>> _event_nodes;
+
 
 
 			std::unordered_map<std::string, HMODULE> _addon_handles;
 			std::vector<hv::v2::addon_info> _addon_info;
 			std::string _libraryPath;
 			std::vector<std::shared_ptr<hv::v2::iaddon>> _addons;
+
+
 
 			unsigned int _max_task_count;
 
@@ -206,6 +212,10 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode
 		//Depth 순으로 그룹핑
 		this->groupingDepth();
 
+		//Search Event Node
+		this->searchingEventNode();
+		
+
 	}
 	catch (hv::v2::oexception e) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
@@ -229,6 +239,9 @@ void hv::v2::context::disconnect(std::string name) {
 
 				//Depth 순으로 그룹핑
 				this->groupingDepth();
+
+				//Search Event Node
+				this->searchingEventNode();
 			}
 		}
 	}
@@ -254,6 +267,9 @@ void hv::v2::context::disconnect(std::size_t targetUID, std::string targetName) 
 
 		//Depth 순으로 그룹핑
 		this->groupingDepth();
+
+		//Search Event Node
+		this->searchingEventNode();
 
 	}
 	catch (hv::v2::oexception e) {
@@ -294,6 +310,9 @@ void hv::v2::context::disconnect(std::size_t targetUID) {
 
 		//Depth 순으로 그룹핑
 		this->groupingDepth();
+
+		//Search Event Node
+		this->searchingEventNode();
 
 	}
 	catch (hv::v2::oexception e) {
@@ -341,7 +360,8 @@ std::shared_ptr<hv::v2::icompositeNode> hv::v2::context::addNode(std::string nam
 				//Depth 순으로 그룹핑
 				this->groupingDepth();
 
-
+				//Search Event Node
+				this->searchingEventNode();
 
 				return node;
 			}
@@ -377,6 +397,9 @@ void hv::v2::context::removeNode(std::size_t uid) {
 
 		//Depth 순으로 그룹핑
 		this->groupingDepth();
+
+		//Search Event Node
+		this->searchingEventNode();
 	}
 	catch (hv::v2::oexception e) {
 		throw e;
@@ -486,6 +509,15 @@ void hv::v2::context::sortingDepth() {
 				node.second->depth(currentDepth);
 				current_node_stack.push(node.second);
 			}
+		}
+	}
+}
+
+void hv::v2::context::searchingEventNode() {
+	this->_instance->_event_nodes.clear();
+	for (auto node : this->_instance->_composite_node_look_up_table) {
+		if (node.second->isEventNode() == true) {
+			this->_instance->_event_nodes.push_back(node.second);
 		}
 	}
 }
@@ -647,35 +679,19 @@ void hv::v2::context::save(std::string path) {
 
 void hv::v2::context::initNodes() {
 	//작업 해야됨.
-
-
-	concurrency::concurrent_vector<std::string> error_message;
-	volatile bool errorDetected = false;
-
-
 	for (auto& node : this->_instance->_composite_node_look_up_table) {
 		try {
 			node.second->init();
-
 		}
 		catch (hv::v2::oexception e) {
-			error_message.push_back(e.what());
-			errorDetected = true;
+			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+			throw hv::v2::oexception(message);
 		}
 		catch (std::exception e) {
-			error_message.push_back(e.what());
-			errorDetected = true;
+			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+			throw hv::v2::oexception(message);
 		}
 	}
-
-	if (errorDetected == true) {
-		std::string all_message;
-		for (auto& message : error_message) {
-			all_message += message;
-		}
-		throw hv::v2::oexception(all_message);
-	}
-
 }
 
 void hv::v2::context::setMaxTaskCount(int num) {
@@ -688,32 +704,97 @@ void hv::v2::context::setMaxTaskCount(int num) {
 
 void hv::v2::context::run(std::size_t uid) {
 
-	for (auto& node : this->_instance->_composite_node_look_up_table) {
-		if (node.second->uid() == uid) {
+	try {
+		//this->initNodes();
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
 
+	
+	for (auto& node : this->_instance->_event_nodes) {
+		if (node->uid() == uid) {
 			try {
-				node.second->process();
+				node->process();
 				return;
 			}
 			catch (hv::v2::oexception e) {
-				throw e;
+				std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+				throw hv::v2::oexception(message);
 			}
+			catch (std::exception e) {
+				std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+				throw hv::v2::oexception(message);
+			}
+
 		}
 	}
 }
 
 void hv::v2::context::run(int objectType, std::string name) {
-	for (auto& node : this->_instance->_composite_node_look_up_table) {
-		if (node.second->type() == objectType) {
-			if (node.second->name() == name) {
-				try {
-					node.second->process();
-					return;
-				}
-				catch (hv::v2::oexception e) {
-					throw e;
-				}
+
+	try {
+		//this->initNodes();
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+
+	for (auto& node : this->_instance->_event_nodes) {
+		if (node->type() == objectType && node->name() == name) {
+			try {
+				node->process();
+				return;
 			}
+			catch (hv::v2::oexception e) {
+				std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+				throw hv::v2::oexception(message);
+			}
+			catch (std::exception e) {
+				std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+				throw hv::v2::oexception(message);
+			}
+
+		}
+	}
+}
+
+void hv::v2::context::run() {
+
+	try {
+		//this->initNodes();
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+
+
+	for (auto& node : this->_instance->_event_nodes) {
+		try {
+			node->process();
+		}
+		catch (hv::v2::oexception e) {
+			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+			throw hv::v2::oexception(message);
+		}
+		catch (std::exception e) {
+			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+			throw hv::v2::oexception(message);
 		}
 	}
 }

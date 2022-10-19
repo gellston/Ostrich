@@ -7,6 +7,7 @@
 
 #include "ihandle.h"
 #include "irunable.h"
+#include "resultType.h"
 
 #include <iostream>
 #include <string>
@@ -29,7 +30,7 @@ namespace hv {
 
 
 			virtual void init() = 0;
-			virtual void process() = 0;
+			virtual hv::v2::resultType process() = 0;
 
 		};
 	}

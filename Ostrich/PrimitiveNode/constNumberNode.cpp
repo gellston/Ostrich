@@ -36,9 +36,9 @@ void hv::v2::constNumberNode::init() {
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 }
 
-void hv::v2::constNumberNode::process() {
+hv::v2::resultType hv::v2::constNumberNode::process() {
 	START_ERROR_HANDLE()
-
+		return hv::v2::resultType::done;
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 }
 

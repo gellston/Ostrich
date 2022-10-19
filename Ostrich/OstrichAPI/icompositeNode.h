@@ -33,6 +33,8 @@ namespace hv {
 			virtual bool isFreezed() = 0;
 			virtual void isFreezed(bool value) = 0;
 
+			virtual bool isEventNode()=0;
+
 			virtual std::vector<std::shared_ptr<hv::v2::iconstNode>> inputs() = 0;
 			virtual std::vector<std::shared_ptr<hv::v2::iconstNode>> outputs() = 0;
 
@@ -44,6 +46,8 @@ namespace hv {
 
 
 		protected:
+
+			virtual void isEventNode(bool check) = 0;
 			
 			virtual std::shared_ptr<hv::v2::iconstNode> search(std::string key, int objectType, hv::v2::searchType type)=0;
 			template<typename T> std::shared_ptr<T> search(std::string key, int objectType, hv::v2::searchType type) {
