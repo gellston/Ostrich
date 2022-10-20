@@ -6,6 +6,8 @@
 #include <chrono>
 #include <thread>
 
+#include <Windows.h>
+
 namespace hv {
 	namespace v2 {
 		class impl_compositeSleepNode {
@@ -33,7 +35,7 @@ hv::v2::compositeSleepNode::compositeSleepNode(std::string name, hv::v2::ihandle
 
 
 
-		this->registerNode("us", 2, hv::v2::searchType::input);
+		this->registerNode("ms", 2, hv::v2::searchType::input);
 
 
 	}
@@ -61,10 +63,8 @@ hv::v2::resultType hv::v2::compositeSleepNode::process() {
 
 	START_ERROR_HANDLE()
 
-
-		auto time = this->search<hv::v2::constNumberNode>("us", 2, hv::v2::searchType::input);
+		auto time = this->search<hv::v2::constNumberNode>("ms", 2, hv::v2::searchType::input);
 		auto execution = this->execution("Exec");
-
 
 		std::this_thread::sleep_for(std::chrono::milliseconds((long long)time->data()));
 

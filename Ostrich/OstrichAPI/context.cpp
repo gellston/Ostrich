@@ -24,10 +24,12 @@ namespace hv {
 		class impl_context {
 		public:
 
-			std::unordered_map< std::size_t, std::shared_ptr<hv::v2::icompositeNode>> _composite_node_look_up_table;
+			std::unordered_map<std::size_t, std::shared_ptr<hv::v2::icompositeNode>> _composite_node_look_up_table;
 			std::unordered_map<std::size_t, std::shared_ptr<hv::v2::iconstNode>> _const_node_loook_up_table;
-			std::unordered_map < std::size_t, std::vector<std::shared_ptr<hv::v2::icompositeNode>>> _align_nodes;
-			
+			std::unordered_map<std::size_t, std::vector<std::shared_ptr<hv::v2::icompositeNode>>> _align_nodes;
+			std::unordered_map<int, int> _addon_type_overlap_table;
+
+
 
 			std::vector<std::shared_ptr<hv::v2::icompositeNode>> _event_nodes;
 
@@ -587,12 +589,14 @@ void hv::v2::context::loadLibrary() {
 
 					if (addon_module() == false) {
 						FreeLibrary(module);
+						continue;
 					}
 
 					
 
 					if (addon_init(this) == false) {
 						FreeLibrary(module);
+						continue;
 					}
 
 					std::string version = addon_version();
@@ -605,6 +609,7 @@ void hv::v2::context::loadLibrary() {
 				}
 				catch (std::exception e) {
 					FreeLibrary(module);
+					continue;
 				}
 			}
 		}
@@ -624,7 +629,14 @@ void hv::v2::context::unloadLibrary() {
 		this->_instance->_composite_node_look_up_table.clear();
 		this->_instance->_const_node_loook_up_table.clear();
 		this->_instance->_addons.clear();
+		this->_instance->_addon_type_overlap_table.clear();
+		this->_instance->_addon_info.clear();
 
+		this->_instance->_composite_node_look_up_table.rehash(0);
+		this->_instance->_const_node_loook_up_table.rehash(0);
+		this->_instance->_addons.reserve(0);
+		this->_instance->_addon_type_overlap_table.reserve(0);
+		this->_instance->_addon_info.reserve(0);
 
 
 		for (auto& pair : this->_instance->_addon_handles) {
@@ -644,6 +656,10 @@ void hv::v2::context::unloadLibrary() {
 			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Unexpected error detected. please check addon");
 			throw hv::v2::oexception(message);
 		}
+
+
+		this->_instance->_addon_handles.rehash(0);
+
 	}
 	catch (hv::v2::oexception e) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
@@ -853,6 +869,22 @@ void hv::v2::context::registerAddon(std::shared_ptr<hv::v2::iaddon> addon, int s
 	if (addon == nullptr) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid addon.");
 		throw hv::v2::oexception(message);
+	}
+
+
+
+	auto addon_information = addon->information();
+
+	for (auto& info : addon_information) {
+		this->_instance->_addon_type_overlap_table[info->type()]++;
+	}
+
+
+	for (auto& frequency : this->_instance->_addon_type_overlap_table) {
+		if (frequency.second > 1) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Type overlap addon issue");
+			throw hv::v2::oexception(message);
+		}
 	}
 
 
