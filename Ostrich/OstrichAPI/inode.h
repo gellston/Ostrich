@@ -6,7 +6,6 @@
 
 
 #include "ihandle.h"
-#include "irunable.h"
 #include "resultType.h"
 
 #include <iostream>
@@ -16,7 +15,7 @@
 
 namespace hv {
 	namespace v2 {
-		class inode : public hv::v2::ihandle, public hv::v2::irunable {
+		class inode : public hv::v2::ihandle{
 		public:
 
 			virtual ~inode() { }
@@ -30,7 +29,7 @@ namespace hv {
 
 
 			virtual void init() = 0;
-			virtual hv::v2::resultType process() = 0;
+
 
 		};
 	}

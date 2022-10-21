@@ -19,7 +19,7 @@ namespace hv {
 
 			virtual ~irunable() { }
 
-			virtual hv::v2::resultType process() = 0;
+			virtual hv::v2::resultType call() = 0;
 
 		};
 	}

@@ -13,6 +13,7 @@
 #include <compositeAddNumberNode.h>
 
 OSTRICH_MODULE()
+OSTRICH_SANITY_CHECK()
 OSTRICH_VERSION(1.0)
 OSTRICH_NAME(PrimitiveNode)
 OSTRICH_ADDON_INIT(context) {

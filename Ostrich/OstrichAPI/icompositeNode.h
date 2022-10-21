@@ -8,7 +8,7 @@
 #include "inode.h"
 #include "iconstNode.h"
 #include "searchType.h"
-
+#include "irunable.h"
 
 
 
@@ -17,7 +17,7 @@
 
 namespace hv {
 	namespace v2 {
-		class icompositeNode : public hv::v2::inode {
+		class icompositeNode : public hv::v2::inode, public hv::v2::irunable {
 		public:
 
 			virtual ~icompositeNode() { }
@@ -43,7 +43,11 @@ namespace hv {
 
 
 			virtual std::vector<std::size_t> constUID() = 0;
+			virtual std::vector<std::size_t> inputConstUID() = 0;
+			virtual std::vector<std::size_t> outputConstUID() = 0;
 
+			virtual hv::v2::resultType process() = 0;
+			virtual void update() = 0;
 
 		protected:
 

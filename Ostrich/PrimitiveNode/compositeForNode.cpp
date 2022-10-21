@@ -68,8 +68,9 @@ hv::v2::resultType hv::v2::compositeForNode::process() {
 				std::cout << "for loop counting : " << _index << std::endl;
 				index->data(_index);
 	
+				this->update();
 				
-				auto result = loop->process();
+				auto result = loop->call();
 				switch (result)
 				{
 				case hv::v2::resultType::continue_:
@@ -95,7 +96,7 @@ hv::v2::resultType hv::v2::compositeForNode::process() {
 			}
 		}
 
-		return complete->process();
+		return complete->call();
 
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 

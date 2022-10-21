@@ -34,8 +34,3 @@ void hv::v2::constExecutionNode::init() {
 
 }
 
-hv::v2::resultType hv::v2::constExecutionNode::process() {
-	START_ERROR_HANDLE()
-		return hv::v2::resultType::done;
-	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
-}

@@ -26,6 +26,23 @@ extern "C" OSTRICH_ADDON_EXPORT bool ostrich_addon_module_enable(){\
 
 
 
+#ifdef _DEBUG
+
+#define OSTRICH_SANITY_CHECK()\
+extern "C" OSTRICH_ADDON_EXPORT bool ostrich_sanity_check(){\
+	return false;\
+}\
+
+#endif
+
+#ifndef _DEBUG
+
+#define OSTRICH_SANITY_CHECK()\
+extern "C" OSTRICH_ADDON_EXPORT bool ostrich_sanity_check(){\
+	return true;\
+}\
+
+#endif
 
 
 #endif

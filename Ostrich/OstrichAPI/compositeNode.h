@@ -44,7 +44,8 @@ namespace hv {
 
 
 			OSTRICH_COMMON_API std::vector<std::size_t> constUID() override;
-
+			OSTRICH_COMMON_API std::vector<std::size_t> inputConstUID() override;
+			OSTRICH_COMMON_API std::vector<std::size_t> outputConstUID() override;
 
 			OSTRICH_COMMON_API std::string name() override;
 
@@ -54,7 +55,8 @@ namespace hv {
 			OSTRICH_COMMON_API std::size_t uid() override;
 			OSTRICH_COMMON_API void uid(std::size_t value) override;
 
-
+			OSTRICH_COMMON_API hv::v2::resultType call() override;
+			OSTRICH_COMMON_API void update() override;
 
 		protected:
 

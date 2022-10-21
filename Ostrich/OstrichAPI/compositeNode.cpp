@@ -136,6 +136,39 @@ bool hv::v2::compositeNode::isConditionalNode() {
 }
 
 
+hv::v2::resultType hv::v2::compositeNode::call() {
+
+	if (this->_instance->_context == nullptr) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null context exception");
+		throw hv::v2::oexception(message);
+	}
+
+
+	START_ERROR_HANDLE();
+
+	auto result = this->process();
+
+
+	this->_instance->_context->onNodeComplete(this->type(), this->uid(), this->outputConstUID());
+
+	return result;
+	END_ERROR_HANDLE(__FUNCTION__, __LINE__);
+}
+
+void hv::v2::compositeNode::update() {
+
+	if (this->_instance->_context == nullptr) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null context exception");
+		throw hv::v2::oexception(message);
+	}
+
+	START_ERROR_HANDLE();
+	this->_instance->_context->onNodeComplete(this->type(), this->uid(), this->outputConstUID());
+	END_ERROR_HANDLE(__FUNCTION__, __LINE__);
+}
+
+
+
 bool hv::v2::compositeNode::checkSourceUID(std::size_t uid) {
 	for (auto node : this->_instance->_inputNodes) {
 		if (node.second->sourceUID() == uid && node.second->isConnected() == true)
@@ -216,6 +249,25 @@ std::vector<std::size_t> hv::v2::compositeNode::constUID() {
 	return uid;
 }
 
+std::vector<std::size_t> hv::v2::compositeNode::inputConstUID() {
+	std::vector<std::size_t> uid;
+
+	for (auto node : this->_instance->_inputNodes) {
+		uid.push_back(node.second->uid());
+	}
+
+	return uid;
+}
+
+std::vector<std::size_t> hv::v2::compositeNode::outputConstUID() {
+	std::vector<std::size_t> uid;
+
+	for (auto node : this->_instance->_outputNodes) {
+		uid.push_back(node.second->uid());
+	}
+
+	return uid;
+}
 
 
 std::shared_ptr<hv::v2::iconstNode> hv::v2::compositeNode::search(std::string key, int objectType, hv::v2::searchType type) {

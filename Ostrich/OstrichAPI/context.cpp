@@ -81,6 +81,14 @@ hv::v2::context::~context() {
 
 }
 
+
+
+void hv::v2::context::onNodeComplete(int nodeType, std::size_t composite_uid, std::vector<std::size_t> output_uid) {
+
+	std::cout << "type : " << nodeType << ", uid : " << composite_uid << std::endl;
+}
+
+
 std::shared_ptr<hv::v2::icompositeNode> hv::v2::context::search(std::size_t uid) {
 	if (this->_instance->_composite_node_look_up_table.find(uid) == this->_instance->_composite_node_look_up_table.end()) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Uid is not exist");
@@ -566,6 +574,9 @@ void hv::v2::context::loadLibrary() {
 		throw hv::v2::oexception(message);
 	}
 
+
+	std::vector<std::string> error_message;
+
 	for (const auto& entry : std::filesystem::directory_iterator(this->_instance->_libraryPath)) {
 		if (entry.path().extension().string() == ".dll") {
 			std::string filePath = entry.path().string();
@@ -580,24 +591,46 @@ void hv::v2::context::loadLibrary() {
 					auto addon_name = (const char* (*)())GetProcAddress(module, "ostrich_addon_name");
 					auto addon_module = (bool (*)())GetProcAddress(module, "ostrich_addon_module_enable");
 					auto addon_init = (bool (*)(hv::v2::icontext*))GetProcAddress(module, "ostrich_addon_init");
+					auto addon_sanity_check = (bool (*)())GetProcAddress(module, "ostrich_sanity_check");
 
-
-					if (addon_version == nullptr || addon_name == nullptr || addon_module == nullptr || addon_init == nullptr) {
+						
+					if (addon_version == nullptr || addon_name == nullptr || addon_module == nullptr || addon_init == nullptr || addon_sanity_check == nullptr) {
 						FreeLibrary(module);
 						continue;
 					}
 
+
+#ifdef _DEBUG
+					if (addon_sanity_check() == true) {
+						FreeLibrary(module);
+						continue;
+					}
+#else
+					if (addon_sanity_check() == false) {
+						std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "sanity check failed");
+						error_message.push_back(message);
+						FreeLibrary(module);
+						continue;
+					}
+#endif
+
+
 					if (addon_module() == false) {
+						std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "its not proper addon file or invalid version addon");
+						error_message.push_back(message);
 						FreeLibrary(module);
 						continue;
 					}
 
 					
-
 					if (addon_init(this) == false) {
+						std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "addon init failed");
+						error_message.push_back(message);
 						FreeLibrary(module);
 						continue;
 					}
+
+
 
 					std::string version = addon_version();
 					std::string name = addon_name();
@@ -613,6 +646,17 @@ void hv::v2::context::loadLibrary() {
 				}
 			}
 		}
+	}
+
+	if (error_message.size() > 0) {
+		std::string message = "";
+
+		for (auto _message : error_message) {
+			message += _message;
+		}
+
+		std::string full_message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, message);
+		throw hv::v2::oexception(message);
 	}
 }
 
@@ -631,12 +675,14 @@ void hv::v2::context::unloadLibrary() {
 		this->_instance->_addons.clear();
 		this->_instance->_addon_type_overlap_table.clear();
 		this->_instance->_addon_info.clear();
+		this->_instance->_align_nodes.clear();
 
 		this->_instance->_composite_node_look_up_table.rehash(0);
 		this->_instance->_const_node_loook_up_table.rehash(0);
 		this->_instance->_addons.reserve(0);
 		this->_instance->_addon_type_overlap_table.reserve(0);
 		this->_instance->_addon_info.reserve(0);
+		this->_instance->_align_nodes.reserve(0);
 
 
 		for (auto& pair : this->_instance->_addon_handles) {
@@ -721,7 +767,7 @@ void hv::v2::context::setMaxTaskCount(int num) {
 void hv::v2::context::run(std::size_t uid) {
 
 	try {
-		//this->initNodes();
+		this->initNodes();
 	}
 	catch (hv::v2::oexception e) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
@@ -736,7 +782,7 @@ void hv::v2::context::run(std::size_t uid) {
 	for (auto& node : this->_instance->_event_nodes) {
 		if (node->uid() == uid) {
 			try {
-				node->process();
+				node->call();
 				return;
 			}
 			catch (hv::v2::oexception e) {
@@ -755,7 +801,7 @@ void hv::v2::context::run(std::size_t uid) {
 void hv::v2::context::run(int objectType, std::string name) {
 
 	try {
-		//this->initNodes();
+		this->initNodes();
 	}
 	catch (hv::v2::oexception e) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
@@ -769,7 +815,7 @@ void hv::v2::context::run(int objectType, std::string name) {
 	for (auto& node : this->_instance->_event_nodes) {
 		if (node->type() == objectType && node->name() == name) {
 			try {
-				node->process();
+				node->call();
 				return;
 			}
 			catch (hv::v2::oexception e) {
@@ -788,7 +834,7 @@ void hv::v2::context::run(int objectType, std::string name) {
 void hv::v2::context::run() {
 
 	try {
-		//this->initNodes();
+		this->initNodes();
 	}
 	catch (hv::v2::oexception e) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
@@ -802,7 +848,7 @@ void hv::v2::context::run() {
 
 	for (auto& node : this->_instance->_event_nodes) {
 		try {
-			node->process();
+			node->call();
 		}
 		catch (hv::v2::oexception e) {
 			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
@@ -974,7 +1020,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::context::find(std::size_t uid, std::
 		}
 
 		if (node->isConditionalNode() == false) {
-			node->process();
+			node->call();
 		}
 		auto const_output = node->output(name);
 

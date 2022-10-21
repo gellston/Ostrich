@@ -68,7 +68,7 @@ hv::v2::resultType hv::v2::compositeSleepNode::process() {
 
 		std::this_thread::sleep_for(std::chrono::milliseconds((long long)time->data()));
 
-		return execution->process();
+		return execution->call();
 
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 

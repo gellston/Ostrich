@@ -25,6 +25,10 @@ namespace hv {
 
 			virtual ~icontext() { }
 
+			// Event Handler
+			virtual void onNodeComplete(int nodeType, std::size_t composite_uid, std::vector<std::size_t> output_uid) = 0;
+
+
 			// Addon manipulation
 			virtual void loadLibrary() =0;
 			virtual void unloadLibrary() = 0;

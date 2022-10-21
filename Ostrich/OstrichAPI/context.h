@@ -28,6 +28,7 @@ namespace hv {
 
 			OSTRICH_COMMON_API int maxDepth() override;
 
+	
 
 
 		public:
@@ -36,6 +37,7 @@ namespace hv {
 			OSTRICH_COMMON_API virtual ~context() override;
 
 
+			OSTRICH_COMMON_API void onNodeComplete(int nodeType, std::size_t composite_uid, std::vector<std::size_t> output_uid);
 
 			//Node manipulation
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::icompositeNode> search(std::size_t uid) override;

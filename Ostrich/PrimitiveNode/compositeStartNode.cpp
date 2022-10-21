@@ -49,7 +49,7 @@ hv::v2::resultType hv::v2::compositeStartNode::process() {
 	START_ERROR_HANDLE()
 
 		auto execution = this->execution("Exec");
-		return execution->process();
+		return execution->call();
 
 
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)

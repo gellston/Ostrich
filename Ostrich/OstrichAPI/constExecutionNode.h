@@ -20,7 +20,8 @@ namespace hv {
 			~constExecutionNode();
 
 			void init() override;
-			hv::v2::resultType process() override;
+	
+			
 		};
 
 	}
