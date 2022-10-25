@@ -45,6 +45,12 @@
     <ClCompile Include="constExecutionNode.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="constNodeJson.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="script.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ihandle.h">
@@ -107,9 +113,6 @@
     <ClInclude Include="addon.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="contentType.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="iconstructor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -141,6 +144,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="resultType.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="constNodeJson.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="script.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

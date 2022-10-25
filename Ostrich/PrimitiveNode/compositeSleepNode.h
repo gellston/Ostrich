@@ -16,11 +16,13 @@ namespace hv {
 			std::unique_ptr<hv::v2::impl_compositeSleepNode> _instance;
 		public:
 			compositeSleepNode(std::string name, hv::v2::ihandle* context);
-			~compositeSleepNode();
+			virtual ~compositeSleepNode();
 
 
 			void init() override;
 			hv::v2::resultType process() override;
+
+			CLONE_PATTERN(compositeSleepNode)
 		};
 
 	}

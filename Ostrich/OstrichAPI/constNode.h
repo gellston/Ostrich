@@ -24,7 +24,8 @@ namespace hv {
 			OSTRICH_COMMON_API bool isConnected() override;
 			OSTRICH_COMMON_API void isConnected(bool value) override;
 
-
+			OSTRICH_COMMON_API int index() override;
+			OSTRICH_COMMON_API void index(int _index) override;
 
 
 			OSTRICH_COMMON_API std::size_t sourceUID() override;
@@ -45,6 +46,8 @@ namespace hv {
 
 			OSTRICH_COMMON_API std::size_t uid() override;
 			OSTRICH_COMMON_API void uid(std::size_t value) override;
+
+
 
 		};
 	}

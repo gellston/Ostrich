@@ -93,14 +93,13 @@ namespace hv {
 			OSTRICH_COMMON_API std::vector<hv::v2::addon_info> addonInfo() override;
 			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iaddon>> addons() override;
 
-			OSTRICH_COMMON_API void load(std::string context, hv::v2::contentType contentType) override;
+			OSTRICH_COMMON_API void load(std::string path) override;
 			OSTRICH_COMMON_API void save(std::string path) override;
 			OSTRICH_COMMON_API void initNodes() override;
-			OSTRICH_COMMON_API void setMaxTaskCount(int num) override;
 			OSTRICH_COMMON_API void run(std::size_t uid) override;
 			OSTRICH_COMMON_API void run(int objectType, std::string name) override;
 			OSTRICH_COMMON_API void run() override;
-
+			OSTRICH_COMMON_API std::shared_ptr<hv::v2::icontext> clone() override;
 
 
 
@@ -110,12 +109,14 @@ namespace hv {
 
 
 
-
 			//Node Special Lock
 			OSTRICH_COMMON_API void registerAddon(std::shared_ptr<hv::v2::iaddon> addon, int special_lock_key) override;
 			OSTRICH_COMMON_API virtual std::shared_ptr<hv::v2::iconstNode> create(std::string name, int objectType, int special_lock_key) override;
 			OSTRICH_COMMON_API virtual std::shared_ptr<hv::v2::iconstNode> find(std::size_t uid, std::string name, int depth, int special_lock_key) override;
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::irunable> findExecution(std::size_t uid, std::string name, int depth, int special_lock_key) override;
+			OSTRICH_COMMON_API void registerConstNodeGroup(std::vector<std::shared_ptr<hv::v2::iconstNode>> group, int special_lock_key) override;
+			OSTRICH_COMMON_API void removeConstNodeGroup(std::vector<std::shared_ptr<hv::v2::iconstNode>> group, int special_lock_key) override;
+
 
 		};
 	}

@@ -17,13 +17,14 @@ namespace hv {
 			std::unique_ptr<hv::v2::impl_constNumberNode> _instance;
 		public:
 			constNumberNode(std::string name);
-			~constNumberNode();
+			virtual ~constNumberNode();
 
 			double data();
 			void data(double value);
 			
 			void init() override;
 
+			std::shared_ptr<hv::v2::iconstNode> clone() override;
 
 		};
 

@@ -16,11 +16,13 @@ namespace hv {
 			std::unique_ptr<hv::v2::impl_compositeForNode> _instance;
 		public:
 			compositeForNode(std::string name, hv::v2::ihandle* context);
-			~compositeForNode();
+			virtual ~compositeForNode();
 
 
 			void init() override;
 			hv::v2::resultType process() override;
+
+			CLONE_PATTERN(compositeForNode)
 		};
 
 	}

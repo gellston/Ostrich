@@ -44,3 +44,15 @@ double hv::v2::constNumberNode::data() {
 void hv::v2::constNumberNode::data(double value) {
 	this->_instance->_value = value;
 }
+
+std::shared_ptr<hv::v2::iconstNode> hv::v2::constNumberNode::clone() {
+	auto object = std::make_shared<hv::v2::constNumberNode>(this->name());
+	object->uid(this->uid());
+	object->isConnected(this->isConnected());
+	object->data(this->data());
+	object->sourceName(this->sourceName());
+	object->sourceUID(this->sourceUID());
+	object->index(this->index());
+
+	return object;
+}

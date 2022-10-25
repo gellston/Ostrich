@@ -26,5 +26,31 @@ namespace hv {
 }
 
 
+#endif
+
+
+#ifndef OSTRICH_CLONE_PATTERN_MACRO
+#define OSTRICH_CLONE_PATTERN_MACRO
+
+#define CLONE_PATTERN(CLASS_TYPE) \
+std::shared_ptr<hv::v2::icompositeNode> clone(hv::v2::ihandle* context) {\
+try {\
+	auto object = std::make_shared<hv::v2::CLASS_TYPE>(this->name(), context);\
+	object->uid(this->uid());\
+	object->depth(this->depth());\
+	object->isFreezed(this->isFreezed());\
+	object->replaceInputs(this->inputs());\
+	object->replaceOuputs(this->outputs());\
+	return object;\
+}\
+catch (hv::v2::oexception e) {\
+	std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());\
+	throw hv::v2::oexception(message);\
+}\
+catch (std::exception e) {\
+	std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());\
+	throw hv::v2::oexception(message);\
+}\
+}\
 
 #endif

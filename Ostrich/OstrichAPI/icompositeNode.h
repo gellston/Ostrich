@@ -13,7 +13,7 @@
 
 
 #include <iostream>
-
+#include <vector>
 
 namespace hv {
 	namespace v2 {
@@ -41,6 +41,10 @@ namespace hv {
 			virtual std::shared_ptr<hv::v2::iconstNode> input(std::string key) = 0;
 			virtual std::shared_ptr<hv::v2::iconstNode> output(std::string key) = 0;
 
+			virtual void replaceInputs(std::vector<std::shared_ptr<hv::v2::iconstNode>> inputs) = 0;
+			virtual void replaceOuputs(std::vector<std::shared_ptr<hv::v2::iconstNode>> outputs) = 0;
+			virtual std::vector<std::shared_ptr<hv::v2::iconstNode>> inputClone() = 0;
+			virtual std::vector<std::shared_ptr<hv::v2::iconstNode>> outputClone() = 0;
 
 			virtual std::vector<std::size_t> constUID() = 0;
 			virtual std::vector<std::size_t> inputConstUID() = 0;
@@ -48,6 +52,8 @@ namespace hv {
 
 			virtual hv::v2::resultType process() = 0;
 			virtual void update() = 0;
+
+			virtual std::shared_ptr<hv::v2::icompositeNode> clone(hv::v2::ihandle * context) = 0;
 
 		protected:
 

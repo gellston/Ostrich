@@ -134,11 +134,13 @@
     <ClCompile Include="commonExceptioin.cpp" />
     <ClCompile Include="constExecutionNode.cpp" />
     <ClCompile Include="constNode.cpp" />
+    <ClCompile Include="constNodeJson.cpp" />
     <ClCompile Include="context.cpp" />
     <ClCompile Include="node.cpp" />
     <ClCompile Include="nodeInfo.cpp" />
     <ClCompile Include="OstrichAPI.cpp" />
     <ClCompile Include="compositeNode.cpp" />
+    <ClCompile Include="script.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="addon.h" />
@@ -149,9 +151,9 @@
     <ClInclude Include="constConstructor.h" />
     <ClInclude Include="constExecutionNode.h" />
     <ClInclude Include="constNode.h" />
+    <ClInclude Include="constNodeJson.h" />
     <ClInclude Include="constructorType.h" />
     <ClInclude Include="context.h" />
-    <ClInclude Include="contentType.h" />
     <ClInclude Include="contextStatus.h" />
     <ClInclude Include="iaddon.h" />
     <ClInclude Include="iconstConstructor.h" />
@@ -168,6 +170,7 @@
     <ClInclude Include="node.h" />
     <ClInclude Include="nodeInfo.h" />
     <ClInclude Include="resultType.h" />
+    <ClInclude Include="script.h" />
     <ClInclude Include="searchType.h" />
     <ClInclude Include="objectType.h" />
     <ClInclude Include="serialType.h" />

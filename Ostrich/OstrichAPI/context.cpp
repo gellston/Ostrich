@@ -16,6 +16,9 @@
 #include <sstream>
 #include <stack>
 #include <concurrent_vector.h>
+#include <nlohmann/json.hpp>
+#include <fstream>
+#include <streambuf>
 
 
 namespace hv {
@@ -42,10 +45,6 @@ namespace hv {
 
 
 
-			unsigned int _max_task_count;
-
-
-
 
 			int _depth;
 
@@ -53,9 +52,7 @@ namespace hv {
 			impl_context() {
 
 				_depth = 0;
-				_max_task_count = 4;
-
-
+		
 			}
 
 
@@ -78,7 +75,12 @@ hv::v2::context::context() {
 }
 
 hv::v2::context::~context() {
-
+	try {
+		this->unloadLibrary();
+	}
+	catch (hv::v2::oexception e) {
+		std::cout << e.what() << std::endl;
+	}
 }
 
 
@@ -476,7 +478,9 @@ void hv::v2::context::verification() {
 }
 void hv::v2::context::clear() {
 	this->_instance->_composite_node_look_up_table.clear();
+	this->_instance->_composite_node_look_up_table.rehash(0);
 	this->_instance->_const_node_loook_up_table.clear();
+	this->_instance->_const_node_loook_up_table.rehash(0);
 	this->clearMaxDepth();
 }
 
@@ -494,6 +498,7 @@ void  hv::v2::context::groupingDepth() {
 			}
 		}
 	}
+
 }
 
 void hv::v2::context::sortingDepth() {
@@ -525,6 +530,7 @@ void hv::v2::context::sortingDepth() {
 
 void hv::v2::context::searchingEventNode() {
 	this->_instance->_event_nodes.clear();
+	
 	for (auto node : this->_instance->_composite_node_look_up_table) {
 		if (node.second->isEventNode() == true) {
 			this->_instance->_event_nodes.push_back(node.second);
@@ -533,15 +539,193 @@ void hv::v2::context::searchingEventNode() {
 }
 
 std::string hv::v2::context::serialization() {
-	//작업 해야됨.
-	return "";
+	
+	try {
 
+
+		std::vector<std::pair<std::size_t, std::shared_ptr<hv::v2::icompositeNode>>> composite_node_vector(this->_instance->_composite_node_look_up_table.begin(),
+																										   this->_instance->_composite_node_look_up_table.end());
+
+		std::sort(composite_node_vector.begin(), composite_node_vector.end());
+
+
+		nlohmann::json context;
+		for (auto& node : composite_node_vector) {
+			nlohmann::json composite_node = {
+				{"name", node.second->name()},
+				{"type", node.second->type()},
+				{"uid", node.first},
+				{"isFreezed", node.second->isFreezed()}
+			};
+
+
+			auto inputs = node.second->inputs();
+			for (auto& input : inputs) {
+				nlohmann::json input_json = {
+					{"name", input->name()},
+					{"type", input->type()},
+					{"uid", input->uid()},
+					{"isConnected", input->isConnected()},
+					{"sourceName", input->sourceName()},
+					{"sourceUID", input->sourceUID()},
+					{"index", input->index()}
+				};
+				composite_node["inputs"].push_back(input_json);
+			}
+
+			auto outputs = node.second->outputs();
+			for (auto& output : outputs) {
+				nlohmann::json output_json = {
+					{"name", output->name()},
+					{"type", output->type()},
+					{"uid", output->uid()},
+					{"index", output->index()}
+				};
+				composite_node["outputs"].push_back(output_json);
+			}
+			context.push_back(composite_node);
+		}
+
+		return context.dump(4);
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
 }
 void hv::v2::context::deserialization(std::string value) {
-	//작업 해야됨.
+	try {
+		nlohmann::json context = nlohmann::json::parse(value);
+
+		this->_instance->_const_node_loook_up_table.clear();
+		this->_instance->_const_node_loook_up_table.rehash(0);
+
+		this->_instance->_composite_node_look_up_table.clear();
+		this->_instance->_composite_node_look_up_table.rehash(0);
+
+		for (auto& node : context) {
+			auto name = node["name"].get<std::string>();
+			auto type = node["type"].get<int>();
+			auto uid = node["uid"].get<std::size_t>();
+			auto isFreezed = node["isFreezed"].get<bool>();
+
+
+			auto createdNode = this->addNode(name, type);
+			this->_instance->_composite_node_look_up_table.erase(createdNode->uid()); //기존 UId 삭제
+
+
+
+			createdNode->uid(uid); //객체 UID변경 
+			this->_instance->_composite_node_look_up_table[uid] = createdNode; //새로운 UID로 객체 등록 
+
+
+			this->removeConstNodeGroup(createdNode->inputs(), 9999);
+			this->removeConstNodeGroup(createdNode->outputs(), 9999);
+
+			//Inputs Replacement
+			std::vector<std::shared_ptr<hv::v2::iconstNode>> inputs;
+			for (auto& input : node["inputs"]) {
+				auto isConnected = input["isConnected"].get<bool>();
+				auto constNodeName = input["name"].get<std::string>();
+				auto constNodeType = input["type"].get<int>();
+				auto constNodeUID = input["uid"].get<std::size_t>();
+				auto sourceName = input["sourceName"].get<std::string>();
+				auto sourceUID = input["sourceUID"].get<std::size_t>();
+				auto index = input["index"].get<int>();
+
+				auto createdConstNode = this->create(constNodeName, constNodeType, 9999);
+				this->_instance->_const_node_loook_up_table.erase(createdConstNode->uid()); //기존 UID 삭제
+
+				createdConstNode->uid(constNodeUID); //UID 갱신
+				this->_instance->_const_node_loook_up_table[constNodeUID] = createdConstNode;
+				
+				createdConstNode->sourceName(sourceName);
+				createdConstNode->sourceUID(sourceUID);
+				createdConstNode->isConnected(isConnected);
+				createdConstNode->index(index);
+				inputs.push_back(createdConstNode);
+			}
+			createdNode->replaceInputs(inputs);
+
+			//Outputs Replacement
+			std::vector<std::shared_ptr<hv::v2::iconstNode>> outputs;
+			for (auto& output : node["outputs"]) {
+				auto constNodeName = output["name"].get<std::string>();
+				auto constNodeType = output["type"].get<int>();
+				auto constNodeUID = output["uid"].get<std::size_t>();
+				auto constNodeIndex = output["index"].get<int>();
+
+				auto createdConstNode = this->create(constNodeName, constNodeType, 9999);
+				this->_instance->_const_node_loook_up_table.erase(createdConstNode->uid()); //기존 UID 삭제
+
+				createdConstNode->uid(constNodeUID); //UID 갱신
+				this->_instance->_const_node_loook_up_table[constNodeUID] = createdConstNode;
+
+				createdConstNode->index(constNodeIndex);
+
+				outputs.push_back(createdConstNode);
+			}
+			createdNode->replaceOuputs(outputs);
+		}
+
+
+		//Depth 정렬
+		this->sortingDepth();
+
+		//Depth 순으로 그룹핑
+		this->groupingDepth();
+
+		//Search Event Node
+		this->searchingEventNode();
+		
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
 
 }
 
+void hv::v2::context::save(std::string path) {
+	try {
+		auto json_context = this->serialization();
+
+		std::ofstream jsonFile(path);
+		if (jsonFile.is_open()) {
+			jsonFile << json_context;
+			jsonFile.close();
+		}
+
+	}
+	catch (hv::v2::oexception e) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+
+void hv::v2::context::load(std::string path) {
+	try {
+
+		std::ifstream text_file(path);
+		if (text_file.is_open()) {
+			std::string json_content((std::istreambuf_iterator<char>(text_file)), std::istreambuf_iterator<char>());
+			this->deserialization(json_content);
+			text_file.close();
+		}
+	}
+	catch (hv::v2::oexception e) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
 
 
 
@@ -676,14 +860,19 @@ void hv::v2::context::unloadLibrary() {
 		this->_instance->_addon_type_overlap_table.clear();
 		this->_instance->_addon_info.clear();
 		this->_instance->_align_nodes.clear();
+		this->_instance->_event_nodes.clear();
 
 		this->_instance->_composite_node_look_up_table.rehash(0);
 		this->_instance->_const_node_loook_up_table.rehash(0);
-		this->_instance->_addons.reserve(0);
+		this->_instance->_align_nodes.rehash(0);
+
+	
 		this->_instance->_addon_type_overlap_table.reserve(0);
 		this->_instance->_addon_info.reserve(0);
-		this->_instance->_align_nodes.reserve(0);
 
+		std::vector<std::shared_ptr<hv::v2::iaddon>>().swap(this->_instance->_addons);
+		std::vector<hv::v2::addon_info>().swap(this->_instance->_addon_info);
+		std::vector<std::shared_ptr<hv::v2::icompositeNode>>().swap(this->_instance->_event_nodes);
 
 		for (auto& pair : this->_instance->_addon_handles) {
 			if ((bool)FreeLibrary(pair.second) == true) {
@@ -731,14 +920,6 @@ std::vector<std::shared_ptr<hv::v2::iaddon>> hv::v2::context::addons() {
 
 
 
-void hv::v2::context::load(std::string context, hv::v2::contentType contentType) {
-	//작업 해야됨.
-}
-
-void hv::v2::context::save(std::string path) {
-	//작업 해야됨.
-}
-
 void hv::v2::context::initNodes() {
 	//작업 해야됨.
 	for (auto& node : this->_instance->_composite_node_look_up_table) {
@@ -755,11 +936,6 @@ void hv::v2::context::initNodes() {
 		}
 	}
 }
-
-void hv::v2::context::setMaxTaskCount(int num) {
-	this->_instance->_max_task_count = num;
-}
-
 
 
 
@@ -859,6 +1035,48 @@ void hv::v2::context::run() {
 			throw hv::v2::oexception(message);
 		}
 	}
+}
+
+std::shared_ptr<hv::v2::icontext> hv::v2::context::clone() {
+
+	auto _context = std::make_shared<hv::v2::context>();
+
+	try {
+
+		_context->setAddonPath(this->_instance->_libraryPath);
+		_context->loadLibrary();
+
+
+		for (auto& node : this->_instance->_composite_node_look_up_table) {
+			auto cloneNode = node.second->clone(this);
+			auto cloneInput = cloneNode->inputs();
+			auto cloneOutput = cloneNode->outputs();
+
+			this->registerConstNodeGroup(cloneInput, 9999);
+			this->registerConstNodeGroup(cloneOutput, 9999);
+			_context->_instance->_composite_node_look_up_table[cloneNode->uid()] = cloneNode;
+		}
+
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+
+	//Depth 정렬
+	_context->sortingDepth();
+
+	//Depth 순으로 그룹핑
+	_context->groupingDepth();
+
+	//Search Event Node
+	_context->searchingEventNode();
+
+	return _context;
 }
 
 
@@ -1086,3 +1304,26 @@ std::shared_ptr<hv::v2::irunable> hv::v2::context::findExecution(std::size_t uid
 	return temp;
 }
 
+void hv::v2::context::registerConstNodeGroup(std::vector<std::shared_ptr<hv::v2::iconstNode>> group, int special_lock_key) {
+
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+	for (auto& node : group) {
+		this->_instance->_const_node_loook_up_table[node->uid()] = node;
+	}
+}
+
+
+void hv::v2::context::removeConstNodeGroup(std::vector<std::shared_ptr<hv::v2::iconstNode>> group, int special_lock_key) {
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+	for (auto& node : group) {
+		this->_instance->_const_node_loook_up_table.erase(node->uid());
+	}
+}

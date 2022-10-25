@@ -7,7 +7,7 @@
 
 
 #include <unordered_map>
-
+#include <algorithm>
 
 
 namespace hv {
@@ -58,6 +58,11 @@ hv::v2::compositeNode::compositeNode(std::string value, int type, hv::v2::ihandl
 
 hv::v2::compositeNode::~compositeNode() {
 
+	this->_instance->_inputNodes.clear();
+	this->_instance->_outputNodes.clear();
+
+	this->_instance->_inputNodes.rehash(0);
+	this->_instance->_outputNodes.rehash(0);
 
 }
 
@@ -187,6 +192,11 @@ std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::inputs()
 		nodes.push_back(node.second);
 	}
 
+	std::sort(nodes.begin(), nodes.end(), [](const std::shared_ptr<hv::v2::iconstNode> &first,
+										     const std::shared_ptr<hv::v2::iconstNode> &second) {
+			return first->index() < second->index();
+	});
+
 	return nodes;
 
 }
@@ -198,6 +208,11 @@ std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::outputs(
 	for (auto& node : this->_instance->_outputNodes) {
 		nodes.push_back(node.second);
 	}
+
+	std::sort(nodes.begin(), nodes.end(), [](const std::shared_ptr<hv::v2::iconstNode>& first,
+		const std::shared_ptr<hv::v2::iconstNode>& second) {
+			return first->index() < second->index();
+	});
 
 	return nodes;
 }
@@ -234,6 +249,56 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::compositeNode::output(std::string ke
 	auto constNode = this->_instance->_outputNodes[key];
 	return constNode;
 }
+
+void hv::v2::compositeNode::replaceInputs(std::vector<std::shared_ptr<hv::v2::iconstNode>> inputs) {
+
+	std::vector<std::shared_ptr<hv::v2::iconstNode>> group;
+	for (auto& node : this->_instance->_inputNodes) {
+		group.push_back(node.second);
+	}
+	this->_instance->_context->removeConstNodeGroup(group, 9999);
+	this->_instance->_inputNodes.clear();
+	this->_instance->_inputNodes.rehash(0);
+
+	for (auto& input : inputs) {
+		this->_instance->_inputNodes[input->name()] = input->clone();
+	}
+}
+
+void hv::v2::compositeNode::replaceOuputs(std::vector<std::shared_ptr<hv::v2::iconstNode>> outputs) {
+
+	std::vector<std::shared_ptr<hv::v2::iconstNode>> group;
+	for (auto& node : this->_instance->_outputNodes) {
+		group.push_back(node.second);
+	}
+	this->_instance->_context->removeConstNodeGroup(group, 9999);
+	this->_instance->_outputNodes.clear();
+	this->_instance->_outputNodes.rehash(0);
+
+	for (auto& output : outputs) {
+		this->_instance->_outputNodes[output->name()] = output->clone();
+	}
+}
+
+std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::inputClone() {
+
+	std::vector<std::shared_ptr<hv::v2::iconstNode>> group;
+	for (auto& constNode : this->_instance->_inputNodes) {
+		group.push_back(constNode.second->clone());
+	}
+
+	return group;
+}
+std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::outputClone() {
+
+	std::vector<std::shared_ptr<hv::v2::iconstNode>> group;
+	for (auto& constNode : this->_instance->_outputNodes) {
+		group.push_back(constNode.second->clone());
+	}
+
+	return group;
+}
+
 
 std::vector<std::size_t> hv::v2::compositeNode::constUID() {
 	std::vector<std::size_t> uid;
@@ -370,6 +435,7 @@ void hv::v2::compositeNode::registerNode(std::string key, int objectType, hv::v2
 				throw hv::v2::oexception(message);
 			}
 			auto node = this->_instance->_context->create(key, objectType, 9999);
+			node->index((int)this->_instance->_inputNodes.size() + 1);
 			this->_instance->_inputNodes[key] = node;
 			break;
 		}
@@ -380,6 +446,7 @@ void hv::v2::compositeNode::registerNode(std::string key, int objectType, hv::v2
 				throw hv::v2::oexception(message);
 			}
 			auto node = this->_instance->_context->create(key, objectType, 9999);
+			node->index((int)this->_instance->_outputNodes.size() + 1);
 			this->_instance->_outputNodes[key] = node;
 			break;
 		}
@@ -423,6 +490,7 @@ void hv::v2::compositeNode::registerExecutionNode(std::string key, hv::v2::searc
 			}
 
 			auto node = this->_instance->_context->create(key, (int)hv::v2::objectType::CONST_EXECUTION, 9999);
+			node->index((int)this->_instance->_inputNodes.size() + 1);
 			this->_instance->_inputNodes[key] = node;
 			break;
 		}
@@ -435,6 +503,7 @@ void hv::v2::compositeNode::registerExecutionNode(std::string key, hv::v2::searc
 			
 
 			auto node = this->_instance->_context->create(key, (int)hv::v2::objectType::CONST_EXECUTION, 9999);
+			node->index((int)this->_instance->_outputNodes.size() + 1);
 			this->_instance->_outputNodes[key] = node;
 			break;
 		}

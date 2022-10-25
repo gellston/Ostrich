@@ -42,6 +42,10 @@ namespace hv {
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::iconstNode> input(std::string key) override;
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::iconstNode> output(std::string key) override;
 
+			OSTRICH_COMMON_API void replaceInputs(std::vector<std::shared_ptr<hv::v2::iconstNode>> inputs) override;
+			OSTRICH_COMMON_API void replaceOuputs(std::vector<std::shared_ptr<hv::v2::iconstNode>> outputs) override;
+			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> inputClone() override;
+			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> outputClone() override;
 
 			OSTRICH_COMMON_API std::vector<std::size_t> constUID() override;
 			OSTRICH_COMMON_API std::vector<std::size_t> inputConstUID() override;
@@ -57,6 +61,8 @@ namespace hv {
 
 			OSTRICH_COMMON_API hv::v2::resultType call() override;
 			OSTRICH_COMMON_API void update() override;
+
+
 
 		protected:
 

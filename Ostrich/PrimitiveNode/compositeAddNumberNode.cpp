@@ -70,3 +70,4 @@ hv::v2::resultType hv::v2::compositeAddNumberNode::process() {
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__)
 
 }
+

@@ -10,7 +10,6 @@
 #include "icompositeNode.h"
 #include "iconstNode.h"
 #include "iaddon.h"
-#include "contentType.h"
 
 
 #include <vector>
@@ -38,22 +37,22 @@ namespace hv {
 
 
 			// Context manipulation
-			virtual void load(std::string context, hv::v2::contentType contentType) = 0;
+			virtual void load(std::string path) = 0;
 			virtual void save(std::string path) = 0;
 			virtual void initNodes() = 0;
-			virtual void setMaxTaskCount(int num) = 0;
 			virtual void verification() = 0;
 			virtual void clear() = 0;
 			virtual void run(std::size_t uid) = 0;
 			virtual void run(int objectType, std::string name) = 0;
 			virtual void run() = 0;
 			
-
 			virtual int maxDepth() = 0;
-	
+
 			virtual std::string serialization() = 0;
 			virtual void deserialization(std::string value) = 0;
-	
+			virtual std::shared_ptr<hv::v2::icontext> clone() = 0;
+
+
 
 			// Node manipulation
 			virtual std::shared_ptr<hv::v2::icompositeNode> search(std::size_t uid) = 0;
@@ -81,7 +80,8 @@ namespace hv {
 			virtual std::shared_ptr<hv::v2::iconstNode> create(std::string name, int objectType, int special_lock_key) = 0;
 			virtual std::shared_ptr<hv::v2::iconstNode> find(std::size_t uid, std::string name, int depth, int special_lock_key) = 0;
 			virtual std::shared_ptr<hv::v2::irunable> findExecution(std::size_t uid, std::string name, int depth, int special_lock_key) = 0;
-
+			virtual void registerConstNodeGroup(std::vector<std::shared_ptr<hv::v2::iconstNode>> group, int special_lock_key) = 0;
+			virtual void removeConstNodeGroup(std::vector<std::shared_ptr<hv::v2::iconstNode>> group, int special_lock_key) = 0;
 		};
 	}
 }

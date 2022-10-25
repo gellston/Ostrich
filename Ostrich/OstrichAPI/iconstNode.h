@@ -20,7 +20,9 @@ namespace hv {
 			virtual bool isConnected() = 0;
 			virtual void isConnected(bool value) = 0;
 
-
+			virtual int index() = 0;
+			virtual void index(int _index) =0;
+			
 
 			virtual std::size_t sourceUID() = 0;
 			virtual void sourceUID(std::size_t value) = 0;
@@ -29,6 +31,8 @@ namespace hv {
 			virtual std::string sourceName() = 0;
 			virtual void sourceName(std::string value) = 0;
 
+
+			virtual std::shared_ptr<hv::v2::iconstNode> clone() = 0;
 
 
 		};

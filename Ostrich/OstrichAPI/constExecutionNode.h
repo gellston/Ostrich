@@ -17,11 +17,11 @@ namespace hv {
 			std::unique_ptr<hv::v2::impl_constExecutionNode> _instance;
 		public:
 			constExecutionNode(std::string name);
-			~constExecutionNode();
+			virtual ~constExecutionNode();
 
 			void init() override;
 	
-			
+			std::shared_ptr<hv::v2::iconstNode> clone() override;
 		};
 
 	}

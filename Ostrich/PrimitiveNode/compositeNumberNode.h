@@ -16,11 +16,14 @@ namespace hv {
 			std::unique_ptr<hv::v2::impl_compositeNumberNode> _instance;
 		public:
 			compositeNumberNode(std::string name, hv::v2::ihandle * context);
-			~compositeNumberNode();
+			virtual ~compositeNumberNode();
 
 		
 			void init() override;
 			hv::v2::resultType process() override;
+
+			CLONE_PATTERN(compositeNumberNode)
+
 		};
 
 	}

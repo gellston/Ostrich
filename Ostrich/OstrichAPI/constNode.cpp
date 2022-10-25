@@ -11,12 +11,14 @@ namespace hv {
 			std::string _sourceName;
 
 			bool _isFreezed;
+			int _index;
 
 			impl_constNode() {
 				_isConnected = false;
 				_sourceUID = 0;
 				_sourceName = "";
 				_isFreezed = false;
+				_index = 0;
 			}
 		};
 	}
@@ -43,6 +45,13 @@ void hv::v2::constNode::isConnected(bool value) {
 	this->_instance->_isConnected = value;
 }
 
+int hv::v2::constNode::index() {
+	return this->_instance->_index;
+}
+
+void hv::v2::constNode::index(int _index) {
+	this->_instance->_index = _index;
+}
 
 
 std::size_t hv::v2::constNode::sourceUID() {
