@@ -22,7 +22,7 @@ namespace hv {
 			void init() override;
 			hv::v2::resultType process() override;
 
-			CLONE_PATTERN(compositeStartNode)
+			COMPOSITE_NODE_CLONE_PATTERN(compositeStartNode)
 		};
 
 	}

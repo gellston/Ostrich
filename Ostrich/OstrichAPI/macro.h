@@ -32,7 +32,7 @@ namespace hv {
 #ifndef OSTRICH_CLONE_PATTERN_MACRO
 #define OSTRICH_CLONE_PATTERN_MACRO
 
-#define CLONE_PATTERN(CLASS_TYPE) \
+#define COMPOSITE_NODE_CLONE_PATTERN(CLASS_TYPE) \
 std::shared_ptr<hv::v2::icompositeNode> clone(hv::v2::ihandle* context) {\
 try {\
 	auto object = std::make_shared<hv::v2::CLASS_TYPE>(this->name(), context);\
@@ -51,6 +51,23 @@ catch (std::exception e) {\
 	std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());\
 	throw hv::v2::oexception(message);\
 }\
+}\
+
+
+
+
+#define START_CONST_NODE_CLONE_PATTERN(CLASS_TYPE, objectName) \
+std::shared_ptr<hv::v2::iconstNode> clone() { \
+std::shared_ptr<hv::v2::CLASS_TYPE> objectName = std::make_shared<hv::v2::CLASS_TYPE>(this->name()); \
+objectName->uid(this->uid()); \
+objectName->isConnected(this->isConnected());\
+objectName->sourceName(this->sourceName());\
+objectName->sourceUID(this->sourceUID());\
+objectName->index(this->index());\
+
+
+#define END_CONST_NODE_CLONE_PATTERN(objectName)\
+return objectName;\
 }\
 
 #endif

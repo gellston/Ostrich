@@ -58,7 +58,7 @@ int main()
             auto ms = std::dynamic_pointer_cast<hv::v2::constNumberNode>(sleep->input("ms"));
             auto count = std::dynamic_pointer_cast<hv::v2::constNumberNode>(loop->input("count"));
 
-            ms->data(5000);
+            ms->data(1000);
             count->data(10);
 
             _script.copyContext("test", "test_copy");

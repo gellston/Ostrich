@@ -7,7 +7,7 @@
 
 
 #include "constNode.h"
-
+#include "macro.h"
 
 namespace hv {
 	namespace v2 {
@@ -21,7 +21,9 @@ namespace hv {
 
 			void init() override;
 	
-			std::shared_ptr<hv::v2::iconstNode> clone() override;
+
+			START_CONST_NODE_CLONE_PATTERN(constExecutionNode, object)
+			END_CONST_NODE_CLONE_PATTERN(object)
 		};
 
 	}
