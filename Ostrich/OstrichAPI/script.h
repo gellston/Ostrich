@@ -1,15 +1,15 @@
 #pragma once
 
 
-#ifndef OSTRICH_SCRIPT_BUIILDER
+#ifndef OSTRICH_SCRIPT_BUILDER
 #define OSTRICH_SCRIPT_BUILDER
 
-#include "icontext.h"
+#include "iscript.h"
 
 namespace hv {
 	namespace v2 {
 		class impl_script;
-		class script {
+		class script : public hv::v2::iscript{
 
 		private:
 			std::unique_ptr<hv::v2::impl_script> _instance;

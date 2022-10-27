@@ -26,7 +26,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OstrichAPISharp", "OstrichA
 		{D3CB5800-1750-4C45-A0DF-1A92DF23EA42} = {D3CB5800-1750-4C45-A0DF-1A92DF23EA42}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleSharp", "ConsoleSharp\ConsoleSharp.csproj", "{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleSharp", "ConsoleSharp\ConsoleSharp.csproj", "{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -100,8 +100,8 @@ Global
 		{A4A23CE7-3A37-4CA3-ABCD-61792662814E}.Release|x86.Build.0 = Release|Win32
 		{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}.Debug|x64.Build.0 = Debug|Any CPU
+		{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}.Debug|x64.ActiveCfg = Debug|x64
+		{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}.Debug|x64.Build.0 = Debug|x64
 		{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}.Debug|x86.Build.0 = Debug|Any CPU
 		{D7D2D9B0-F13F-4724-8653-F97F0B7BFB32}.Release|Any CPU.ActiveCfg = Release|Any CPU

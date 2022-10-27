@@ -26,7 +26,7 @@ HV::V2::ConstNode::~ConstNode() {
 }
 
 HV::V2::ConstNode::!ConstNode() {
-	this->_instance.~mananged_shared_ptr();
+	this->_instance.reset();
 }
 
 System::IntPtr HV::V2::ConstNode::Handle::get() {

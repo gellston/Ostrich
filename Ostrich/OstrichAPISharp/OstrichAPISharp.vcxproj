@@ -128,24 +128,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Addon.h" />
     <ClInclude Include="CompositeNode.h" />
     <ClInclude Include="ConstNode.h" />
+    <ClInclude Include="Context.h" />
+    <ClInclude Include="IAddon.h" />
     <ClInclude Include="ICompositeNode.h" />
     <ClInclude Include="IConstNode.h" />
+    <ClInclude Include="IContext.h" />
     <ClInclude Include="IHandle.h" />
     <ClInclude Include="INode.h" />
     <ClInclude Include="IRunable.h" />
     <ClInclude Include="managed_shared_ptr.h" />
+    <ClInclude Include="NodeInfo.h" />
     <ClInclude Include="OstrichAPISharp.h" />
     <ClInclude Include="CommonException.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResultType.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Addon.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="CommonException.cpp" />
     <ClCompile Include="CompositeNode.cpp" />
     <ClCompile Include="ConstNode.cpp" />
+    <ClCompile Include="Context.cpp" />
+    <ClCompile Include="NodeInfo.cpp" />
     <ClCompile Include="OstrichAPISharp.cpp" />
   </ItemGroup>
   <ItemGroup>

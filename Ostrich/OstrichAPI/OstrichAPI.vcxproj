@@ -166,6 +166,7 @@
     <ClInclude Include="iengine.h" />
     <ClInclude Include="icompositeNode.h" />
     <ClInclude Include="irunable.h" />
+    <ClInclude Include="iscript.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="nodeInfo.h" />

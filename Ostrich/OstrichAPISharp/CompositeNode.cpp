@@ -31,7 +31,7 @@ HV::V2::CompositeNode::~CompositeNode() {
 }
 
 HV::V2::CompositeNode::!CompositeNode() {
-	this->_instance.~mananged_shared_ptr();
+	this->_instance.reset();
 }
 
 int HV::V2::CompositeNode::Depth::get() {

@@ -51,6 +51,21 @@
     <ClInclude Include="CompositeNode.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="IContext.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="IAddon.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeInfo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Addon.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Context.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OstrichAPISharp.cpp">
@@ -66,6 +81,15 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CompositeNode.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeInfo.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Addon.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Context.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
