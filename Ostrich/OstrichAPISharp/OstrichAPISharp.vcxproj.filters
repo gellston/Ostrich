@@ -66,6 +66,12 @@
     <ClInclude Include="Context.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="IScript.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OstrichAPISharp.cpp">
@@ -90,6 +96,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Context.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Script.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
