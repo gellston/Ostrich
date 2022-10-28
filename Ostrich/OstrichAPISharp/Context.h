@@ -15,6 +15,7 @@
 
 namespace HV {
 	namespace V2 {
+
 		public ref class Context : public HV::V2::IContext {
 		private:
 			HV::V2::mananged_shared_ptr<hv::v2::icontext> _instance;
@@ -34,8 +35,8 @@ namespace HV {
 			virtual void Loadlibrary();
 			virtual void Unloadlibrary();
 			virtual void SetAddonPath(System::String^ path);
-			virtual property System::Collections::Generic::List<AddonInfo^>^ AddonInfo {
-				System::Collections::Generic::List<AddonInfo^>^ get();
+			virtual property System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ AddonInfo {
+				System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ get();
 			}
 			virtual property System::Collections::Generic::List<IAddon^>^ Addons {
 				System::Collections::Generic::List<IAddon^>^ get();
@@ -57,7 +58,7 @@ namespace HV {
 			virtual System::Object^ Clone();
 
 			virtual HV::V2::ICompositeNode^ Search(std::size_t uid);
-			virtual HV::V2::ICompositeNode^ Search(std::string name);
+			virtual HV::V2::ICompositeNode^ Search(System::String^ name);
 
 
 			virtual void Connect(std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName);

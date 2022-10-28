@@ -10,7 +10,7 @@
 
 namespace HV {
 	namespace V2 {
-		public ref class Addon {
+		public ref class Addon : public IAddon {
 		private:
 			HV::V2::mananged_shared_ptr<hv::v2::iaddon> _instance;
 		public:

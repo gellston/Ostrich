@@ -11,7 +11,6 @@ using namespace System;
 
 namespace HV {
 	namespace V2 {
-		typedef System::Tuple<System::String^, System::String^> AddonInfo;
 
 		public interface class IContext : public IHandle, public ICloneable {
 		public:
@@ -24,8 +23,8 @@ namespace HV {
 			virtual void Loadlibrary();
 			virtual void Unloadlibrary();
 			virtual void SetAddonPath(System::String^ path);
-			virtual property System::Collections::Generic::List<AddonInfo^>^ AddonInfo{
-				System::Collections::Generic::List<AddonInfo^>^ get();
+			virtual property System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ AddonInfo{
+				System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ get();
 			}
 			virtual property System::Collections::Generic::List<IAddon^>^ Addons {
 				System::Collections::Generic::List<IAddon^>^ get();
@@ -47,7 +46,7 @@ namespace HV {
 			//Clone Here
 
 			virtual HV::V2::ICompositeNode^ Search(std::size_t uid);
-			virtual HV::V2::ICompositeNode^ Search(std::string name);
+			virtual HV::V2::ICompositeNode^ Search(System::String^ name);
 
 
 			virtual void Connect(std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName);
