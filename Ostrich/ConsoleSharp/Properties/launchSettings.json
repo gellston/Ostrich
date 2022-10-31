@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ConsoleSharp": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

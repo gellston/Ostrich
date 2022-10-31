@@ -45,6 +45,7 @@ std::shared_ptr<hv::v2::icompositeNode> hv::v2::script::search(std::string conte
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		return this->_instance->_contextes[context_name]->search(uid);
@@ -62,6 +63,7 @@ std::shared_ptr<hv::v2::icompositeNode> hv::v2::script::search(std::string conte
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		return this->_instance->_contextes[context_name]->search(name);
@@ -80,6 +82,7 @@ void hv::v2::script::connect(std::string context_name, std::size_t sourceUID, st
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->connect(sourceUID, sourceName, targetUID, targetName);
@@ -97,6 +100,7 @@ void hv::v2::script::connect(std::string context_name, std::shared_ptr<hv::v2::i
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->connect(sourceNode, sourceName, targetNode, targetName);
@@ -115,6 +119,7 @@ void hv::v2::script::disconnect(std::string context_name, std::string name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->disconnect(name);
@@ -132,6 +137,7 @@ void hv::v2::script::disconnect(std::string context_name, std::size_t targetUID,
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->disconnect(targetUID, targetName);
@@ -149,6 +155,7 @@ void hv::v2::script::disconnect(std::string context_name, std::shared_ptr<hv::v2
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->disconnect(targetNode, targetName);
@@ -166,6 +173,7 @@ void hv::v2::script::disconnect(std::string context_name, std::size_t targetUID)
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->disconnect(targetUID);
@@ -183,6 +191,7 @@ void hv::v2::script::disconnect(std::string context_name, std::shared_ptr<hv::v2
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->disconnect(targetNode);
@@ -201,6 +210,7 @@ std::shared_ptr<hv::v2::icompositeNode> hv::v2::script::addNode(std::string cont
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		return this->_instance->_contextes[context_name]->addNode(name, objetType);
@@ -218,6 +228,7 @@ void hv::v2::script::removeNode(std::string context_name, std::size_t uid) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->removeNode(uid);
@@ -235,6 +246,7 @@ void hv::v2::script::removeNode(std::string context_name, std::shared_ptr<hv::v2
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->removeNode(node);
@@ -252,6 +264,7 @@ void hv::v2::script::removeNode(std::string context_name, std::string name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->removeNode(name);
@@ -270,6 +283,7 @@ void hv::v2::script::verification(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->verification();
@@ -287,6 +301,7 @@ void hv::v2::script::clear(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->clear();
@@ -304,6 +319,7 @@ void hv::v2::script::loadLibrary(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->loadLibrary();
@@ -321,6 +337,7 @@ void hv::v2::script::unloadLibrary(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->unloadLibrary();
@@ -396,6 +413,7 @@ std::vector<std::shared_ptr<hv::v2::iaddon>> hv::v2::script::addons(std::string 
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		return this->_instance->_contextes[context_name]->addons();
@@ -414,6 +432,7 @@ void hv::v2::script::load(std::string context_name, std::string path) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->load(path);
@@ -431,6 +450,7 @@ void hv::v2::script::save(std::string context_name, std::string path) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->save(path);
@@ -448,6 +468,7 @@ void hv::v2::script::initNodes(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->initNodes();
@@ -465,6 +486,7 @@ void hv::v2::script::run(std::string context_name, std::size_t uid) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->run(uid);
@@ -482,6 +504,7 @@ void hv::v2::script::run(std::string context_name, int objectType, std::string n
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->run(objectType, name);
@@ -499,6 +522,7 @@ void hv::v2::script::run(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[context_name]->run();
@@ -519,6 +543,7 @@ void hv::v2::script::createContext(std::string name) {
 	try {
 		if (this->_instance->_contextes.find(name) != this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is already exists");
+			throw hv::v2::oexception(message);
 		}
 
 		auto context = std::make_shared<hv::v2::context>();
@@ -543,10 +568,12 @@ void hv::v2::script::renameContext(std::string sourceName, std::string targetNam
 	try {
 		if (this->_instance->_contextes.find(sourceName) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "source context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		if (this->_instance->_contextes.find(targetName) != this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "target context is already exists");
+			throw hv::v2::oexception(message);
 		}
 
 
@@ -571,6 +598,7 @@ void hv::v2::script::removeContext(std::string name) {
 	try {
 		if (this->_instance->_contextes.find(name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "source context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[name]->unloadLibrary();
@@ -592,10 +620,12 @@ void hv::v2::script::copyContext(std::string sourceName, std::string targetName)
 	try {
 		if (this->_instance->_contextes.find(sourceName) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "source context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 		if (this->_instance->_contextes.find(targetName) != this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "target context is already exists");
+			throw hv::v2::oexception(message);
 		}
 
 		this->_instance->_contextes[targetName] = this->_instance->_contextes[sourceName]->clone();
@@ -614,6 +644,7 @@ std::string hv::v2::script::serialization(std::string context) {
 	try {
 		if (this->_instance->_contextes.find(context) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 
 
@@ -633,6 +664,7 @@ void hv::v2::script::deserialization(std::string context, std::string jsonContex
 	try {
 		if (this->_instance->_contextes.find(context) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
 		}
 		this->_instance->_contextes[context]->deserialization(jsonContext);
 	}
