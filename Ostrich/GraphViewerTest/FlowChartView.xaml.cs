@@ -1,4 +1,5 @@
 ﻿using GraphViewerTest.Util;
+using GraphViewerTest.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -38,9 +39,11 @@ namespace GraphViewerTest
 
         protected Point _RightButtonDownPos;
         protected Point _LeftButtonDownPos;
-        protected Point _PrevMousePos;
+        protected Point _PrevMousePosOnCanvas;
         protected bool _IsDraggingCanvas;
+        protected bool _IsNodeDragging;
         private Matrix _ZoomAndPanStartMatrix;
+        private NodeViewModel _SelectedNodeViewModel = null;
         #endregion
 
 
@@ -98,6 +101,69 @@ namespace GraphViewerTest
         }
 
 
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+
+            Keyboard.Focus(this);
+
+
+            var mousePosition = Mouse.GetPosition(this);
+            var clickedItem = this.InputHitTest(mousePosition) as FrameworkElement;
+
+            if(clickedItem != null && clickedItem.DataContext != null)
+            {
+                if (clickedItem.DataContext.GetType() == typeof(NodeViewModel))
+                {
+
+
+                    var nodeViewModel = clickedItem.DataContext as NodeViewModel;
+                    nodeViewModel.IsSelected = true;
+                    Mouse.Capture(this, CaptureMode.SubTree);//?????????????????
+
+                    //이전에 선택되어 있는 아이템 선택 해제 
+                    if (nodeViewModel != this._SelectedNodeViewModel && this._SelectedNodeViewModel != null)
+                        this._SelectedNodeViewModel.IsSelected = false;
+
+
+                    if(nodeViewModel.IsSelected)
+                    {
+                        // 현재 아이템으로 선택 설정 드래깅 시작 
+                        this._SelectedNodeViewModel = nodeViewModel;
+                        _IsNodeDragging = true;
+                    }
+                }
+
+            }
+            else
+            {    //노드가 아닌 오브젝트를 선택시 선택되어있던 오브젝트 해제 
+                if (this._SelectedNodeViewModel != null)
+                {
+                    this._SelectedNodeViewModel.IsSelected = false;
+                }
+            }
+
+
+
+
+
+
+            System.Diagnostics.Debug.WriteLine("test");
+        }
+
+        protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonUp(e);
+
+
+
+            if (this._IsNodeDragging == true)
+            {
+                this._IsNodeDragging = false;
+                Mouse.Capture(null);
+            }
+        }
+
 
 
         protected override void OnMouseRightButtonDown(MouseButtonEventArgs e)
@@ -125,7 +191,7 @@ namespace GraphViewerTest
 
             // Current Mouse Position 
             Point mousePos = e.GetPosition(this);
-            Point delta = new Point(mousePos.X - _PrevMousePos.X, mousePos.Y - _PrevMousePos.Y);
+            Point delta = new Point(mousePos.X - _PrevMousePosOnCanvas.X, mousePos.Y - _PrevMousePosOnCanvas.Y);
 
             if (this._IsDraggingCanvas)
             {
@@ -133,8 +199,15 @@ namespace GraphViewerTest
                 _ZoomAndPan.StartY -= delta.Y;
             }
 
-            _PrevMousePos = mousePos;
+            if (this._IsNodeDragging)
+            {
+                this._SelectedNodeViewModel.X += delta.X / _ZoomAndPan.Scale;
+                this._SelectedNodeViewModel.Y += delta.Y / _ZoomAndPan.Scale;
+            }
 
+
+            //Update mouse Pose
+            _PrevMousePosOnCanvas = mousePos;
 
             e.Handled = true;
             

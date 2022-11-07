@@ -52,7 +52,12 @@ namespace GraphViewerTest
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
-            this.NodeViewModelCollection.Add(new NodeViewModel());
+            this.NodeViewModelCollection.Add(new NodeViewModel()
+            {
+                X = 100,
+                Y = 100,
+                IsSelected = false
+            });
         }
     }
 }

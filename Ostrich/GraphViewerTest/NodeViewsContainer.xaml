@@ -17,7 +17,20 @@
                                         Mode=TwoWay}">
         <ItemsControl.Resources>
             <DataTemplate DataType="{x:Type vm:NodeViewModel}">
-                <view:NodeView></view:NodeView>
+                <view:NodeView IsSelected="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                               IsHitTestVisible="True"
+                               Background="Transparent"
+                               Foreground="Transparent">
+                    <view:NodeView.Style>
+                        <Style TargetType="{x:Type view:NodeView}">
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="BorderSelectionColor" Value="Orange"></Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </view:NodeView.Style>
+                </view:NodeView>
             </DataTemplate>
         </ItemsControl.Resources>
         <ItemsControl.ItemsPanel>
@@ -25,5 +38,14 @@
                 <Canvas IsHitTestVisible="True"></Canvas>
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemContainerStyle>
+            <Style TargetType="ContentPresenter">
+                <Setter Property="Canvas.Left" Value="{Binding X}"></Setter>
+                <Setter Property="Canvas.Top" Value="{Binding Y}"></Setter>
+                <Setter Property="Panel.ZIndex" Value="1"></Setter>
+                <Setter Property="Margin" Value="0"></Setter>
+                
+            </Style>
+        </ItemsControl.ItemContainerStyle>
     </ItemsControl>
 </UserControl>

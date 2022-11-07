@@ -60,6 +60,14 @@ namespace GraphViewerTest
             get => (double)GetValue(CornerRadiusProperty);
         }
 
+
+        public static readonly DependencyProperty BorderSelectionColorProperty = DependencyProperty.Register("BorderSelectionColor", typeof(SolidColorBrush), typeof(NodeView), new PropertyMetadata(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#121212"))));
+        public SolidColorBrush BorderSelectionColor
+        {
+            set => SetValue(BorderSelectionColorProperty, value);
+            get => (SolidColorBrush)GetValue(BorderSelectionColorProperty);
+        }
+
         #endregion
 
     }
