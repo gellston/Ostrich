@@ -65,6 +65,24 @@ HV::V2::ICompositeNode^ HV::V2::Script::Search(System::String^ context_name, Sys
 	}
 }
 
+bool HV::V2::Script::CheckConnectability(System::String^ context_name, std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName) {
+	try {
+		return this->_instance->checkConnectability(msclr::interop::marshal_as<std::string>(context_name),
+													sourceUID,
+													msclr::interop::marshal_as<std::string>(sourceName),
+													targetUID,
+													msclr::interop::marshal_as<std::string>(targetName));
+
+	}
+	catch (hv::v2::oexception e) {
+		return false;
+	}
+	catch (std::exception e) {
+		return false;
+	}
+}
+
+
 
 void HV::V2::Script::Connect(System::String^ context_name, std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName) {
 	try {

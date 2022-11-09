@@ -61,6 +61,9 @@ namespace hv {
 			virtual void connect(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) = 0;
 			virtual void connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::icompositeNode> targetNode, std::string targetName) = 0;
 
+			virtual bool checkConnectability(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) = 0;
+
+
 			virtual void disconnect(std::string name) = 0;
 			virtual void disconnect(std::size_t targetUID, std::string targetName) = 0;
 			virtual void disconnect(std::shared_ptr<hv::v2::icompositeNode> targetNode, std::string targetName) = 0;

@@ -274,6 +274,20 @@ HV::V2::ICompositeNode^ HV::V2::Context::Search(System::String^ name) {
 }
 
 
+bool HV::V2::Context::CheckConnectability(std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName) {
+	try {
+		return this->_instance->checkConnectability(sourceUID, msclr::interop::marshal_as<std::string>(sourceName),
+										     targetUID, msclr::interop::marshal_as<std::string>(targetName));
+
+	}
+	catch (hv::v2::oexception e) {
+		return false;
+	}
+	catch (std::exception e) {
+		return false;
+	}
+}
+
 
 
 void HV::V2::Context::Connect(std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName) {

@@ -56,7 +56,8 @@ namespace GraphViewerTest
             {
                 X = 100,
                 Y = 100,
-                IsSelected = false
+                IsSelected = false,
+                Name = "test",
             });
         }
     }

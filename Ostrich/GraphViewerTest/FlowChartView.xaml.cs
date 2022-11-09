@@ -37,13 +37,28 @@ namespace GraphViewerTest
             get { return _NodeCanvas; }
         }
 
+        protected FrameworkElement? _ConnectorCanvas = null;
+        public FrameworkElement? ConnectorCanvas
+        {
+            get { return _ConnectorCanvas; }
+        }
+
+
+
+
         protected Point _RightButtonDownPos;
         protected Point _LeftButtonDownPos;
         protected Point _PrevMousePosOnCanvas;
+
+        protected Point _SelectionCanvasStartPos;
+        protected Point _SelectionCanvasEndPose;
+
         protected bool _IsDraggingCanvas;
         protected bool _IsNodeDragging;
+        protected bool _IsNodePropertyDragging;
+        protected bool _IsDragSelectionStart = false;
         private Matrix _ZoomAndPanStartMatrix;
-        private NodeViewModel _SelectedNodeViewModel = null;
+        private NodePropertyViewModel _SelectedNodePropertyViewModel = null;
         #endregion
 
 
@@ -70,6 +85,11 @@ namespace GraphViewerTest
                 this._NodeCanvas = ViewUtil.FindChild<Canvas>(this.PART_NodeViewContainer);
             }
 
+            if (this._ConnectorCanvas == null)
+            {
+                this._ConnectorCanvas = ViewUtil.FindChild<Canvas>(this.PART_ConnectorViewContainer);
+            }
+
             this._ZoomAndPan.UpdateTransform += _ZoomAndPan_UpdateTransform;
         }
 
@@ -77,6 +97,10 @@ namespace GraphViewerTest
         {
             if(this._NodeCanvas != null)
                 this._NodeCanvas.RenderTransform = new MatrixTransform(this._ZoomAndPan.Matrix);
+
+
+            if(this._ConnectorCanvas != null)
+                this._ConnectorCanvas.RenderTransform = new MatrixTransform(this._ZoomAndPan.Matrix);
         }
 
 
@@ -116,39 +140,65 @@ namespace GraphViewerTest
                 if (clickedItem.DataContext.GetType() == typeof(NodeViewModel))
                 {
 
-
                     var nodeViewModel = clickedItem.DataContext as NodeViewModel;
-                    nodeViewModel.IsSelected = true;
                     Mouse.Capture(this, CaptureMode.SubTree);//?????????????????
 
-                    //이전에 선택되어 있는 아이템 선택 해제 
-                    if (nodeViewModel != this._SelectedNodeViewModel && this._SelectedNodeViewModel != null)
-                        this._SelectedNodeViewModel.IsSelected = false;
 
+                    //그룹선택하여 이동시에 선택이 해제되지 않도록 
+                    if (Keyboard.IsKeyDown(Key.LeftShift) == false)
+                    {                    
+                        //DeSelection
+                        foreach (var node in this.NodeViewModelCollection)
+                        {
 
-                    if(nodeViewModel.IsSelected)
-                    {
-                        // 현재 아이템으로 선택 설정 드래깅 시작 
-                        this._SelectedNodeViewModel = nodeViewModel;
-                        _IsNodeDragging = true;
+                            node.IsSelected = false;
+                        }
+                        //DeSelection
                     }
+
+                    this._IsNodeDragging = true;
+
+                    //Selection Activation;
+                    nodeViewModel.IsSelected = true;
                 }
 
+
+                if(clickedItem.DataContext.GetType() == typeof(NodePropertyViewModel))
+                {
+                    var property = clickedItem.DataContext as NodePropertyViewModel;
+                    property.IsPressed = true;
+                    Mouse.Capture(this, CaptureMode.SubTree);//?????????????????
+
+                    this._SelectedNodePropertyViewModel = property;
+                    this._IsNodePropertyDragging = true;
+                }
             }
             else
-            {    //노드가 아닌 오브젝트를 선택시 선택되어있던 오브젝트 해제 
-                if (this._SelectedNodeViewModel != null)
+            {
+
+                //DeSelection
+                foreach (var node in this.NodeViewModelCollection)
                 {
-                    this._SelectedNodeViewModel.IsSelected = false;
+                    node.IsSelected = false;
+                }
+                //DeSelection
+
+                //Selection Start 
+                if (Keyboard.IsKeyDown(Key.LeftShift))
+                {
+                    this._IsDragSelectionStart = true;
+                    Point mousePos = e.GetPosition(this.PART_DragAndSelectionCanvas);
+                    this.SelectionStartX = mousePos.X;
+                    this.SelectionStartY = mousePos.Y;
+                    this.SelectionVisibility = Visibility.Visible;
+
+                    this._SelectionCanvasStartPos = e.GetPosition(this.NodeCanvas);
                 }
             }
 
 
 
 
-
-
-            System.Diagnostics.Debug.WriteLine("test");
         }
 
         protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -160,6 +210,24 @@ namespace GraphViewerTest
             if (this._IsNodeDragging == true)
             {
                 this._IsNodeDragging = false;
+                Mouse.Capture(null);
+            }
+
+            if(this._IsNodePropertyDragging == true)
+            {
+                if (this._SelectedNodePropertyViewModel != null)
+                    this._SelectedNodePropertyViewModel.IsPressed = false;
+                this._IsNodePropertyDragging = false;
+                Mouse.Capture(null);
+            }
+
+
+            if(this._IsDragSelectionStart == true)
+            {
+                this._IsDragSelectionStart = false;
+                this.SelectionVisibility = Visibility.Hidden;
+                this.SelectionWidth = 0;
+                this.SelectionHeight = 0;
                 Mouse.Capture(null);
             }
         }
@@ -181,7 +249,11 @@ namespace GraphViewerTest
             // Dragging Test!!!
             // Dragging Test!!!
 
+
             this._IsDraggingCanvas = true;
+
+
+
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -201,8 +273,54 @@ namespace GraphViewerTest
 
             if (this._IsNodeDragging)
             {
-                this._SelectedNodeViewModel.X += delta.X / _ZoomAndPan.Scale;
-                this._SelectedNodeViewModel.Y += delta.Y / _ZoomAndPan.Scale;
+                //Group Selection Start
+                foreach (var node in this.NodeViewModelCollection)
+                {
+
+                    if (node.IsSelected == true)
+                    {
+                        node.X += delta.X / _ZoomAndPan.Scale;
+                        node.Y += delta.Y / _ZoomAndPan.Scale;
+                    }
+                }
+            }
+
+
+            if (this._IsDragSelectionStart)
+            {
+
+                Point dragCanvasMousePos = e.GetPosition(this.PART_DragAndSelectionCanvas);
+
+                if(dragCanvasMousePos.X - this.SelectionStartX > 0)
+                {
+                    this.SelectionWidth = dragCanvasMousePos.X - this.SelectionStartX;
+                }
+
+                if(dragCanvasMousePos.Y - this.SelectionStartY > 0)
+                {
+                    this.SelectionHeight = dragCanvasMousePos.Y - this.SelectionStartY;
+                }
+
+
+                this._SelectionCanvasEndPose = e.GetPosition(this.NodeCanvas);
+
+
+                //Group Selection Start
+                foreach(var node in this.NodeViewModelCollection)
+                {
+
+                    if(node.X > this._SelectionCanvasStartPos.X &&
+                       node.X < this._SelectionCanvasEndPose.X &&
+                       node.Y > this._SelectionCanvasStartPos.Y &&
+                       node.Y < this._SelectionCanvasEndPose.Y)
+                    {
+                        node.IsSelected = true;
+                    }
+                    else
+                    {
+                        node.IsSelected = false;
+                    }
+                }
             }
 
 
@@ -254,6 +372,83 @@ namespace GraphViewerTest
                 SetValue(NodeViewModelCollectionProperty, value);
             }
         }
+
+
+
+        public static readonly DependencyProperty SelectionVisibilityProperty = DependencyProperty.Register("SelectionVisibility", typeof(Visibility), typeof(FlowChartView), new PropertyMetadata(Visibility.Hidden));
+        public Visibility SelectionVisibility
+        {
+            get
+            {
+                return (Visibility)GetValue(SelectionVisibilityProperty);
+            }
+
+            set
+            {
+                SetValue(SelectionVisibilityProperty, value);
+            }
+        }
+
+
+
+        public static readonly DependencyProperty SelectionStartXProperty = DependencyProperty.Register("SelectionStartX", typeof(double), typeof(FlowChartView), new PropertyMetadata(0.0));
+        public double SelectionStartX
+        {
+            get
+            {
+                return (double)GetValue(SelectionStartXProperty);
+            }
+
+            set
+            {
+                SetValue(SelectionStartXProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty SelectionStartYProperty = DependencyProperty.Register("SelectionStartY", typeof(double), typeof(FlowChartView), new PropertyMetadata(0.0));
+        public double SelectionStartY
+        {
+            get
+            {
+                return (double)GetValue(SelectionStartYProperty);
+            }
+
+            set
+            {
+                SetValue(SelectionStartYProperty, value);
+            }
+        }
+
+
+        public static readonly DependencyProperty SelectionWidthProperty = DependencyProperty.Register("SelectionWidth", typeof(double), typeof(FlowChartView), new PropertyMetadata(0.0));
+        public double SelectionWidth
+        {
+            get
+            {
+                return (double)GetValue(SelectionWidthProperty);
+            }
+
+            set
+            {
+                SetValue(SelectionWidthProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty SelectionHeightProperty = DependencyProperty.Register("SelectionHeight", typeof(double), typeof(FlowChartView), new PropertyMetadata(0.0));
+        public double SelectionHeight
+        {
+            get
+            {
+                return (double)GetValue(SelectionHeightProperty);
+            }
+
+            set
+            {
+                SetValue(SelectionHeightProperty, value);
+            }
+        }
+
+
         #endregion
     }
 }

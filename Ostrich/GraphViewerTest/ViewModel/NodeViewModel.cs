@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,18 +12,26 @@ namespace GraphViewerTest.ViewModel
     {
 
         #region PrivateProperty
-
         private bool _IsSelected = false;
         private double _X = 0;
         private double _Y = 0;
-
+        private string _Name = "";
+        private ObservableCollection<NodePropertyViewModel> _InputCollection = new ObservableCollection<NodePropertyViewModel>();
+        private ObservableCollection<NodePropertyViewModel> _OutputCollection = new ObservableCollection<NodePropertyViewModel>();
         #endregion
 
 
         #region Constructor
-        public NodeViewModel() { 
-        
-        
+        public NodeViewModel() {
+            this._InputCollection.Add(new NodePropertyViewModel()
+            {
+                Name = "test",
+                IsConnected = true,
+            });
+            this._OutputCollection.Add(new NodePropertyViewModel()
+            {
+                Name = "test"
+            });
         }
         #endregion
 
@@ -34,6 +43,7 @@ namespace GraphViewerTest.ViewModel
             get => _IsSelected;
             set => SetProperty(ref _IsSelected, value);
         }
+
 
         public double X
         {
@@ -55,7 +65,26 @@ namespace GraphViewerTest.ViewModel
             }
         }
 
+        public string Name
+        {
+            get => _Name;
+            set => SetProperty(ref _Name, value);
+        }
+        #endregion
 
+
+
+
+        #region Collection
+        public ObservableCollection<NodePropertyViewModel> InputCollection
+        {
+            get => _InputCollection;
+        }
+
+        public ObservableCollection<NodePropertyViewModel> OutputCollection
+        {
+            get => _OutputCollection;
+        }
         #endregion
     }
 }

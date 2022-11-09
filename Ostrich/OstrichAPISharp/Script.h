@@ -23,6 +23,7 @@ namespace HV {
 			virtual HV::V2::ICompositeNode^ Search(System::String^ context_name, std::size_t uid);
 			virtual HV::V2::ICompositeNode^ Search(System::String^ context_name, System::String^ name);
 
+			virtual bool CheckConnectability(System::String^ context_name, std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName);
 
 			virtual void Connect(System::String^ context_name, std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName);
 			virtual void Connect(System::String^ context_name, HV::V2::ICompositeNode^ sourceNode, System::String^ sourceName, HV::V2::ICompositeNode^ targetNode, System::String^ targetName);

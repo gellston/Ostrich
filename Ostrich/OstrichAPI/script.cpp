@@ -78,6 +78,24 @@ std::shared_ptr<hv::v2::icompositeNode> hv::v2::script::search(std::string conte
 	}
 }
 
+
+bool hv::v2::script::checkConnectability(std::string context_name, std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) {
+	try {
+		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
+			return false;
+		}
+
+		return this->_instance->_contextes[context_name]->checkConnectability(sourceUID, sourceName, targetUID, targetName);
+	}
+	catch (hv::v2::oexception e) {
+		return false;
+	}
+	catch (std::exception e) {
+		return false;
+	}
+}
+
+
 void hv::v2::script::connect(std::string context_name, std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {

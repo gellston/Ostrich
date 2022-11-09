@@ -16,9 +16,35 @@
     </UserControl.Resources>
     <Grid ClipToBounds="True"
           Background="{StaticResource FlowChartViewBackGroundColor}">
+
+        <view:ConnectorViewContainer x:Name="PART_ConnectorViewContainer">
+            
+        </view:ConnectorViewContainer>
+        
         <view:NodeViewsContainer x:Name="PART_NodeViewContainer"
                                  NodeViewModelCollection="{Binding ElementName=FlowChartViewControl, Path=NodeViewModelCollection, UpdateSourceTrigger=PropertyChanged}">
             
         </view:NodeViewsContainer>
+
+        <Canvas Name="PART_DragAndSelectionCanvas" 
+				Visibility="{Binding ElementName=FlowChartViewControl, Path=SelectionVisibility}"
+				IsHitTestVisible="False"
+				HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Border Canvas.Left="{Binding ElementName=FlowChartViewControl, Path=SelectionStartX}"
+					Canvas.Top="{Binding ElementName=FlowChartViewControl, Path=SelectionStartY}"
+					Canvas.ZIndex="1"
+					Width="{Binding ElementName=FlowChartViewControl, Path=SelectionWidth}"
+					Height="{Binding ElementName=FlowChartViewControl, Path=SelectionHeight}"
+					BorderBrush="LightBlue"
+					BorderThickness="2"/>
+            <Border Canvas.Left="{Binding ElementName=FlowChartViewControl, Path=SelectionStartX}"
+					Canvas.Top="{Binding ElementName=FlowChartViewControl, Path=SelectionStartY}"
+					Canvas.ZIndex="0"
+					Width="{Binding ElementName=FlowChartViewControl, Path=SelectionWidth}"
+					Height="{Binding ElementName=FlowChartViewControl, Path=SelectionHeight}"
+					Background="LightBlue"
+					Opacity="0.4"/>
+        </Canvas>
+
     </Grid>
 </UserControl>

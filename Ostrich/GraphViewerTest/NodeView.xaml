@@ -8,16 +8,18 @@
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="view"
              xmlns:view="clr-namespace:GraphViewerTest"
+             xmlns:vm="clr-namespace:GraphViewerTest.ViewModel"
              MinWidth="120"
              MinHeight="120">
     <UserControl.Resources>
         <SolidColorBrush x:Key="NodeBackGroundColor" Color="#121212"/>
         <SolidColorBrush x:Key="NodeBackGroundOverColor" Color="#323232"/>
+        <SolidColorBrush x:Key="FlowChartViewBackGroundColor" Color="#303030"/>
     </UserControl.Resources>
     <Grid>
-        <Border Background="{StaticResource NodeBackGroundColor}"
-                Margin="2"
-                Opacity="0.9">
+        <Border Margin="2"
+                Opacity="0.9"
+                Background="{StaticResource NodeBackGroundColor}">
             <Border.Effect>
                 <BlurEffect KernelType="Box" Radius="{Binding ElementName=view, Path=CornerRadius, UpdateSourceTrigger=PropertyChanged}"/>
             </Border.Effect>
@@ -31,37 +33,148 @@
             <Grid Background="Transparent">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="5"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Border Grid.Row="0"
                         Background="DarkRed">
-                    <TextBlock Text="Test"
+                    <TextBlock Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
                                Foreground="White"
                                FontWeight="SemiBold"></TextBlock>
                 </Border>
                 
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <!--Input-->
                     <Grid Grid.Column="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
+                        <ItemsControl ItemsSource="{Binding Path=InputCollection}"
+                                      Background="Transparent"
+                                      HorizontalAlignment="Left"
+                                      HorizontalContentAlignment="Left"
+                                      VerticalContentAlignment="Center"
+                                      VerticalAlignment="Top">
+                            <ItemsControl.Resources>
+                                <DataTemplate DataType="{x:Type vm:NodePropertyViewModel}">
+                                    <Grid Background="Transparent"
+                                          VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="14"></ColumnDefinition>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0"
+                                                BorderThickness="2"
+                                                Height="10"
+                                                Width="10"
+                                                CornerRadius="5"
+                                                Margin="1">
+                                            <Border.Style>
+                                                <Style TargetType="{x:Type Border}">
+                                                    <Setter Property="Background" Value="Transparent"></Setter>
+                                                    <Setter Property="BorderBrush" Value="White"></Setter>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="BorderBrush" Value="Orange"></Setter>
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                            <Setter Property="Background" Value="White"></Setter>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                                            <Setter Property="Background" Value="White"></Setter>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+
+                                            </Border.Style>
+                                        </Border>
+                                        <TextBlock Text="{Binding Name}"
+                                                   Foreground="White"
+                                                   Grid.Column="1"
+                                                   VerticalAlignment="Center"
+                                                   Margin="5,0,0,0"
+                                                   TextAlignment="Left"
+                                                   Name="NodeName">
+                                          
+                                        </TextBlock>
+                                        
+                                    </Grid>
+                          
+                                </DataTemplate>
+                            </ItemsControl.Resources>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                IsItemsHost="True"
+                                                VerticalAlignment="Center"></StackPanel>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
                     </Grid>
 
                     <!--Output-->
                     <Grid Grid.Column="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
+                        <ItemsControl ItemsSource="{Binding Path=OutputCollection}"
+                                      Background="Transparent"
+                                      HorizontalAlignment="Right"
+                                      HorizontalContentAlignment="Right"
+                                      VerticalContentAlignment="Center"
+                                      VerticalAlignment="Top">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical"
+                                                IsItemsHost="True"></StackPanel>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type ContentPresenter}">
+                                    <Grid Background="Transparent"
+                                          VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"></ColumnDefinition>
+                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Name}"
+                                                   Foreground="White"
+                                                   Grid.Column="0"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,5,0"
+                                                   TextAlignment="Right"></TextBlock>
 
+                                        <Border Grid.Column="1"
+                                                BorderThickness="2"
+                                                Height="10"
+                                                Width="10"
+                                                CornerRadius="5"
+                                                Margin="1">
+                                            <Border.Style>
+                                                <Style TargetType="{x:Type Border}">
+                                                    <Setter Property="Background" Value="Transparent"></Setter>
+                                                    <Setter Property="BorderBrush" Value="White"></Setter>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="BorderBrush" Value="Orange"></Setter>
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding IsPressed}" Value="True">
+                                                            <Setter Property="Background" Value="White"></Setter>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                                            <Setter Property="Background" Value="White"></Setter>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            
+                                            </Border.Style>
+                                            
+                                        </Border>
+                                    </Grid>
+                        
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </Grid>
                 </Grid>
 

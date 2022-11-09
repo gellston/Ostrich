@@ -236,6 +236,92 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode
 
 }
 
+
+
+bool hv::v2::context::checkConnectability(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) {
+
+	try {
+		auto sourceNode = this->search(sourceUID);
+		auto targetNode = this->search(targetUID);
+
+
+		if (sourceNode == targetNode) {
+			return false;
+		}
+
+		if (sourceNode == nullptr || targetNode == nullptr) {
+			return false;
+		}
+
+
+		try {
+
+			std::stack<std::size_t> current_node_stack;
+			auto inputNodes = sourceNode->inputs();
+
+			for (auto& node : inputNodes) {
+				if (node->isConnected() == true) {
+					current_node_stack.push(node->sourceUID());
+				}
+			}
+
+			while (current_node_stack.empty() != true) {
+				auto _currentUID = current_node_stack.top();
+				current_node_stack.pop();
+
+				auto _currentSourceNode = this->search(_currentUID);
+				if (_currentSourceNode == targetNode) {
+					return false;
+				}
+
+				auto _currentInputNodes = _currentSourceNode->inputs();
+				for (auto& node : _currentInputNodes) {
+					if (node->isConnected() == true) {
+						current_node_stack.push(node->sourceUID());
+					}
+				}
+			}
+
+
+
+			auto sourceConstNode = sourceNode->output(sourceName);
+			auto targetConstNode = targetNode->input(targetName);
+
+
+			if (sourceConstNode->type() != targetConstNode->type()) {
+				return false;
+			}
+
+
+			// Flow Node Connection Check
+			for (auto& pair : this->_instance->_composite_node_look_up_table) {
+
+				if (pair.second->checkSourceUID(sourceNode->uid()) == true) {
+					auto inputs = pair.second->inputs();
+					for (auto& input : inputs) {
+						if (input->type() == (int)hv::v2::objectType::CONST_EXECUTION) {
+							if (input->sourceName() == sourceName && input->isConnected() == true && input->sourceUID() == sourceNode->uid()) {
+								return false;
+							}
+						}
+					}
+				}
+			}
+			// Flow Node Connection Check
+
+		}
+		catch (hv::v2::oexception e) {
+			return false;
+		}
+	}
+	catch (std::exception e) {
+		return false;
+	}
+
+	return true;
+}
+
+
 void hv::v2::context::disconnect(std::string name) {
 
 	try {
