@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,13 @@ namespace GraphViewerTest
         public ConnectorViewContainer()
         {
             InitializeComponent();
+        }
+        public static readonly DependencyProperty ConnectorViewModelCollectionProperty = DependencyProperty.Register("ConnectorViewModelCollection", typeof(ObservableCollection<ViewModel.ConnectorViewModel>), typeof(ConnectorViewContainer));
+        public ObservableCollection<ViewModel.ConnectorViewModel> ConnectorViewModelCollection
+        {
+
+            get => (ObservableCollection<ViewModel.ConnectorViewModel>)GetValue(ConnectorViewModelCollectionProperty);
+            set => SetValue(ConnectorViewModelCollectionProperty, value);
         }
     }
 }

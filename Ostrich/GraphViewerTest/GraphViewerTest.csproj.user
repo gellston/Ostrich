@@ -13,6 +13,12 @@
     <Compile Update="FlowChartView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="NodeInputPropertyView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="NodeOutputPropertyView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="NodeView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -28,6 +34,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="NodeInputPropertyView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="NodeOutputPropertyView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="NodeView.xaml">

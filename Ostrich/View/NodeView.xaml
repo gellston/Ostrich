@@ -1,16 +1,12 @@
-﻿<UserControl x:Class="GraphViewerTest.NodeView"
+<UserControl x:Class="View.NodeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:GraphViewerTest"
+             xmlns:local="clr-namespace:View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              x:Name="view"
-             xmlns:view="clr-namespace:GraphViewerTest"
-             xmlns:vm="clr-namespace:GraphViewerTest.ViewModel"
-             MinWidth="120"
-             MinHeight="120"
              Loaded="view_Loaded">
     
     <UserControl.Resources>
@@ -18,7 +14,7 @@
         <SolidColorBrush x:Key="NodeBackGroundOverColor" Color="#323232"/>
         <SolidColorBrush x:Key="FlowChartViewBackGroundColor" Color="#303030"/>
     </UserControl.Resources>
-    
+
     <Grid x:Name="PART_NodeView">
         <Border Margin="2"
                 Opacity="0.9"
@@ -47,7 +43,7 @@
                                Foreground="White"
                                FontWeight="SemiBold"></TextBlock>
                 </Border>
-                
+
                 <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"></ColumnDefinition>
@@ -68,11 +64,11 @@
                                                 VerticalAlignment="Center"></StackPanel>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
-                            <ItemsControl.Resources>
+                            <!--<ItemsControl.Resources>
                                 <DataTemplate DataType="{x:Type vm:NodePropertyViewModel}">
                                     <view:NodeInputPropertyView></view:NodeInputPropertyView>
                                 </DataTemplate>
-                            </ItemsControl.Resources>
+                            </ItemsControl.Resources>-->
                         </ItemsControl>
                     </Grid>
 
@@ -91,11 +87,11 @@
                                                 VerticalAlignment="Center"></StackPanel>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
+                            <!--<ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type ContentPresenter}">
                                     <view:NodeOutputPropertyView></view:NodeOutputPropertyView>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
+                            </ItemsControl.ItemTemplate>-->
                         </ItemsControl>
                     </Grid>
                 </Grid>
@@ -103,6 +99,4 @@
             </Grid>
         </Border>
     </Grid>
-
-   
 </UserControl>

@@ -1,17 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GraphViewerTest.ViewModel
+namespace ViewModel
 {
-    public class NodePropertyViewModel : ObservableObject
+    public class NodePropertyViewModel : ViewModelBase
     {
 
-        #region PrivateProperty
+        #region Private Property
         private bool _IsOutput = false;
         private bool _IsExecution = false;
         private string _Name = "";
@@ -27,9 +25,8 @@ namespace GraphViewerTest.ViewModel
 
 
         #region Constructor
-        public NodePropertyViewModel()
-        {
-
+        public NodePropertyViewModel() { 
+        
         }
         #endregion
 
@@ -86,7 +83,7 @@ namespace GraphViewerTest.ViewModel
             set
             {
                 SetProperty(ref _X, value);
-                if(this.IsOutput == false)
+                if (this.IsOutput == false)
                 {
                     foreach (var viewModel in this._TargetConnectorCollection)
                     {

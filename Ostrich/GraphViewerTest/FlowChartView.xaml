@@ -17,7 +17,8 @@
     <Grid ClipToBounds="True"
           Background="{StaticResource FlowChartViewBackGroundColor}">
 
-        <view:ConnectorViewContainer x:Name="PART_ConnectorViewContainer">
+        <view:ConnectorViewContainer x:Name="PART_ConnectorViewContainer"
+                                     ConnectorViewModelCollection="{Binding ElementName=FlowChartViewControl, Path=ConnectorViewModellCollection, UpdateSourceTrigger=PropertyChanged}">
             
         </view:ConnectorViewContainer>
         

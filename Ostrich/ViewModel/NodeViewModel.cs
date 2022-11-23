@@ -1,17 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GraphViewerTest.ViewModel
+namespace ViewModel
 {
-    public class NodeViewModel : ObservableObject
+    public class NodeViewModel : ViewModelBase
     {
 
-        #region PrivateProperty
+        #region Private Property
         private bool _IsSelected = false;
         private double _X = 0;
         private double _Y = 0;
@@ -22,50 +17,30 @@ namespace GraphViewerTest.ViewModel
 
 
         #region Constructor
-        public NodeViewModel() {
-            this._InputCollection.Add(new NodePropertyViewModel()
-            {
-                Name = "test",
-                IsConnected = false,
-                IsOutput = false,
-            });
-            this._OutputCollection.Add(new NodePropertyViewModel()
-            {
-                Name = "test",
-                IsConnected = false,
-                IsOutput = true,
-            });
+        public NodeViewModel() { 
+            
+        
         }
         #endregion
 
 
         #region Public Property
-
         public bool IsSelected
         {
             get => _IsSelected;
             set => SetProperty(ref _IsSelected, value);
         }
 
-
         public double X
         {
             get => _X;
-            set
-            {
-                if(_X != value)
-                    SetProperty(ref _X, value);
-            }
+            set => SetProperty(ref _X, value);
         }
 
         public double Y
         {
             get => _Y;
-            set
-            {
-                if (_Y != value)
-                    SetProperty(ref _Y, value);
-            }
+            set => SetProperty(ref _Y, value);
         }
 
         public string Name
@@ -76,18 +51,19 @@ namespace GraphViewerTest.ViewModel
         #endregion
 
 
-
-
         #region Collection
         public ObservableCollection<NodePropertyViewModel> InputCollection
         {
             get => _InputCollection;
+            set => SetProperty(ref _InputCollection, value);
         }
 
         public ObservableCollection<NodePropertyViewModel> OutputCollection
         {
             get => _OutputCollection;
+            set => SetProperty(ref _OutputCollection, value);
         }
         #endregion
+
     }
 }

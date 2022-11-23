@@ -1,8 +1,6 @@
-﻿using GraphViewerTest.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,32 +13,26 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace GraphViewerTest
+namespace View
 {
     /// <summary>
-    /// NodeView.xaml에 대한 상호 작용 논리
+    /// Interaction logic for UserControl1.xaml
     /// </summary>
     public partial class NodeView : UserControl
     {
+
         #region Constructor
         public NodeView()
         {
             InitializeComponent();
-
-
-            
         }
         #endregion
 
-
-
-
         #region DependencyProperty
-
         public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register("IsSelected", typeof(bool), typeof(NodeView), new PropertyMetadata(false));
         public bool IsSelected
         {
-            set => SetValue(IsSelectedProperty, value); 
+            set => SetValue(IsSelectedProperty, value);
             get => (bool)GetValue(IsSelectedProperty);
         }
 
@@ -48,7 +40,7 @@ namespace GraphViewerTest
         public bool HasConnection
         {
             set => SetValue(HasConnectionProperty, value);
-            get => (bool)GetValue (HasConnectionProperty);
+            get => (bool)GetValue(HasConnectionProperty);
         }
 
         public static readonly DependencyProperty SelectionThicknessProperty = DependencyProperty.Register("SelectionThickness", typeof(Thickness), typeof(NodeView), new PropertyMetadata(new Thickness(2.0)));
@@ -73,28 +65,15 @@ namespace GraphViewerTest
             get => (SolidColorBrush)GetValue(BorderSelectionColorProperty);
         }
 
+
         #endregion
 
+        #region EventHandler
         private void view_Loaded(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                //UI Update
-                var viewModel = this.DataContext as NodeViewModel;
-                var x = viewModel.X;
-                var y = viewModel.Y;
-                viewModel.X = -1;
-                viewModel.Y = -1;
-                viewModel.X = x;
-                viewModel.Y = y;
-            }
-            catch(Exception exception)
-            {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-            }
-
 
         }
+        #endregion
 
 
     }

@@ -134,7 +134,6 @@ namespace GraphViewerTest
 
             var mousePosition = Mouse.GetPosition(this);
             var clickedItem = this.InputHitTest(mousePosition) as FrameworkElement;
-
             if(clickedItem != null && clickedItem.DataContext != null)
             {
                 if (clickedItem.DataContext.GetType() == typeof(NodeViewModel))
@@ -281,6 +280,8 @@ namespace GraphViewerTest
                     {
                         node.X += delta.X / _ZoomAndPan.Scale;
                         node.Y += delta.Y / _ZoomAndPan.Scale;
+
+                        
                     }
                 }
             }
@@ -359,6 +360,7 @@ namespace GraphViewerTest
 
 
         #region DependencyObjects
+
         public static readonly DependencyProperty NodeViewModelCollectionProperty = DependencyProperty.Register("NodeViewModelCollection", typeof(ObservableCollection<ViewModel.NodeViewModel>), typeof(FlowChartView));
         public ObservableCollection<ViewModel.NodeViewModel> NodeViewModelCollection
         {
@@ -372,6 +374,21 @@ namespace GraphViewerTest
                 SetValue(NodeViewModelCollectionProperty, value);
             }
         }
+
+        public static readonly DependencyProperty ConnectorViewModellCollectionProperty = DependencyProperty.Register("ConnectorViewModellCollection", typeof(ObservableCollection<ViewModel.ConnectorViewModel>), typeof(FlowChartView));
+        public ObservableCollection<ViewModel.ConnectorViewModel> ConnectorViewModellCollection
+        {
+            get
+            {
+                return (ObservableCollection<ViewModel.ConnectorViewModel>)GetValue(ConnectorViewModellCollectionProperty);
+            }
+
+            set
+            {
+                SetValue(ConnectorViewModellCollectionProperty, value);
+            }
+        }
+
 
 
 

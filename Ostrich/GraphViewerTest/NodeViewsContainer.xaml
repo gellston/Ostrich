@@ -9,7 +9,11 @@
              Background="Transparent"
              xmlns:vm="clr-namespace:GraphViewerTest.ViewModel"
              xmlns:view="clr-namespace:GraphViewerTest"
+             xmlns:converter="clr-namespace:GraphViewerTest.Converter"
              x:Name="view">
+    <UserControl.Resources>
+        <converter:NodePositionConverter x:Key="NodePositionConverter"></converter:NodePositionConverter>
+    </UserControl.Resources>
     <ItemsControl x:Name="NodeViewContainerItemsControl"
                   ItemsSource="{Binding ElementName=view, 
                                         Path=NodeViewModelCollection, 
@@ -40,8 +44,24 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.ItemContainerStyle>
             <Style TargetType="ContentPresenter">
-                <Setter Property="Canvas.Left" Value="{Binding X}"></Setter>
-                <Setter Property="Canvas.Top" Value="{Binding Y}"></Setter>
+                <Setter Property="Canvas.Left">
+                    <Setter.Value>
+                        <MultiBinding Converter="{StaticResource NodePositionConverter}"
+                                      ConverterParameter="X">
+                            <Binding RelativeSource="{RelativeSource Mode=Self}"></Binding>
+                            <Binding Path="X" UpdateSourceTrigger="PropertyChanged" Mode="OneWay"></Binding>
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Canvas.Top">
+                    <Setter.Value>
+                        <MultiBinding Converter="{StaticResource NodePositionConverter}"
+                                      ConverterParameter="Y">
+                            <Binding RelativeSource="{RelativeSource Mode=Self}"></Binding>
+                            <Binding Path="Y" UpdateSourceTrigger="PropertyChanged" Mode="OneWay"></Binding>
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
                 <Setter Property="Panel.ZIndex" Value="1"></Setter>
                 <Setter Property="Margin" Value="0"></Setter>
                 
