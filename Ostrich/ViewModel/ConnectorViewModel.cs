@@ -50,7 +50,7 @@ namespace ViewModel
             set
             {
                 SetProperty(ref _SourceX, value);   
-                ComputeCurve(SourceX, _SourceY, _TargetX, _TargetY);
+                ComputeCurve();
             }
         }
 
@@ -60,7 +60,7 @@ namespace ViewModel
             set
             {
                 SetProperty(ref _SourceY, value);
-                ComputeCurve(SourceX, SourceY, TargetX, TargetY);
+                ComputeCurve();
             }
         }
 
@@ -70,7 +70,7 @@ namespace ViewModel
             set
             {
                 SetProperty(ref _TargetX, value);
-                ComputeCurve(SourceX, SourceY, TargetX, TargetY);
+                ComputeCurve();
             }
         }
 
@@ -80,7 +80,7 @@ namespace ViewModel
             set
             {
                 SetProperty(ref _TargetY, value);
-                ComputeCurve(SourceX, SourceY, TargetX, TargetY);
+                ComputeCurve();
             }
         }
 
@@ -123,10 +123,10 @@ namespace ViewModel
         #endregion
 
         #region Functions
-        public void ComputeCurve(double sourceX, double sourceY, double targetX, double targetY)
+        public void ComputeCurve()
         {
-            Point start = new Point(sourceX, sourceY);
-            Point end = new Point(targetX, targetY);
+            Point start = new Point(this.SourceX, this.SourceY);
+            Point end = new Point(this.TargetX, this.TargetY);
             Point center = new Point((start.X + end.X) * 0.5, (start.Y + end.Y) * 0.5);
 
             if (start.X > end.X)

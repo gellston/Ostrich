@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,15 +12,15 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ViewModel;
 
-namespace View
+namespace UC
 {
     /// <summary>
-    /// Interaction logic for UserControl1.xaml
+    /// NodeView.xaml에 대한 상호 작용 논리
     /// </summary>
     public partial class NodeView : UserControl
     {
-
         #region Constructor
         public NodeView()
         {
@@ -71,10 +71,24 @@ namespace View
         #region EventHandler
         private void view_Loaded(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                //UI Update
+                var viewModel = this.DataContext as NodeViewModel;
+                var x = viewModel.X;
+                var y = viewModel.Y;
+                viewModel.X = -1;
+                viewModel.Y = -1;
+                viewModel.X = x;
+                viewModel.Y = y;
+            }
+            catch (Exception exception)
+            {
+                System.Diagnostics.Debug.WriteLine(exception.Message);
+            }
 
         }
         #endregion
-
 
     }
 }

@@ -17,9 +17,22 @@ namespace ViewModel
 
 
         #region Constructor
-        public NodeViewModel() { 
-            
-        
+        public NodeViewModel() {
+            this._InputCollection.Add(new NodePropertyViewModel()
+            {
+                Name = "test",
+                IsConnected = false,
+                IsOutput = false,
+                ObjectType = 1,
+            });
+            this._OutputCollection.Add(new NodePropertyViewModel()
+            {
+                Name = "test",
+                IsConnected = false,
+                IsOutput = true,
+                ObjectType = 1,
+            });
+
         }
         #endregion
 

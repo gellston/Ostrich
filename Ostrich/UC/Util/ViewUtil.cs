@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows;
 
-namespace View
+namespace UC.Util
 {
     public class ViewUtil
     {
@@ -14,7 +14,7 @@ namespace View
         {
             DependencyObject? parent = VisualTreeHelper.GetParent(child);
 
-            if ((null == parent) || parent is T)
+            if (null == parent || parent is T)
                 return parent as T;
 
             return FindFirstParent<T>(parent);
@@ -25,7 +25,7 @@ namespace View
             DependencyObject? parent = VisualTreeHelper.GetParent(child);
 
             T? parentAsT = parent as T;
-            if ((null != parentAsT) && ((parentAsT as FrameworkElement).Name == parentName))
+            if (null != parentAsT && (parentAsT as FrameworkElement).Name == parentName)
                 return parentAsT;
 
             return FindFirstParent<T>(parent);
@@ -38,7 +38,7 @@ namespace View
                 var child = VisualTreeHelper.GetChild(parent, i);
                 if (child is T)
                     outChildren.Add(child as T);
-                FindChildren<T>(child, outChildren);
+                FindChildren(child, outChildren);
             }
         }
 
