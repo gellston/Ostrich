@@ -11,6 +11,7 @@ namespace ViewModel
         private double _X = 0;
         private double _Y = 0;
         private string _Name = "";
+        private ulong _Uid = 0;
         private ObservableCollection<NodePropertyViewModel> _InputCollection = new ObservableCollection<NodePropertyViewModel>();
         private ObservableCollection<NodePropertyViewModel> _OutputCollection = new ObservableCollection<NodePropertyViewModel>();
         #endregion
@@ -24,6 +25,8 @@ namespace ViewModel
                 IsConnected = false,
                 IsOutput = false,
                 ObjectType = 1,
+                Uid = this.Uid,
+                ParentNodeViewModel = this
             });
             this._OutputCollection.Add(new NodePropertyViewModel()
             {
@@ -31,6 +34,8 @@ namespace ViewModel
                 IsConnected = false,
                 IsOutput = true,
                 ObjectType = 1,
+                Uid = this.Uid,
+                ParentNodeViewModel = this
             });
 
         }
@@ -38,6 +43,13 @@ namespace ViewModel
 
 
         #region Public Property
+
+        public ulong Uid
+        {
+            get => _Uid;
+            set => SetProperty(ref _Uid, value);
+        }
+
         public bool IsSelected
         {
             get => _IsSelected;

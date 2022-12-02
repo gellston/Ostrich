@@ -7,17 +7,22 @@ namespace hv {
 		class impl_constNode {
 		public:
 			bool _isConnected;
+			bool _isMultiple;
 			std::size_t _sourceUID;
 			std::string _sourceName;
 
 			bool _isFreezed;
 			int _index;
 
+			std::vector<std::size_t> _sourceMultiUID;
+			std::vector<std::string> _sourceMultiNames;
+
 			impl_constNode() {
 				_isConnected = false;
 				_sourceUID = 0;
 				_sourceName = "";
 				_isFreezed = false;
+				_isMultiple = false;
 				_index = 0;
 			}
 		};
@@ -45,6 +50,14 @@ void hv::v2::constNode::isConnected(bool value) {
 	this->_instance->_isConnected = value;
 }
 
+bool hv::v2::constNode::isMultiple() {
+	return this->_instance->_isMultiple;
+}
+void hv::v2::constNode::isMultiple(bool value) {
+	this->_instance->_isMultiple = value;
+}
+
+
 int hv::v2::constNode::index() {
 	return this->_instance->_index;
 }
@@ -70,6 +83,21 @@ std::string hv::v2::constNode::sourceName() {
 
 void hv::v2::constNode::sourceName(std::string name) {
 	this->_instance->_sourceName = name;
+}
+
+
+std::vector<std::size_t> hv::v2::constNode::sourceMultiUID() {
+	return this->_instance->_sourceMultiUID;
+}
+std::vector<std::string> hv::v2::constNode::sourceMultiNames() {
+	return this->_instance->_sourceMultiNames;
+}
+
+void hv::v2::constNode::sourceMultiUID(std::vector<std::size_t> uids) {
+	this->_instance->_sourceMultiUID = uids;
+}
+void hv::v2::constNode::sourceMultiNames(std::vector<std::string> names) {
+	this->_instance->_sourceMultiNames = names;
 }
 
 

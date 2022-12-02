@@ -339,8 +339,6 @@ namespace UC
         {
             base.OnMouseLeftButtonUp(e);
 
-
-
             if (this._IsNodeDragging == true)
             {
                 this._IsNodeDragging = false;
@@ -350,12 +348,83 @@ namespace UC
             if (this._IsNodePropertyDragging == true)
             {
                 if (this._SelectedNodePropertyViewModel != null)
+                {
                     this._SelectedNodePropertyViewModel.IsPressed = false;
+
+                    //Final Connection 
+                    //Final Connection 
+                    var mousePosition = Mouse.GetPosition(this);
+                    var clickedItem = this.InputHitTest(mousePosition) as FrameworkElement;
+                    if (clickedItem != null && clickedItem.DataContext != this.DataContext)
+                    {
+                        if (clickedItem.DataContext.GetType() == typeof(NodePropertyViewModel) && 
+                            this._SelectedNodePropertyViewModel != clickedItem.DataContext &&
+                            this._SelectedNodePropertyViewModel.IsOutput != ((NodePropertyViewModel)clickedItem.DataContext).IsOutput)
+                        {
+                            var targetNodePropertyViewModel = clickedItem.DataContext as NodePropertyViewModel;
+
+                            if (this.PreviewCurveStart2End == true && 
+                                targetNodePropertyViewModel.IsConnected == false)
+                            {
+
+                                var connector = new ConnectorViewModel()
+                                {
+                                    SourceNodeUID = this._SelectedNodePropertyViewModel.Uid,
+                                    SourceObjectType = this._SelectedNodePropertyViewModel.ObjectType,
+                                    SourcePropertyName = this._SelectedNodePropertyViewModel.Name,
+                                    SourceX = this._SelectedNodePropertyViewModel.X,
+                                    SourceY = this._SelectedNodePropertyViewModel.Y,
+
+                                    TargetNodeUID = targetNodePropertyViewModel.Uid,
+                                    TargetObjectType = targetNodePropertyViewModel.ObjectType,
+                                    TargetPropertyName = targetNodePropertyViewModel.Name,
+                                    TargetX = targetNodePropertyViewModel.X,
+                                    TargetY = targetNodePropertyViewModel.Y
+                                };
+
+                                this._SelectedNodePropertyViewModel.RegisterSourceConnectorViewModel(connector);
+                                targetNodePropertyViewModel.RegisterTargetConnectorViewModel(connector);
+                                this.ConnectorViewModellCollection.Add(connector);
+
+                                targetNodePropertyViewModel.IsConnected = true;
+
+                            }
+
+                            if(this.PreviewCurveEnd2Start == true &&
+                                this._SelectedNodePropertyViewModel.IsConnected == false)
+                            {
+                                var connector = new ConnectorViewModel()
+                                {
+                                    SourceNodeUID = targetNodePropertyViewModel.Uid,
+                                    SourceObjectType = targetNodePropertyViewModel.ObjectType,
+                                    SourcePropertyName = targetNodePropertyViewModel.Name,
+                                    SourceX = targetNodePropertyViewModel.X,
+                                    SourceY = targetNodePropertyViewModel.Y,
+
+                                    TargetNodeUID = _SelectedNodePropertyViewModel.Uid,
+                                    TargetObjectType = _SelectedNodePropertyViewModel.ObjectType,
+                                    TargetPropertyName = _SelectedNodePropertyViewModel.Name,
+                                    TargetX = _SelectedNodePropertyViewModel.X,
+                                    TargetY = _SelectedNodePropertyViewModel.Y
+                                };
+
+                                this._SelectedNodePropertyViewModel.RegisterTargetConnectorViewModel(connector);
+                                targetNodePropertyViewModel.RegisterSourceConnectorViewModel(connector);
+                                this.ConnectorViewModellCollection.Add(connector);
+
+                                this._SelectedNodePropertyViewModel.IsConnected = true;
+                            }
+                            
+                        }
+                    }
+                    //Final Connection 
+                    //Final Connection 
+                }
+
                 this._IsNodePropertyDragging = false;
                 this.ConnectorVisibility = Visibility.Hidden;
                 Mouse.Capture(null);
             }
-
 
             if (this._IsDragSelectionStart == true)
             {

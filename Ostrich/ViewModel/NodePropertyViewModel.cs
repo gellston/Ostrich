@@ -21,6 +21,7 @@ namespace ViewModel
         private double _Y = 0;
         private List<ConnectorViewModel> _SourceConnectorCollection = new List<ConnectorViewModel>();
         private List<ConnectorViewModel> _TargetConnectorCollection = new List<ConnectorViewModel>();
+        private NodeViewModel _ParentNodeViewModel = null;
         #endregion
 
 
@@ -76,6 +77,13 @@ namespace ViewModel
             get => _ObjectType;
             set => SetProperty(ref _ObjectType, value);
         }
+
+        public NodeViewModel ParentNodeViewModel
+        {
+            get => _ParentNodeViewModel;
+            set => SetProperty(ref _ParentNodeViewModel, value);
+        }
+
 
         public double X
         {

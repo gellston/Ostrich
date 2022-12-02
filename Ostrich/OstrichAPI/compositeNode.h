@@ -60,7 +60,7 @@ namespace hv {
 			OSTRICH_COMMON_API void uid(std::size_t value) override;
 
 			OSTRICH_COMMON_API hv::v2::resultType call() override;
-			OSTRICH_COMMON_API void update() override;
+			OSTRICH_COMMON_API void updateConst(std::size_t uid) override;
 
 
 

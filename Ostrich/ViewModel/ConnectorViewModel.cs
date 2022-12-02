@@ -12,12 +12,12 @@ namespace ViewModel
 
         #region Private Property
         private ulong _SourceNodeUID = 0;
-        private ulong _SourcePropertyUID = 0;
-        private int _SourceType = 0;
+        private string _SourcePropertyName = "";
+        private int _SourceObjectType = 0;
 
         private ulong _TargetNodeUID = 0;
-        private ulong _TargetPropertyUID = 0;
-        private int _TargetType = 0;
+        private string _TargetPropertyName = "";
+        private int _TargetObjectType = 0;
 
         private string _Curve = "";
 
@@ -26,6 +26,8 @@ namespace ViewModel
 
         private double _TargetX = 0;
         private double _TargetY = 0;
+
+
 
         #endregion
 
@@ -90,17 +92,18 @@ namespace ViewModel
             set => SetProperty(ref _SourceNodeUID, value);
         }
 
-        public ulong SourcePropertyUID
+        public string SourcePropertyName
         {
-            get => _SourcePropertyUID;
-            set => SetProperty(ref _SourcePropertyUID, value);
+            get => _SourcePropertyName;
+            set => SetProperty(ref _SourcePropertyName, value);
         }
 
-        public int SourceType
+        public int SourceObjectType
         {
-            get => _SourceType;
-            set => SetProperty(ref _SourceType, value);
+            get => _SourceObjectType;
+            set => SetProperty(ref _SourceObjectType, value);
         }
+
 
 
         public ulong TargetNodeUID
@@ -109,17 +112,19 @@ namespace ViewModel
             set => SetProperty(ref _TargetNodeUID, value);
         }
 
-        public ulong TargetPropertyUID
+        public string TargetPropertyName
         {
-            get => _TargetPropertyUID;
-            set => SetProperty(ref _TargetPropertyUID, value);
+            get => _TargetPropertyName;
+            set => SetProperty(ref _TargetPropertyName, value);
         }
 
-        public int TargetType
+        public int TargetObjectType
         {
-            get => _TargetType;
-            set => SetProperty(ref _TargetType, value);
+            get => _TargetObjectType;
+            set => SetProperty(ref _TargetObjectType, value);
         }
+
+
         #endregion
 
         #region Functions

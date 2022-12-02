@@ -24,6 +24,13 @@ namespace hv {
 			OSTRICH_COMMON_API bool isConnected() override;
 			OSTRICH_COMMON_API void isConnected(bool value) override;
 
+
+
+			OSTRICH_COMMON_API bool isMultiple() override;
+			OSTRICH_COMMON_API void isMultiple(bool value) override;
+
+
+
 			OSTRICH_COMMON_API int index() override;
 			OSTRICH_COMMON_API void index(int _index) override;
 
@@ -36,6 +43,11 @@ namespace hv {
 			OSTRICH_COMMON_API void sourceName(std::string value) override;
 
 
+			OSTRICH_COMMON_API std::vector<std::size_t> sourceMultiUID() override;
+			OSTRICH_COMMON_API std::vector<std::string> sourceMultiNames() override;
+
+			OSTRICH_COMMON_API void sourceMultiUID(std::vector<std::size_t> uids) override;
+			OSTRICH_COMMON_API void sourceMultiNames(std::vector<std::string> names) override;
 
 
 			OSTRICH_COMMON_API std::string name() override;

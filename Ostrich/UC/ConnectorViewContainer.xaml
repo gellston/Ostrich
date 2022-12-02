@@ -18,7 +18,7 @@
                     <Path Data="{Binding Curve}"
                               StrokeDashOffset="2"
                               StrokeThickness="8"
-                              Stroke="Orange">
+                              Stroke="Green">
 
                     </Path>
                     <Path Data="{Binding Curve}"

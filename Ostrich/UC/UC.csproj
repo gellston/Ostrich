@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DevExpress.Wpf" Version="21.2.8" />
+    <PackageReference Include="DevExpress.Wpf.Core" Version="21.2.8" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
 

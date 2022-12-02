@@ -85,9 +85,14 @@ hv::v2::context::~context() {
 
 
 
-void hv::v2::context::onNodeComplete(int nodeType, std::size_t composite_uid, std::vector<std::size_t> output_uid) {
+void hv::v2::context::onProcessComplete(int nodeType, std::size_t composite_uid, std::vector<std::size_t> output_uid) {
 
 	std::cout << "type : " << nodeType << ", uid : " << composite_uid << std::endl;
+}
+
+void hv::v2::context::onConstChanged(std::size_t constUID) {
+
+	std::cout << "const uid : " << constUID << std::endl;
 }
 
 
@@ -644,7 +649,7 @@ std::string hv::v2::context::serialization() {
 				{"isFreezed", node.second->isFreezed()}
 			};
 
-
+			//Input Node Serialization
 			auto inputs = node.second->inputs();
 			for (auto& input : inputs) {
 				nlohmann::json input_json = {
@@ -652,13 +657,14 @@ std::string hv::v2::context::serialization() {
 					{"type", input->type()},
 					{"uid", input->uid()},
 					{"isConnected", input->isConnected()},
+					{"isMultiple", input->isMultiple()},
 					{"sourceName", input->sourceName()},
 					{"sourceUID", input->sourceUID()},
 					{"index", input->index()}
 				};
 				composite_node["inputs"].push_back(input_json);
 			}
-
+			//Output Node Serialization
 			auto outputs = node.second->outputs();
 			for (auto& output : outputs) {
 				nlohmann::json output_json = {
@@ -716,6 +722,7 @@ void hv::v2::context::deserialization(std::string value) {
 			std::vector<std::shared_ptr<hv::v2::iconstNode>> inputs;
 			for (auto& input : node["inputs"]) {
 				auto isConnected = input["isConnected"].get<bool>();
+				auto isMultiple = input["isMultiple"].get<bool>();
 				auto constNodeName = input["name"].get<std::string>();
 				auto constNodeType = input["type"].get<int>();
 				auto constNodeUID = input["uid"].get<std::size_t>();
@@ -733,6 +740,7 @@ void hv::v2::context::deserialization(std::string value) {
 				createdConstNode->sourceUID(sourceUID);
 				createdConstNode->isConnected(isConnected);
 				createdConstNode->index(index);
+				createdConstNode->isMultiple(isMultiple);
 				inputs.push_back(createdConstNode);
 			}
 			createdNode->replaceInputs(inputs);
@@ -1319,7 +1327,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::context::find(std::size_t uid, std::
 		auto node = this->_instance->_composite_node_look_up_table[uid];
 
 		if (node->depth() >= depth) {
-			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invaliid graph depth");
+			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid graph depth");
 			throw hv::v2::oexception(message);
 		}
 

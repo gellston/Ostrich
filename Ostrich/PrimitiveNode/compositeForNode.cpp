@@ -68,7 +68,7 @@ hv::v2::resultType hv::v2::compositeForNode::process() {
 				std::cout << "for loop counting : " << _index << std::endl;
 				index->data(_index);
 	
-				this->update();
+				this->updateConst(index->uid());
 				
 				auto result = loop->call();
 				switch (result)

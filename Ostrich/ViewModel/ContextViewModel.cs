@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace ViewModel
         #region PrivateProperty
         private string _Name = "";
         private string _NativeContext = "";
+        private ObservableCollection<NodeViewModel> _NodeViewModelCollection = new ObservableCollection<NodeViewModel>();
+        private ObservableCollection<ConnectorViewModel> _ConnectorViewModelCollection = new ObservableCollection<ConnectorViewModel>();
         #endregion
 
 
@@ -37,6 +40,18 @@ namespace ViewModel
         {
             get => _NativeContext;
             set => SetProperty(ref _NativeContext, value);  
+        }
+
+        public ObservableCollection<ConnectorViewModel> ConnectorViewModelCollection
+        {
+            get => _ConnectorViewModelCollection;
+            set => SetProperty(ref _ConnectorViewModelCollection, value);
+        }
+
+        public ObservableCollection<NodeViewModel> NodeViewModelCollection
+        {
+            get => _NodeViewModelCollection;
+            set => SetProperty(ref _NodeViewModelCollection, value);
         }
         #endregion
     }

@@ -12,13 +12,35 @@
             <RowDefinition Height="100"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <uc:FlowChartView NodeViewModelCollection="{Binding NodeViewModelCollection, Mode=OneWay}"
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <!--<uc:FlowChartView NodeViewModelCollection="{Binding NodeViewModelCollection, Mode=OneWay}"
                           ConnectorViewModellCollection="{Binding ConnectorViewModelCollection, Mode=OneWay}"
-                          Grid.Row="0"></uc:FlowChartView>
+                          Grid.Row="0"
+                          Grid.Column="0"
+                          Grid.ColumnSpan="2"></uc:FlowChartView>-->
+
+        <uc:FlowContextView Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            ContextViewModelCollection="{Binding ContextViewModelCollection}"
+                            SelectedContextViewModel="{Binding SelectedContextViewModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></uc:FlowContextView>
 
         <Button Grid.Row="1"
-                Content="TEST"
+                Grid.Column="0"
+                Content="Context 생성 테스트 버튼입니다."
                 FontSize="25"
-                Command="{Binding TestCommand}"></Button>
+                FontWeight="Bold"
+                Command="{Binding AddContextCommand}"></Button>
+
+        <Button Grid.Row="1"
+                Grid.Column="1"
+                Content="노드 생성 테스트 버튼입니다."
+                FontSize="25"
+                FontWeight="Bold"
+                Command="{Binding AddNodeCommand}"></Button>
     </Grid>
 </dx:ThemedWindow>

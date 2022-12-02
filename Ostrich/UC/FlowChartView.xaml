@@ -56,7 +56,7 @@
             <Path Data="{Binding ElementName=FlowChartViewControl, Path=PreviewCurve}"
                   StrokeDashOffset="2"
                   StrokeThickness="8"
-                  Stroke="Green">
+                  Stroke="Orange">
 
             </Path>
 
@@ -86,6 +86,29 @@
                     </Style>
                 </Path.Style>
             </Path>
+
+            <Border Width="10"
+                    Height="10"
+                    Canvas.Left="{Binding ElementName=FlowChartViewControl, Path=PreviewCurveStartX, Mode=OneWay}"
+                    Canvas.Top="{Binding ElementName=FlowChartViewControl, Path=PreviewCurveStartY,Mode=OneWay}"
+                    Visibility="{Binding ElementName=FlowChartViewControl, Path=ConnectorVisibility, Mode=OneWay}"
+                    CornerRadius="5"
+                    Margin="-5, -5, 0, 0"
+                    BorderBrush="Orange"
+                    Background="Orange">
+            </Border>
+
+            <Border Width="10"
+                    Height="10"
+                    CornerRadius="5"
+                    Canvas.Left="{Binding ElementName=FlowChartViewControl, Path=PreviewCurveEndX, Mode=OneWay}"
+                    Canvas.Top="{Binding ElementName=FlowChartViewControl, Path=PreviewCurveEndY,Mode=OneWay}"
+                    Visibility="{Binding ElementName=FlowChartViewControl, Path=ConnectorVisibility, Mode=OneWay}"
+                    Margin="-5, -5, 0, 0"
+                    BorderBrush="Orange"
+                    Background="Orange">
+            </Border>
+
         </Canvas>
 
     </Grid>

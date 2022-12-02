@@ -8,6 +8,9 @@
     <Compile Update="FlowChartView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="FlowContextView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="NodeInputPropertyView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -26,6 +29,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="FlowChartView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="FlowContextView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="NodeInputPropertyView.xaml">

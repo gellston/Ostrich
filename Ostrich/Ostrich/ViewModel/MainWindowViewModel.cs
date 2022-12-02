@@ -14,64 +14,54 @@ namespace Ostrich.ViewModel
     public class MainWindowViewModel : ObservableObject
     {
 
+
+        #region PrivateProperty
+        private ContextViewModel _SelectedContextViewModel = null;
+        #endregion
+
+
+        #region Constructor
+
         public MainWindowViewModel() { 
         
         
         }
-
-        public ObservableCollection<NodeViewModel> NodeViewModelCollection { get; private set; } = new ObservableCollection<NodeViewModel>();
-
-        public ObservableCollection<ConnectorViewModel> ConnectorViewModelCollection { get; private set; } = new ObservableCollection<ConnectorViewModel>();
+        #endregion
 
 
-        public ICommand TestCommand
+
+        #region Collection
+        public ObservableCollection<ContextViewModel> ContextViewModelCollection { get; private set; } = new ObservableCollection<ContextViewModel>();
+        #endregion
+
+
+
+        #region Public Property
+        public ContextViewModel SelectedContextViewModel
+        {
+            get => _SelectedContextViewModel;
+            set => SetProperty(ref _SelectedContextViewModel, value);
+        }
+        #endregion
+
+
+
+        #region Command
+
+        public ICommand AddContextCommand
         {
             get => new RelayCommand(() =>
             {
                 try
                 {
 
-                    var source = new NodeViewModel()
+                    var context = new ContextViewModel()
                     {
-                        X = 100,
-                        Y = 100,
-                        IsSelected = false,
-                        Name = "test",
+                        Name = "Test",
+                        NativeContext = ""
                     };
 
-                    var target = new NodeViewModel()
-                    {
-                        X = 200,
-                        Y = 100,
-                        IsSelected = false,
-                        Name = "test",
-                    };
-
-                    var target2 = new NodeViewModel()
-                    {
-                        X = 200,
-                        Y = 100,
-                        IsSelected = false,
-                        Name = "test",
-                    };
-
-
-                    this.NodeViewModelCollection.Add(source);
-                    this.NodeViewModelCollection.Add(target);
-                    this.NodeViewModelCollection.Add(target2);
-
-                    var connector = new ConnectorViewModel();
-                    var connector2 = new ConnectorViewModel();
-
-                    source.OutputCollection[0].RegisterSourceConnectorViewModel(connector);
-                    target.InputCollection[0].RegisterTargetConnectorViewModel(connector);
-
-                    source.OutputCollection[0].RegisterSourceConnectorViewModel(connector2);
-                    target2.InputCollection[0].RegisterTargetConnectorViewModel(connector2);
-
-                    this.ConnectorViewModelCollection.Add(connector);
-                    this.ConnectorViewModelCollection.Add(connector2);
-
+                    this.ContextViewModelCollection.Add(context);
 
                 }
                 catch (Exception ex)
@@ -80,6 +70,31 @@ namespace Ostrich.ViewModel
                 }
             });
         }
+
+        public ICommand AddNodeCommand
+        {
+            get => new RelayCommand(() =>
+            {
+                try
+                {
+
+                    if(this.SelectedContextViewModel != null)
+                    {
+                        this.SelectedContextViewModel.NodeViewModelCollection.Add(new NodeViewModel()
+                        {
+                            Name = "test",
+                            X = 100,
+                            Y = 100
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+            });
+        }
+        #endregion
 
     }
 }

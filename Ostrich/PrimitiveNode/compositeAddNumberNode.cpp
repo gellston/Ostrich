@@ -62,7 +62,7 @@ hv::v2::resultType hv::v2::compositeAddNumberNode::process() {
 
 		y->data(x1->data() + x2->data());
 
-		this->update();
+		this->updateConst(y->uid());
 
 		auto execution = this->execution("Exec");
 		return execution->call();

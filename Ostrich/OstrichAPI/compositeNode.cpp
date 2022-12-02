@@ -154,13 +154,13 @@ hv::v2::resultType hv::v2::compositeNode::call() {
 	auto result = this->process();
 
 
-	this->_instance->_context->onNodeComplete(this->type(), this->uid(), this->outputConstUID());
+	this->_instance->_context->onProcessComplete(this->type(), this->uid(), this->outputConstUID());
 
 	return result;
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__);
 }
 
-void hv::v2::compositeNode::update() {
+void hv::v2::compositeNode::updateConst(std::size_t uid) {
 
 	if (this->_instance->_context == nullptr) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null context exception");
@@ -168,7 +168,7 @@ void hv::v2::compositeNode::update() {
 	}
 
 	START_ERROR_HANDLE();
-	this->_instance->_context->onNodeComplete(this->type(), this->uid(), this->outputConstUID());
+	this->_instance->_context->onConstChanged(uid);
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__);
 }
 
@@ -210,7 +210,7 @@ std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::outputs(
 	}
 
 	std::sort(nodes.begin(), nodes.end(), [](const std::shared_ptr<hv::v2::iconstNode>& first,
-		const std::shared_ptr<hv::v2::iconstNode>& second) {
+											 const std::shared_ptr<hv::v2::iconstNode>& second) {
 			return first->index() < second->index();
 	});
 
