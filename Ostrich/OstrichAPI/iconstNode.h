@@ -16,13 +16,8 @@ namespace hv {
 			virtual ~iconstNode() { }
 
 
-
 			virtual bool isConnected() = 0;
 			virtual void isConnected(bool value) = 0;
-
-
-			virtual bool isMultiple() = 0;
-			virtual void isMultiple(bool value) = 0;
 
 
 			virtual int index() = 0;
@@ -37,17 +32,18 @@ namespace hv {
 			virtual void sourceName(std::string value) = 0;
 
 
-			virtual std::vector<std::size_t> sourceMultiUID() = 0;
-			virtual std::vector<std::string> sourceMultiNames() = 0;
 
+			virtual void registerMultipleSourceNode(std::size_t uid, std::string name) = 0;
+			virtual void clearMultipleSourceNode() = 0;
+			virtual void unRegisterMultipleSourceNode(std::size_t uid, std::string name) = 0;
+			virtual std::vector<std::tuple<std::size_t, std::string>> multipleSourceNode() = 0;
+			virtual void multipleSourceNode(std::vector<std::tuple<std::size_t, std::string>> nodes) = 0;
 
-
-			virtual void sourceMultiUID(std::vector<std::size_t> uids) = 0;
-			virtual void sourceMultiNames(std::vector<std::string> names) = 0;
+			virtual bool isMultiple() = 0;
+			virtual void isMultiple(bool value) = 0;
 
 
 			virtual std::shared_ptr<hv::v2::iconstNode> clone() = 0;
-
 
 		};
 	}

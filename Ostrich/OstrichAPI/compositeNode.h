@@ -83,7 +83,30 @@ namespace hv {
 				}
 
 			}
+
+
+			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> searchMultipleNode(std::string key, int objectType, hv::v2::searchType type) override;
+			template<typename T> std::vector<std::shared_ptr<T>> searchMultipleNode(std::string key, int objectType, hv::v2::searchType type) {
+				try {
+					auto nodes = this->searchMultipleNode(key, objectType, type);
+					std::vector<std::shared_ptr<T>> _cast_nodes;
+
+					for (auto _node : nodes) {
+						_cast_nodes.push_back(std::dynamic_pointer_cast<T>(_node));
+					}
+					return _cast_nodes;
+				}
+				catch (hv::v2::oexception e) {
+					throw e;
+				}
+				catch (std::exception e) {
+					throw e;
+				}
+
+			}
+
 			OSTRICH_COMMON_API void registerNode(std::string key, int objectType, hv::v2::searchType type) override;
+			OSTRICH_COMMON_API void registerMultipleNode(std::string key, int objectType, hv::v2::searchType type) override;
 			OSTRICH_COMMON_API void registerExecutionNode(std::string key, hv::v2::searchType type) override;
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::irunable> execution(std::string key) override;
 

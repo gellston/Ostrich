@@ -17,6 +17,10 @@ namespace HV {
 				bool get();
 			}
 
+			virtual property bool IsMultiple {
+				bool get();
+			}
+
 			virtual property int Index {
 				int get();
 			}
@@ -30,7 +34,16 @@ namespace HV {
 			}
 
 
+			virtual void RegisterMultipleSourceNode(std::size_t uid, System::String^ name);
+			virtual void ClearMultipleSourceNode();
+			virtual void UnRegisterMultipleSourceNode(std::size_t, System::String^ name);
 
+
+			virtual property System::Collections::Generic::List<System::Tuple<std::size_t, System::String^>^>^ MultipleSourceNode {
+				System::Collections::Generic::List<System::Tuple<std::size_t, System::String^>^>^ get();
+				void set(System::Collections::Generic::List<System::Tuple<std::size_t, System::String^>^>^ nodes);
+			}
+			
 			
 		};
 	}

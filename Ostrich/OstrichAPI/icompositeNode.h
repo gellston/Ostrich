@@ -70,7 +70,11 @@ namespace hv {
 					throw e;
 				}
 			}
+			virtual std::vector<std::shared_ptr<hv::v2::iconstNode>> searchMultipleNode(std::string key, int objectType, hv::v2::searchType type) = 0;
+
+
 			virtual void registerNode(std::string key, int objectType, hv::v2::searchType type) = 0;
+			virtual void registerMultipleNode(std::string key, int objectType, hv::v2::searchType type) = 0;
 			virtual void registerExecutionNode(std::string key, hv::v2::searchType type) = 0;
 
 			virtual std::shared_ptr<hv::v2::irunable> execution(std::string key) = 0;

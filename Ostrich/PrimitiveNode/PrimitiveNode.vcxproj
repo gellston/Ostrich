@@ -143,6 +143,7 @@
     <ClCompile Include="compositeEndNode.cpp" />
     <ClCompile Include="compositeForNode.cpp" />
     <ClCompile Include="compositeStartNode.cpp" />
+    <ClCompile Include="compositeSumNumberNode.cpp" />
     <ClCompile Include="constNumberNode.cpp" />
     <ClCompile Include="PrimitiveNode.cpp" />
     <ClCompile Include="compositeNumberNode.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="compositeEndNode.h" />
     <ClInclude Include="compositeSleepNode.h" />
     <ClInclude Include="compositeStartNode.h" />
+    <ClInclude Include="compositeSumNumberNode.h" />
     <ClInclude Include="constNumberNode.h" />
     <ClInclude Include="compositeNumberNode.h" />
     <ClInclude Include="compositeForNode.h" />

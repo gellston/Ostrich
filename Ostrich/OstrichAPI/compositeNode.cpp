@@ -176,8 +176,20 @@ void hv::v2::compositeNode::updateConst(std::size_t uid) {
 
 bool hv::v2::compositeNode::checkSourceUID(std::size_t uid) {
 	for (auto node : this->_instance->_inputNodes) {
-		if (node.second->sourceUID() == uid && node.second->isConnected() == true)
-			return true;
+		if (node.second->isMultiple() == false) {
+			if (node.second->sourceUID() == uid && node.second->isConnected() == true)
+				return true;
+		}
+		else {
+			auto multipleNodes = node.second->multipleSourceNode();
+			if (node.second->isConnected() == true) {
+				for (auto& multiNode : multipleNodes) {
+					auto _uid = std::get<0>(multiNode);
+					if (_uid == uid)
+						return true;
+				}
+			}
+		}
 	}
 
 	return false;
@@ -334,6 +346,81 @@ std::vector<std::size_t> hv::v2::compositeNode::outputConstUID() {
 	return uid;
 }
 
+std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::searchMultipleNode(std::string key, int objectType, hv::v2::searchType type) {
+
+	if (key.length() == 0) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
+		throw hv::v2::oexception(message);
+	}
+
+	if (objectType <= (int)hv::v2::objectType::CONST_NODE && objectType >= (int)hv::v2::objectType::COMPOSITE_NODE) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid object type");
+		throw hv::v2::oexception(message);
+	}
+
+	if (this->_instance->_context == nullptr) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null context exception");
+		throw hv::v2::oexception(message);
+	}
+
+	try {
+
+		switch (type)
+		{
+		case hv::v2::searchType::input: {
+
+			if (this->_instance->_inputNodes.find(key) == this->_instance->_inputNodes.end()) {
+				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Name is not exist");
+				throw hv::v2::oexception(message);
+			}
+			auto constNode = this->_instance->_inputNodes[key];
+
+			if (constNode->isMultiple() == false) {
+				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Its single node, can't use searchMultipleNode function");
+				throw hv::v2::oexception(message);
+			}
+
+			std::vector<std::shared_ptr<hv::v2::iconstNode>> result;
+			if (constNode->isConnected() == false) {
+				result.push_back(constNode);
+				return result;
+			}
+
+			auto multipleInfo = constNode->multipleSourceNode();
+
+			for (auto & _multipleInfo : multipleInfo) {
+				auto _uid = std::get<0>(_multipleInfo);
+				auto _name = std::get<1>(_multipleInfo);
+				auto connectedConstNode = this->_instance->_context->find(_uid, _name, this->depth(), 9999);
+				result.push_back(connectedConstNode);
+			}
+
+			return result;
+
+			break;
+		}
+		case hv::v2::searchType::output: {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "searchMultipleNode function is not for output");
+			throw hv::v2::oexception(message);
+			break;
+		}
+		default:
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid search type");
+			throw hv::v2::oexception(message);
+			break;
+		}
+
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+
 
 std::shared_ptr<hv::v2::iconstNode> hv::v2::compositeNode::search(std::string key, int objectType, hv::v2::searchType type) {
 
@@ -364,6 +451,13 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::compositeNode::search(std::string ke
 				throw hv::v2::oexception(message);
 			}
 			auto constNode = this->_instance->_inputNodes[key];
+
+			if (constNode->isMultiple() == true) {
+				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "It's multiple node, can't use search function");
+				throw hv::v2::oexception(message);
+			}
+
+
 			if (constNode->isConnected() == false) {
 				return constNode;
 			}
@@ -466,6 +560,63 @@ void hv::v2::compositeNode::registerNode(std::string key, int objectType, hv::v2
 	}
 
 }
+
+
+void hv::v2::compositeNode::registerMultipleNode(std::string key, int objectType, hv::v2::searchType type) {
+
+	if (key.length() == 0) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
+		throw hv::v2::oexception(message);
+	}
+
+	if (objectType <= (int)hv::v2::objectType::CONST_NODE && objectType >= (int)hv::v2::objectType::COMPOSITE_NODE) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid object type");
+		throw hv::v2::oexception(message);
+	}
+
+
+	if (this->_instance->_context == nullptr) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null context exception");
+		throw hv::v2::oexception(message);
+	}
+
+	try {
+		switch (type)
+		{
+		case hv::v2::searchType::input: {
+			if (this->_instance->_inputNodes.find(key) != this->_instance->_inputNodes.end()) {
+				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Exist node key");
+				throw hv::v2::oexception(message);
+			}
+			auto node = this->_instance->_context->create(key, objectType, 9999);
+			node->index((int)this->_instance->_inputNodes.size() + 1);
+			node->isMultiple(true);
+			this->_instance->_inputNodes[key] = node;
+			break;
+		}
+
+		case hv::v2::searchType::output: {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "It's multiple node, can't use searchMultipleNode function");
+			throw hv::v2::oexception(message);
+			break;
+		}
+		default:
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid search type");
+			throw hv::v2::oexception(message);
+			break;
+		}
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+
+
 
 void hv::v2::compositeNode::registerExecutionNode(std::string key, hv::v2::searchType type) {
 

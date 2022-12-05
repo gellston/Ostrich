@@ -161,8 +161,16 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode
 		auto inputNodes = sourceNode->inputs();
 
 		for (auto& node : inputNodes) {
-			if (node->isConnected() == true) {
+			if (node->isConnected() == true && node->isMultiple() == false) {
 				current_node_stack.push(node->sourceUID());
+			}
+
+			if (node->isConnected() == true && node->isMultiple() == true) {
+				auto multipleNodes = node->multipleSourceNode();
+				for (auto& multipleNode : multipleNodes) {
+					auto _uid = std::get<0>(multipleNode);
+					current_node_stack.push(_uid);
+				}
 			}
 		}
 
@@ -178,8 +186,16 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode
 
 			auto _currentInputNodes = _currentSourceNode->inputs();
 			for (auto& node : _currentInputNodes) {
-				if (node->isConnected() == true) {
+				if (node->isConnected() == true && node->isMultiple() == false) {
 					current_node_stack.push(node->sourceUID());
+				}
+
+				if (node->isConnected() == true && node->isMultiple() == true) {
+					auto multipleNodes = node->multipleSourceNode();
+					for (auto& multipleNode : multipleNodes) {
+						auto _uid = std::get<0>(multipleNode);
+						current_node_stack.push(_uid);
+					}
 				}
 			}
 		}
@@ -216,10 +232,16 @@ void hv::v2::context::connect(std::shared_ptr<hv::v2::icompositeNode> sourceNode
 
 
 
+		if (targetConstNode->isMultiple()) {
+			targetConstNode->registerMultipleSourceNode(sourceNode->uid(), sourceName);
+			targetConstNode->isConnected(true);
+		}
+		else {
+			targetConstNode->sourceName(sourceName);
+			targetConstNode->sourceUID(sourceNode->uid());
+			targetConstNode->isConnected(true);
+		}
 
-		targetConstNode->sourceName(sourceName);
-		targetConstNode->sourceUID(sourceNode->uid());
-		targetConstNode->isConnected(true);
 		
 
 
@@ -265,9 +287,18 @@ bool hv::v2::context::checkConnectability(std::size_t sourceUID, std::string sou
 			auto inputNodes = sourceNode->inputs();
 
 			for (auto& node : inputNodes) {
-				if (node->isConnected() == true) {
+				if (node->isConnected() == true && node->isMultiple() == false) {
 					current_node_stack.push(node->sourceUID());
 				}
+
+				if (node->isConnected() == true && node->isMultiple() == true) {
+					auto multipleNodes = node->multipleSourceNode();
+					for (auto& multipleNode : multipleNodes) {
+						auto _uid = std::get<0>(multipleNode);
+						current_node_stack.push(_uid);
+					}
+				}
+
 			}
 
 			while (current_node_stack.empty() != true) {
@@ -281,8 +312,16 @@ bool hv::v2::context::checkConnectability(std::size_t sourceUID, std::string sou
 
 				auto _currentInputNodes = _currentSourceNode->inputs();
 				for (auto& node : _currentInputNodes) {
-					if (node->isConnected() == true) {
+					if (node->isConnected() == true && node->isMultiple() == false) {
 						current_node_stack.push(node->sourceUID());
+					}
+
+					if (node->isConnected() == true && node->isMultiple() == true) {
+						auto multipleNodes = node->multipleSourceNode();
+						for (auto& multipleNode : multipleNodes) {
+							auto _uid = std::get<0>(multipleNode);
+							current_node_stack.push(_uid);
+						}
 					}
 				}
 			}
@@ -334,6 +373,7 @@ void hv::v2::context::disconnect(std::string name) {
 			if (node.second->name() == name) {
 				auto inputs = node.second->inputs();
 				for (auto input : inputs) {
+					input->clearMultipleSourceNode();
 					input->isConnected(false);
 				}
 
@@ -353,6 +393,52 @@ void hv::v2::context::disconnect(std::string name) {
 	}
 
 }
+
+void hv::v2::context::disconnect(std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) {
+
+
+	if (this->_instance->_composite_node_look_up_table.find(targetUID) == this->_instance->_composite_node_look_up_table.end()) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Uid is not exist");
+		throw hv::v2::oexception(message);
+	}
+
+	try {
+
+
+		for (auto node : this->_instance->_composite_node_look_up_table) {
+			if (node.second->uid() == targetUID) {
+				auto inputs = node.second->inputs();
+				for (auto input : inputs) {
+					if (input->name() == targetName && input->isMultiple() == true) {
+						input->unRegisterMultipleSourceNode(sourceUID, sourceName);
+						auto multipleNode = input->multipleSourceNode();
+						if (multipleNode.size() == 0) {
+							input->isConnected(false);
+						}
+					}
+
+					if (input->name() == targetName && input->isMultiple() == false) {
+						input->isConnected(false);
+					}
+				}
+
+				//Depth 정렬
+				this->sortingDepth();
+
+				//Depth 순으로 그룹핑
+				this->groupingDepth();
+
+				//Search Event Node
+				this->searchingEventNode();
+			}
+		}
+	}
+	catch (hv::v2::oexception e) {
+		throw e;
+	}
+
+}
+
 void hv::v2::context::disconnect(std::size_t targetUID, std::string targetName) {
 
 	if (this->_instance->_composite_node_look_up_table.find(targetUID) == this->_instance->_composite_node_look_up_table.end()) {
@@ -405,6 +491,7 @@ void hv::v2::context::disconnect(std::size_t targetUID) {
 		auto node = this->_instance->_composite_node_look_up_table[targetUID];
 		auto inputs = node->inputs();
 		for (auto input : inputs) {
+			input->clearMultipleSourceNode();
 			input->isConnected(false);
 		}
 
@@ -660,7 +747,8 @@ std::string hv::v2::context::serialization() {
 					{"isMultiple", input->isMultiple()},
 					{"sourceName", input->sourceName()},
 					{"sourceUID", input->sourceUID()},
-					{"index", input->index()}
+					{"index", input->index()},
+					{"multipleSourceNode", input->multipleSourceNode()}
 				};
 				composite_node["inputs"].push_back(input_json);
 			}
@@ -729,6 +817,8 @@ void hv::v2::context::deserialization(std::string value) {
 				auto sourceName = input["sourceName"].get<std::string>();
 				auto sourceUID = input["sourceUID"].get<std::size_t>();
 				auto index = input["index"].get<int>();
+				auto multipleSourceNode = input["multipleSourceNode"].get<std::vector<std::tuple<std::size_t, std::string>>>();
+
 
 				auto createdConstNode = this->create(constNodeName, constNodeType, 9999);
 				this->_instance->_const_node_loook_up_table.erase(createdConstNode->uid()); //기존 UID 삭제
@@ -741,6 +831,7 @@ void hv::v2::context::deserialization(std::string value) {
 				createdConstNode->isConnected(isConnected);
 				createdConstNode->index(index);
 				createdConstNode->isMultiple(isMultiple);
+				createdConstNode->multipleSourceNode(multipleSourceNode);
 				inputs.push_back(createdConstNode);
 			}
 			createdNode->replaceInputs(inputs);

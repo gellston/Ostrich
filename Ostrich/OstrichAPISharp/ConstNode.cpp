@@ -1,4 +1,9 @@
 
+
+
+#include <msclr/marshal_cppstd.h>
+
+
 //C++/CLI Header
 #include "ConstNode.h"
 #include "CommonException.h"
@@ -140,11 +145,115 @@ std::size_t HV::V2::ConstNode::SourceUID::get() {
 }
 
 
+bool HV::V2::ConstNode::IsMultiple::get() {
+	try {
+		return this->_instance->isMultiple();
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+
+
+
 System::Object^ HV::V2::ConstNode::Clone() {
 	try {
 		auto nativeCloneObject = this->_instance->clone();
 		auto managedCloneObject = gcnew HV::V2::ConstNode(System::IntPtr(&nativeCloneObject), true);
 		return managedCloneObject;
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::ConstNode::RegisterMultipleSourceNode(std::size_t uid, System::String^ name) {
+	try {
+		this->_instance->registerMultipleSourceNode(uid, msclr::interop::marshal_as<std::string>(name));
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::ConstNode::ClearMultipleSourceNode() {
+	try {
+		this->_instance->clearMultipleSourceNode();
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::ConstNode::UnRegisterMultipleSourceNode(std::size_t uid, System::String^ name) {
+	try {
+		this->_instance->unRegisterMultipleSourceNode(uid, msclr::interop::marshal_as<std::string>(name));
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+System::Collections::Generic::List<System::Tuple<std::size_t, System::String^>^>^ HV::V2::ConstNode::MultipleSourceNode::get() {
+
+
+	try {
+		System::Collections::Generic::List<System::Tuple<std::size_t, System::String^>^>^ result = gcnew System::Collections::Generic::List<System::Tuple<std::size_t, System::String^>^>();
+		auto nativeResult = this->_instance->multipleSourceNode();
+
+		for (auto element : nativeResult) {
+			auto uid = std::get<0>(element);
+			auto name = std::get<1>(element);
+			auto managedTuple = gcnew System::Tuple<std::size_t, System::String^>(uid, gcnew System::String(name.c_str()));
+			result->Add(managedTuple);
+		}
+		return result;
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+
+
+
+}
+
+
+
+void HV::V2::ConstNode::MultipleSourceNode::set(System::Collections::Generic::List<System::Tuple<std::size_t, System::String^>^>^ collection) {
+
+	try {
+
+		std::vector<std::tuple<std::size_t, std::string>> nativeCollection;
+
+		auto count = collection->Count;
+		for (auto index = 0; index < count; index++) {
+			auto managedElement = collection[index];
+			auto nativeSourceUID = managedElement->Item1;
+			auto nativeSourceName = msclr::interop::marshal_as<std::string>(managedElement->Item2);
+
+			nativeCollection.push_back(std::tuple<std::size_t, std::string>(nativeSourceUID, nativeSourceName));
+		}
+
+		this->_instance->multipleSourceNode(nativeCollection);
 	}
 	catch (hv::v2::oexception e) {
 		throw gcnew HV::V2::OException(gcnew System::String(e.what()));

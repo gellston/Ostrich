@@ -43,12 +43,11 @@ namespace hv {
 			OSTRICH_COMMON_API void sourceName(std::string value) override;
 
 
-			OSTRICH_COMMON_API std::vector<std::size_t> sourceMultiUID() override;
-			OSTRICH_COMMON_API std::vector<std::string> sourceMultiNames() override;
-
-			OSTRICH_COMMON_API void sourceMultiUID(std::vector<std::size_t> uids) override;
-			OSTRICH_COMMON_API void sourceMultiNames(std::vector<std::string> names) override;
-
+			OSTRICH_COMMON_API void registerMultipleSourceNode(std::size_t, std::string name) override;
+			OSTRICH_COMMON_API void clearMultipleSourceNode() override;
+			OSTRICH_COMMON_API void unRegisterMultipleSourceNode(std::size_t uid, std::string name) override;
+			OSTRICH_COMMON_API std::vector<std::tuple<std::size_t, std::string>> multipleSourceNode() override;
+			OSTRICH_COMMON_API void multipleSourceNode(std::vector<std::tuple<std::size_t, std::string>> nodes) override;
 
 			OSTRICH_COMMON_API std::string name() override;
 	

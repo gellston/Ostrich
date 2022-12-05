@@ -11,6 +11,7 @@
 #include <compositeForNode.h>
 #include <compositeSleepNode.h>
 #include <compositeAddNumberNode.h>
+#include <compositeSumNumberNode.h>
 
 OSTRICH_MODULE()
 OSTRICH_SANITY_CHECK()
@@ -28,7 +29,7 @@ OSTRICH_ADDON_INIT(context) {
 		_addon->addComposite<hv::v2::compositeForNode>(50004, "Loop");
 		_addon->addComposite<hv::v2::compositeSleepNode>(50005, "Function");
 		_addon->addComposite<hv::v2::compositeAddNumberNode>(50006, "Function");
-
+		_addon->addComposite<hv::v2::compositeSumNumberNode>(50007, "Function");
 
 		context->registerAddon(_addon, 9999);
 

@@ -14,8 +14,7 @@ namespace hv {
 			bool _isFreezed;
 			int _index;
 
-			std::vector<std::size_t> _sourceMultiUID;
-			std::vector<std::string> _sourceMultiNames;
+			std::vector<std::tuple<std::size_t, std::string>> _multiSourceNodes;
 
 			impl_constNode() {
 				_isConnected = false;
@@ -86,32 +85,47 @@ void hv::v2::constNode::sourceName(std::string name) {
 }
 
 
-std::vector<std::size_t> hv::v2::constNode::sourceMultiUID() {
-	return this->_instance->_sourceMultiUID;
-}
-std::vector<std::string> hv::v2::constNode::sourceMultiNames() {
-	return this->_instance->_sourceMultiNames;
+void hv::v2::constNode::registerMultipleSourceNode(std::size_t uid, std::string name) {
+
+	this->_instance->_multiSourceNodes.push_back({ uid, name });
+
 }
 
-void hv::v2::constNode::sourceMultiUID(std::vector<std::size_t> uids) {
-	this->_instance->_sourceMultiUID = uids;
-}
-void hv::v2::constNode::sourceMultiNames(std::vector<std::string> names) {
-	this->_instance->_sourceMultiNames = names;
+void hv::v2::constNode::clearMultipleSourceNode() {
+
+	this->_instance->_multiSourceNodes.clear();
 }
 
+void hv::v2::constNode::unRegisterMultipleSourceNode(std::size_t uid, std::string name) {
+
+	this->_instance->_multiSourceNodes.erase(std::remove_if(this->_instance->_multiSourceNodes.begin(),
+															this->_instance->_multiSourceNodes.end(),
+															[&](std::tuple<std::size_t, std::string> element) {
+
+																std::size_t _uid = std::get<0>(element);
+																std::string _name = std::get<1>(element);
+																if (_uid == uid && _name == name)
+																	return true;
+																else return false;
+															}));
+}
+
+std::vector<std::tuple<std::size_t, std::string>> hv::v2::constNode::multipleSourceNode() {
+
+	return this->_instance->_multiSourceNodes;
+}
+
+void hv::v2::constNode::multipleSourceNode(std::vector<std::tuple<std::size_t, std::string>> nodes) {
+	this->_instance->_multiSourceNodes = nodes;
+}
 
 
 std::string hv::v2::constNode::name() {
 
 	return hv::v2::node::name();
 }
-//std::string hv::v2::constNode::nick() {
-//	return hv::v2::node::nick();
-//}
-//void hv::v2::constNode::nick(std::string value) {
-//	hv::v2::node::nick(value);
-//}
+
+
 int hv::v2::constNode::type() {
 	return hv::v2::node::type();
 }
