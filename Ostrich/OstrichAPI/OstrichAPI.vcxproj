@@ -163,7 +163,6 @@
     <ClInclude Include="icontext.h" />
     <ClInclude Include="ihandle.h" />
     <ClInclude Include="inode.h" />
-    <ClInclude Include="iengine.h" />
     <ClInclude Include="icompositeNode.h" />
     <ClInclude Include="irunable.h" />
     <ClInclude Include="iscript.h" />

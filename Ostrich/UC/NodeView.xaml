@@ -39,8 +39,17 @@
                     <RowDefinition Height="5"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Border Grid.Row="0"
-                        Background="DarkRed">
+                <Border Grid.Row="0">
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="Background" Value="DarkGreen"></Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsEvent}" Value="True">
+                                    <Setter Property="Background" Value="DarkRed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
                     <TextBlock Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"

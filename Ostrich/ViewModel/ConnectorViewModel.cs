@@ -11,6 +11,10 @@ namespace ViewModel
     {
 
         #region Private Property
+
+        private bool _IsExecution = false;
+
+
         private ulong _SourceNodeUID = 0;
         private string _SourcePropertyName = "";
         private int _SourceObjectType = 0;
@@ -40,6 +44,13 @@ namespace ViewModel
         #endregion
 
         #region Public Property
+
+        public bool IsExecution
+        {
+            get => _IsExecution;
+            set => SetProperty(ref _IsExecution, value);
+        }
+
         public string Curve
         {
             get => _Curve;

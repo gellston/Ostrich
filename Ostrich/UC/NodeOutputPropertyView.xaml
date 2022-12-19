@@ -15,11 +15,21 @@
             <ColumnDefinition Width="Auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <TextBlock Text="{Binding Name}"
-                   Foreground="White"
                    Grid.Column="0"
                    VerticalAlignment="Center"
                    Margin="0,0,5,0"
-                   TextAlignment="Right"></TextBlock>
+                   TextAlignment="Right">
+            <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Foreground" Value="White"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsExecution}" Value="True">
+                            <Setter Property="Foreground" Value="#00796b"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
         <Border Grid.Column="1"
                 BorderThickness="2"

@@ -17,8 +17,18 @@
                 <Grid>
                     <Path Data="{Binding Curve}"
                               StrokeDashOffset="2"
-                              StrokeThickness="8"
-                              Stroke="Green">
+                              StrokeThickness="8">
+
+                        <Path.Style>
+                            <Style TargetType="{x:Type Path}">
+                                <Setter Property="Stroke" Value="Green"></Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsExecution}" Value="True">
+                                        <Setter Property="Stroke" Value="#00796b"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
 
                     </Path>
                     <Path Data="{Binding Curve}"

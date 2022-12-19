@@ -8,6 +8,7 @@ namespace ViewModel
 
         #region Private Property
         private bool _IsSelected = false;
+        private bool _IsEvent = false;
         private double _X = 0;
         private double _Y = 0;
         private string _Name = "";
@@ -19,24 +20,72 @@ namespace ViewModel
 
         #region Constructor
         public NodeViewModel() {
+
+            //Test Code
             this._InputCollection.Add(new NodePropertyViewModel()
             {
-                Name = "test",
+                Name = "Exec",
                 IsConnected = false,
                 IsOutput = false,
+                IsExecution = true,
+                ObjectType = 1,
+                Uid = this.Uid,
+                ParentNodeViewModel = this
+            });
+            this._InputCollection.Add(new NodePropertyViewModel()
+            {
+                Name = "Input",
+                IsConnected = false,
+                IsMultiple = true,
+                IsExecution = false,
+                IsOutput = false,
+                ObjectType = 50001,
+                Uid = this.Uid,
+                ParentNodeViewModel = this
+            });
+            this._InputCollection.Add(new NodePropertyViewModel()
+            {
+                Name = "X",
+                IsConnected = false,
+                IsExecution = false,
+                IsOutput = false,
+                ObjectType = 50002,
+                Uid = this.Uid,
+                ParentNodeViewModel = this
+            });
+
+            this._OutputCollection.Add(new NodePropertyViewModel()
+            {
+                Name = "Exec",
+                IsConnected = false,
+                IsOutput = true,
+                IsExecution = true,
                 ObjectType = 1,
                 Uid = this.Uid,
                 ParentNodeViewModel = this
             });
             this._OutputCollection.Add(new NodePropertyViewModel()
             {
-                Name = "test",
+                Name = "Result",
+                IsExecution = false,
                 IsConnected = false,
                 IsOutput = true,
-                ObjectType = 1,
+                ObjectType = 50001,
                 Uid = this.Uid,
                 ParentNodeViewModel = this
             });
+            this._OutputCollection.Add(new NodePropertyViewModel()
+            {
+                Name = "Y",
+                IsExecution = false,
+                IsConnected = false,
+                IsOutput = true,
+                ObjectType = 50002,
+                Uid = this.Uid,
+                ParentNodeViewModel = this
+            });
+
+            //Test Code
 
         }
         #endregion
@@ -48,6 +97,12 @@ namespace ViewModel
         {
             get => _Uid;
             set => SetProperty(ref _Uid, value);
+        }
+
+        public bool IsEvent
+        {
+            get => _IsEvent;
+            set => SetProperty(ref _IsEvent, value);
         }
 
         public bool IsSelected

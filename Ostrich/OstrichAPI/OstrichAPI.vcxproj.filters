@@ -56,9 +56,6 @@
     <ClInclude Include="ihandle.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="iengine.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="inode.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>

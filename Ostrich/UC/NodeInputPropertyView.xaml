@@ -27,27 +27,77 @@
                     <Setter Property="Background" Value="Transparent"></Setter>
                     <Setter Property="BorderBrush" Value="White"></Setter>
                     <Style.Triggers>
+
+
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="BorderBrush" Value="Orange"></Setter>
                         </Trigger>
-                        <DataTrigger Binding="{Binding IsPressed}" Value="True">
+
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsMultiple}" Value="True"></Condition>
+                                <Condition Binding="{Binding IsConnected}" Value="True"></Condition>
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter Property="Background" Value="Orange"></Setter>
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsMultiple}" Value="False"></Condition>
+                                <Condition Binding="{Binding IsConnected}" Value="True"></Condition>
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter Property="Background" Value="Green"></Setter>
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+
+
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsExecution}" Value="True"></Condition>
+                                <Condition Binding="{Binding IsConnected}" Value="True"></Condition>
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter Property="Background" Value="#00796b"></Setter>
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsExecution}" Value="False"></Condition>
+                                <Condition Binding="{Binding IsConnected}" Value="True"></Condition>
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter Property="Background" Value="Green"></Setter>
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+
+
+
+                        <!--<DataTrigger Binding="{Binding IsConnected}" Value="True">
                             <Setter Property="Background" Value="White"></Setter>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsConnected}" Value="True">
-                            <Setter Property="Background" Value="White"></Setter>
-                        </DataTrigger>
+                        </DataTrigger>-->
                     </Style.Triggers>
                 </Style>
 
             </Border.Style>
         </Border>
         <TextBlock Text="{Binding Name}"
-                   Foreground="White"
                    Grid.Column="1"
                    VerticalAlignment="Center"
                    Margin="5,0,0,0"
                    TextAlignment="Left"
                    Name="NodeName">
+            <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Foreground" Value="White"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsExecution}" Value="True">
+                            <Setter Property="Foreground" Value="#00796b"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
         </TextBlock>
     </Grid>
 </UserControl>

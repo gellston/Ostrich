@@ -17,6 +17,7 @@ namespace ViewModel
         private bool _IsPressed = false;
         private bool _IsConnected = false;
         private int _ObjectType = -1;
+        private bool _IsMultiple = false;
         private double _X = 0;
         private double _Y = 0;
         private List<ConnectorViewModel> _SourceConnectorCollection = new List<ConnectorViewModel>();
@@ -62,6 +63,12 @@ namespace ViewModel
         {
             get => _IsConnected;
             set => SetProperty(ref _IsConnected, value);
+        }
+
+        public bool IsMultiple
+        {
+            get => _IsMultiple;
+            set => SetProperty(ref _IsMultiple, value);
         }
 
 

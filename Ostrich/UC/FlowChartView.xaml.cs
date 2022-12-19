@@ -278,30 +278,29 @@ namespace UC
                     this._IsNodePropertyDragging = true;
 
 
-                    if(property.IsConnected == false)
+                    if ((property.IsOutput == true && property.IsConnected == false) ||
+                        (property.IsOutput == true && property.IsMultiple == true))
                     {
-                        if(property.IsOutput == true)
-                        {
-                            this.PreviewCurveStartX = property.X;
-                            this.PreviewCurveStartY = property.Y;
-                            this.PreviewCurveEndX = property.X;
-                            this.PreviewCurveEndY = property.Y;
-                            this.PreviewCurveStart2End = true;
-                            this.PreviewCurveEnd2Start = false;
-                            this.ComputeCurve();
-                            this.ConnectorVisibility = Visibility.Visible;
-                        }
-                        else
-                        {
-                            this.PreviewCurveStartX = property.X;
-                            this.PreviewCurveStartY = property.Y;
-                            this.PreviewCurveEndX = property.X;
-                            this.PreviewCurveEndY = property.Y;
-                            this.PreviewCurveStart2End = false;
-                            this.PreviewCurveEnd2Start = true;
-                            this.ComputeCurve();
-                            this.ConnectorVisibility = Visibility.Visible;
-                        }
+                        this.PreviewCurveStartX = property.X;
+                        this.PreviewCurveStartY = property.Y;
+                        this.PreviewCurveEndX = property.X;
+                        this.PreviewCurveEndY = property.Y;
+                        this.PreviewCurveStart2End = true;
+                        this.PreviewCurveEnd2Start = false;
+                        this.ComputeCurve();
+                        this.ConnectorVisibility = Visibility.Visible;
+                    }
+                    else if ((property.IsOutput == false && property.IsConnected == false) ||
+                             (property.IsOutput == false && property.IsMultiple == true))
+                    {
+                        this.PreviewCurveStartX = property.X;
+                        this.PreviewCurveStartY = property.Y;
+                        this.PreviewCurveEndX = property.X;
+                        this.PreviewCurveEndY = property.Y;
+                        this.PreviewCurveStart2End = false;
+                        this.PreviewCurveEnd2Start = true;
+                        this.ComputeCurve();
+                        this.ConnectorVisibility = Visibility.Visible;
                     }
                 }
 
@@ -359,12 +358,19 @@ namespace UC
                     {
                         if (clickedItem.DataContext.GetType() == typeof(NodePropertyViewModel) && 
                             this._SelectedNodePropertyViewModel != clickedItem.DataContext &&
-                            this._SelectedNodePropertyViewModel.IsOutput != ((NodePropertyViewModel)clickedItem.DataContext).IsOutput)
+                            this._SelectedNodePropertyViewModel.IsOutput != ((NodePropertyViewModel)clickedItem.DataContext).IsOutput && 
+                            this._SelectedNodePropertyViewModel.ObjectType == ((NodePropertyViewModel)clickedItem.DataContext).ObjectType)
                         {
                             var targetNodePropertyViewModel = clickedItem.DataContext as NodePropertyViewModel;
 
-                            if (this.PreviewCurveStart2End == true && 
-                                targetNodePropertyViewModel.IsConnected == false)
+
+
+                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
+                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
+                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
+                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
+                            if ((this.PreviewCurveStart2End == true && targetNodePropertyViewModel.IsConnected == false) ||
+                                (this.PreviewCurveStart2End == true && targetNodePropertyViewModel.IsMultiple == true))
                             {
 
                                 var connector = new ConnectorViewModel()
@@ -374,6 +380,9 @@ namespace UC
                                     SourcePropertyName = this._SelectedNodePropertyViewModel.Name,
                                     SourceX = this._SelectedNodePropertyViewModel.X,
                                     SourceY = this._SelectedNodePropertyViewModel.Y,
+
+
+                                    IsExecution = this._SelectedNodePropertyViewModel.IsExecution,
 
                                     TargetNodeUID = targetNodePropertyViewModel.Uid,
                                     TargetObjectType = targetNodePropertyViewModel.ObjectType,
@@ -386,12 +395,15 @@ namespace UC
                                 targetNodePropertyViewModel.RegisterTargetConnectorViewModel(connector);
                                 this.ConnectorViewModellCollection.Add(connector);
 
+                                // 실행 노드일 경우 이후에 연결이 불가능하도록 IsConnected 값을 true로 변경
                                 targetNodePropertyViewModel.IsConnected = true;
+                                if (this._SelectedNodePropertyViewModel.IsExecution == true)
+                                    this._SelectedNodePropertyViewModel.IsConnected = true;
 
                             }
 
-                            if(this.PreviewCurveEnd2Start == true &&
-                                this._SelectedNodePropertyViewModel.IsConnected == false)
+                            if((this.PreviewCurveEnd2Start == true && this._SelectedNodePropertyViewModel.IsConnected == false) ||
+                               (this.PreviewCurveEnd2Start == true && this._SelectedNodePropertyViewModel.IsMultiple == true))
                             {
                                 var connector = new ConnectorViewModel()
                                 {
@@ -400,6 +412,8 @@ namespace UC
                                     SourcePropertyName = targetNodePropertyViewModel.Name,
                                     SourceX = targetNodePropertyViewModel.X,
                                     SourceY = targetNodePropertyViewModel.Y,
+
+                                    IsExecution = this._SelectedNodePropertyViewModel.IsExecution,
 
                                     TargetNodeUID = _SelectedNodePropertyViewModel.Uid,
                                     TargetObjectType = _SelectedNodePropertyViewModel.ObjectType,
@@ -412,9 +426,15 @@ namespace UC
                                 targetNodePropertyViewModel.RegisterSourceConnectorViewModel(connector);
                                 this.ConnectorViewModellCollection.Add(connector);
 
+                                // 실행 노드일 경우 이후에 연결이 불가능하도록 IsConnected 값을 true로 변경
                                 this._SelectedNodePropertyViewModel.IsConnected = true;
+                                if (targetNodePropertyViewModel.IsExecution == true)
+                                    targetNodePropertyViewModel.IsConnected = true;
                             }
-                            
+                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
+                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
+                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
+                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
                         }
                     }
                     //Final Connection 
