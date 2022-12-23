@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\OstrichAPISharp\OstrichAPISharp.vcxproj" />
     <ProjectReference Include="..\UC\UC.csproj" />
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>

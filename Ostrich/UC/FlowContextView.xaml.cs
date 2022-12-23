@@ -72,6 +72,36 @@ namespace UC
         }
 
 
+        public static readonly DependencyProperty NodeConnectivityCheckCommandProperty = DependencyProperty.Register("NodeConnectivityCheckCommand", typeof(ICommand), typeof(FlowContextView));
+        public ICommand NodeConnectivityCheckCommand
+        {
+            get
+            {
+                return (ICommand)GetValue(NodeConnectivityCheckCommandProperty);
+            }
+
+            set
+            {
+                SetValue(NodeConnectivityCheckCommandProperty, value);
+            }
+        }
+
+
+
+
+        public static readonly DependencyProperty NodeConnectRequestCommandProperty = DependencyProperty.Register("NodeConnectRequestCommand", typeof(ICommand), typeof(FlowContextView));
+        public ICommand NodeConnectRequestCommand
+        {
+            get
+            {
+                return (ICommand)GetValue(NodeConnectRequestCommandProperty);
+            }
+
+            set
+            {
+                SetValue(NodeConnectRequestCommandProperty, value);
+            }
+        }
 
 
 

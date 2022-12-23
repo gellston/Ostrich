@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DevExpress.Data;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,18 @@ namespace Ostrich.ViewModel
         public ObservableObject MainWindowViewModel
         {
             get => App.Current.Services.GetService<MainWindowViewModel>();
+        }
+
+
+
+        public ObservableObject CalculatorViewModel
+        {
+            get => App.Current.Services.GetService<CalculatorViewModel>();
+        }
+
+        public ObservableObject MessageViewModel
+        {
+            get => App.Current.Services.GetService<MessageViewModel>();
         }
     }
 }

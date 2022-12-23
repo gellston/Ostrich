@@ -7,19 +7,20 @@ using System.Windows;
 
 namespace ViewModel
 {
-    public class ConnectorViewModel : ViewModelBase
+    public class ConnectorViewModel : ViewModelBase, ICloneable
     {
 
         #region Private Property
 
         private bool _IsExecution = false;
 
+        private bool _IsSelected = false;
 
-        private ulong _SourceNodeUID = 0;
+        private ulong _SourcePropertyUID = 0;
         private string _SourcePropertyName = "";
         private int _SourceObjectType = 0;
 
-        private ulong _TargetNodeUID = 0;
+        private ulong _TargetPropertyUID = 0;
         private string _TargetPropertyName = "";
         private int _TargetObjectType = 0;
 
@@ -49,6 +50,12 @@ namespace ViewModel
         {
             get => _IsExecution;
             set => SetProperty(ref _IsExecution, value);
+        }
+
+        public bool IsSelected
+        {
+            get => _IsSelected;
+            set => SetProperty(ref _IsSelected, value);
         }
 
         public string Curve
@@ -97,10 +104,10 @@ namespace ViewModel
             }
         }
 
-        public ulong SourceNodeUID
+        public ulong SourcePropertyUID
         {
-            get => _SourceNodeUID;
-            set => SetProperty(ref _SourceNodeUID, value);
+            get => _SourcePropertyUID;
+            set => SetProperty(ref _SourcePropertyUID, value);
         }
 
         public string SourcePropertyName
@@ -117,10 +124,10 @@ namespace ViewModel
 
 
 
-        public ulong TargetNodeUID
+        public ulong TargetPropertyUID
         {
-            get => _TargetNodeUID;
-            set => SetProperty(ref _TargetNodeUID, value);
+            get => _TargetPropertyUID;
+            set => SetProperty(ref _TargetPropertyUID, value);
         }
 
         public string TargetPropertyName
@@ -133,6 +140,33 @@ namespace ViewModel
         {
             get => _TargetObjectType;
             set => SetProperty(ref _TargetObjectType, value);
+        }
+
+        public object Clone()
+        {
+            var connector = new ConnectorViewModel()
+            {
+                IsExecution = this.IsExecution,
+
+                SourcePropertyUID = this.SourcePropertyUID,
+                SourceObjectType = this.SourceObjectType,
+                SourcePropertyName = this.SourcePropertyName,
+                SourceX = this.SourceX,
+                SourceY = this.SourceY,
+
+                TargetPropertyUID = this.TargetPropertyUID,
+                TargetObjectType = this.TargetObjectType,
+                TargetPropertyName = this.TargetPropertyName,
+                TargetX = this.TargetX,
+                TargetY = this.TargetY,
+
+                Curve = this.Curve
+            };
+
+
+            System.Diagnostics.Debug.WriteLine("Curve Data = " + this.Curve);
+
+            return connector;
         }
 
 

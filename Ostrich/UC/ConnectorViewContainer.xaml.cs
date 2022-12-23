@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DevExpress.XtraSpreadsheet.Import.OpenXml;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -21,6 +22,9 @@ namespace UC
     /// </summary>
     public partial class ConnectorViewContainer : UserControl
     {
+
+
+
         public ConnectorViewContainer()
         {
             InitializeComponent();
@@ -33,5 +37,7 @@ namespace UC
             get => (ObservableCollection<ViewModel.ConnectorViewModel>)GetValue(ConnectorViewModelCollectionProperty);
             set => SetValue(ConnectorViewModelCollectionProperty, value);
         }
+
+
     }
 }

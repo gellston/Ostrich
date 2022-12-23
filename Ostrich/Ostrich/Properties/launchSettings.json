@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Ostrich": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

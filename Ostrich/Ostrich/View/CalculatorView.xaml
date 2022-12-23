@@ -1,0 +1,244 @@
+﻿<UserControl x:Class="Ostrich.View.CalculatorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Ostrich.View"
+             xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxl="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:uc="clr-namespace:UC;assembly=UC"
+             xmlns:dmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:vm="clr-namespace:ViewModel;assembly=ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="White">
+    <DockPanel>
+        <dxr:RibbonControl DockPanel.Dock="Top"
+                           RibbonStyle="Office2019"
+                           ShowApplicationButton="False"
+                           RibbonTitleBarVisibility="Collapsed"
+                           ToolbarShowMode="Hide"
+              
+                           AllowSimplifiedRibbon="False"
+                           AllowMinimizeRibbon="False"
+                           AllowCustomization="False"
+                           ToolbarShowCustomizationButton="False">
+
+ 
+
+            <dxr:RibbonPage Caption="홈">
+                <dxr:RibbonPageGroup Caption="컨텍스트">
+                    <dxb:BarButtonItem Content="컨텍스트 생성"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/Actions/New.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/Actions/New.svg'}"
+                                       Command="{Binding CreateContextCommand}">
+                        
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Content="컨텍스트 복사"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/Edit/Copy.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/Edit/Copy.svg'}"
+                                       Command="{Binding CopyContextCommand}">
+
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Content="컨텍스트 삭제"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Trash.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Trash.svg'}"
+                                       Command="{Binding RemoveContextCommand}">
+
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Content="컨텍스트 이름 변경"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/Dashboards/RenameDataSource.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/Dashboards/RenameDataSource.svg'}"
+                                       Command="{Binding RenameContextCommand}">
+
+                    </dxb:BarButtonItem>
+                </dxr:RibbonPageGroup>
+                <dxr:RibbonPageGroup Caption="노드">
+                    <dxb:BarButtonItem Content="선택된 노드 삭제"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_RemoveCircled.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_RemoveCircled.svg'}"
+                                       Command="{Binding DeleteSelectedNodesCommand}">
+
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Content="선택된 경로 삭제"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_RemoveCircled.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_RemoveCircled.svg'}"
+                                       Command="{Binding DeleteSelectedNodesCommand}">
+
+                    </dxb:BarButtonItem>
+                </dxr:RibbonPageGroup>
+            </dxr:RibbonPage>
+        </dxr:RibbonControl>
+        <dxdo:DockLayoutManager FloatingMode="Desktop"
+                                x:Name="OstrichDockingPanel"
+                                AutoHideExpandMode="MouseDown"
+                                dxdo:AutoHideGroup.AutoHideType="Bottom">
+
+            <dxdo:LayoutGroup Orientation="Vertical"
+                              AllowClose="False"
+                              dxdo:AutoHideGroup.AutoHideType="Bottom">
+                <dxdo:LayoutGroup Orientation="Horizontal"
+                                  AllowClose="False"
+                                  ItemHeight="*">
+                    <dxdo:LayoutPanel ItemWidth="*"
+                                      AllowClose="False"
+                                      AllowDock="True"
+                                      dxdo:AutoHideGroup.AutoHideType="Bottom"
+                                      Caption="노드 플로우 편집">
+                        <uc:FlowContextView ContextViewModelCollection="{Binding ContextViewModelCollection}"
+                                            SelectedContextViewModel="{Binding SelectedContextViewModel, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                            NodeConnectivityCheckCommand="{Binding NodeConnectivityCheckCommand}"
+                                            NodeConnectRequestCommand="{Binding NodeConnectRequestCommand}"
+                                            Margin="0,5,0,0"
+                                            AllowDrop="True">
+                            <dmvvm:Interaction.Behaviors>
+                                <dmvvm:EventToCommand EventName="Drop"
+                                                      PassEventArgsToCommand="True"
+                                                      Command="{Binding DropNodeCommand}">
+                                    
+                                </dmvvm:EventToCommand>
+                            </dmvvm:Interaction.Behaviors>
+                            
+                            
+                        </uc:FlowContextView>
+
+                    </dxdo:LayoutPanel>
+
+                    <dxdo:TabbedGroup ItemWidth="450"
+                                      AllowClose="False"
+                                      AllowDock="True"
+                                      Orientation="Vertical">
+                        <dxdo:LayoutPanel Caption="노드">
+                            <dxg:GridControl ItemsSource="{Binding SelectedContextViewModel.NodeInfoViewModelCollection}"
+                                             FlowDirection="LeftToRight"
+                                             AutoExpandAllGroups="True"
+                                             AllowCollectionView="True"
+                                             SelectionMode="Cell"
+                                             HorizontalAlignment="Stretch"
+                                             VerticalAlignment="Stretch">
+                                <dxg:GridControl.Bands>
+                                    <dxg:GridControlBand Header="0" VisibleIndex="0">
+                                        <dxg:GridColumn FieldName="Category" VisibleIndex="0"/>
+                                    </dxg:GridControlBand>
+                                    <dxg:GridControlBand Header="1" VisibleIndex="1">
+                                        <dxg:GridColumn FieldName="NodeName" VisibleIndex="0"/>
+                                    </dxg:GridControlBand>
+                                </dxg:GridControl.Bands>
+                                <dxg:GridControl.View>
+                                    <dxg:CardView ShowCardExpandButton="False"
+                                                  AllowGrouping="True"
+                                                  AllowEditing="False"
+                                                  CardHeaderBinding="{DXBinding 'RowData.Row.Category'}"
+                                                  FlowDirection="LeftToRight"
+                                                  CardLayout="Rows"
+                                                  AllowDragDrop="True"
+                                                  ShowDragDropHint="True"
+                                                  CompleteRecordDragDrop="CardView_CompleteRecordDragDrop">
+                                        <dxg:CardView.DragDropHintTemplate>
+                                            <DataTemplate>
+                                                <!--<dxe:ListBoxEdit ItemsSource="{Binding Records}" DisplayMember="NodeName"/>-->
+                                                <ItemsControl ItemsSource="{Binding Records}">
+                                                    <ItemsControl.Resources>
+                                                        <DataTemplate DataType="{x:Type vm:NodeInfoViewModel}">
+                                                            <Grid Margin="10,10,0,0"
+                                                                  Width="120"
+                                                                  Height="80"
+                                                                  MaxWidth="120"
+                                                                  MaxHeight="80"
+                                                                  MinWidth="120"
+                                                                  MinHeight="80"
+                                                                  >
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="*"></RowDefinition>
+                                                                    <RowDefinition Height="Auto"></RowDefinition>
+                                                                </Grid.RowDefinitions>
+                                                                <Image Source="{dx:DXImage 'SvgImages/Business Objects/BO_Product.svg'}"
+                                                                       Grid.Row="0"
+                                                                       Margin="20"></Image>
+                                                                <StackPanel Grid.Row="1"
+                                                                            HorizontalAlignment="Center">
+                                                                    <TextBlock Text="{Binding NodeName}"
+                                                                               TextAlignment="Center"></TextBlock>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.Resources>
+                                                </ItemsControl>
+                                            </DataTemplate>
+                                        </dxg:CardView.DragDropHintTemplate>
+                                        <dxg:CardView.CardTemplate>
+                                            <DataTemplate>
+                                                <Grid Margin="10"
+                                                      Width="120"
+                                                      Height="80"
+                                                      MaxWidth="120"
+                                                      MaxHeight="80"
+                                                      MinWidth="120"
+                                                      MinHeight="80"
+                                                      >
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*"></RowDefinition>
+                                                        <RowDefinition Height="Auto"></RowDefinition>
+                                                    </Grid.RowDefinitions>
+                                                    <Image Source="{dx:DXImage 'SvgImages/Business Objects/BO_Product.svg'}"
+                                                           Grid.Row="0"
+                                                           Margin="20"></Image>
+                                                    <StackPanel Grid.Row="1"
+                                                            HorizontalAlignment="Center">
+                                                        <TextBlock Text="{Binding Row.NodeName}"
+                                                                   TextAlignment="Center"></TextBlock>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </dxg:CardView.CardTemplate>
+                                    </dxg:CardView>
+                                </dxg:GridControl.View>
+                            </dxg:GridControl>
+                            
+                        </dxdo:LayoutPanel>
+                        <dxdo:LayoutPanel Caption="애드온">
+                            <dxg:GridControl ItemsSource="{Binding SelectedContextViewModel.AddonViewModelCollection}"
+                                             EnableSmartColumnsGeneration="False"
+                                             SelectionMode="Row"
+                                             ShowAllTableValuesInFilterPopup="False"
+                                             AutoGenerateColumns="None"
+>
+                                <dxg:GridControl.Columns>
+                                    <dxg:GridColumn FieldName="이름" IsSmart="False" Width="*" Binding="{Binding Path=Name}"/>
+                                    <dxg:GridColumn FieldName="버전" IsSmart="False" Width="*" Binding="{Binding Path=Version}"/>
+                                </dxg:GridControl.Columns>
+
+                                <dxg:GridControl.View>
+                                    <dxg:TableView></dxg:TableView>
+                                </dxg:GridControl.View>
+                            </dxg:GridControl>
+                        </dxdo:LayoutPanel>
+                    </dxdo:TabbedGroup>
+                  
+                </dxdo:LayoutGroup>
+                
+                <dxdo:LayoutGroup Orientation="Horizontal"
+                                  AllowClose="False"
+                                  ItemHeight="150">
+                    <dxdo:LayoutPanel ItemWidth="*"
+                                      AllowClose="False"
+                                      AllowDock="True"
+                                      dxdo:AutoHideGroup.AutoHideType="Bottom"
+                                      Caption="로그">
+                        
+                    </dxdo:LayoutPanel>
+
+                </dxdo:LayoutGroup>
+            </dxdo:LayoutGroup>
+
+
+        </dxdo:DockLayoutManager>
+
+
+    </DockPanel>
+</UserControl>

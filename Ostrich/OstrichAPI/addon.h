@@ -35,7 +35,7 @@ namespace hv {
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::iconstConstructor> constConstructor(int type) override;
 			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::nodeInfo>> information() override;
 
-			template<typename T> void addComposite(int type, std::string category) {
+			template<typename T> void addComposite(int type, std::string category, std::string nodeName) {
 				try {
 
 					auto constructor = std::make_shared<hv::v2::compositeConstructor<T>>();
@@ -44,6 +44,7 @@ namespace hv {
 					auto arg = std::make_shared<hv::v2::argument>();
 					arg->add("category", category);
 					arg->add("type", type);
+					arg->add("nodeName", nodeName);
 
 					auto info = std::make_shared<hv::v2::nodeInfo>(typeid(T).name(), arg);
 					this->information(info);
@@ -54,13 +55,14 @@ namespace hv {
 			}
 
 
-			template<typename T> void addConst(int type, std::string category) {
+			template<typename T> void addConst(int type, std::string category, std::string nodeName) {
 				try {
 
 					auto constructor = std::make_shared<hv::v2::constConstructor<T>>();
 					this->constConstructor(type, constructor);
 
 					auto arg = std::make_shared<hv::v2::argument>();
+					arg->add("nodeName", nodeName);
 					arg->add("category", category);
 					arg->add("type", type);
 

@@ -8,6 +8,7 @@ namespace hv {
 			impl_nodeInfo() {
 				this->name = "";
 				this->category = "";
+				this->nodeName = "";
 				this->type = -1;
 			}
 
@@ -17,6 +18,7 @@ namespace hv {
 
 			std::string name;
 			std::string category;
+			std::string nodeName;
 			int type;
 
 		};
@@ -31,7 +33,9 @@ hv::v2::nodeInfo::nodeInfo(std::string name, std::shared_ptr<hv::v2::argument> a
 		this->_instance = std::make_unique<hv::v2::impl_nodeInfo>();
 		this->_instance->name = name;
 		this->_instance->category = arg->get<std::string>("category");
+		this->_instance->nodeName = arg->get<std::string>("nodeName");
 		this->_instance->type = arg->get<int>("type");
+
 	}
 	catch (hv::v2::oexception e) {
 		throw e;
@@ -49,6 +53,10 @@ std::string hv::v2::nodeInfo::category() {
 
 std::string hv::v2::nodeInfo::name() {
 	return this->_instance->name;
+}
+
+std::string hv::v2::nodeInfo::nodeName() {
+	return this->_instance->nodeName;
 }
 
 int hv::v2::nodeInfo::type() {

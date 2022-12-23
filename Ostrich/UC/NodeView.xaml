@@ -10,8 +10,7 @@
              xmlns:vm="clr-namespace:ViewModel;assembly=ViewModel"
              MinWidth="120"
              MinHeight="120"
-             x:Name="view"
-             Loaded="view_Loaded">
+             x:Name="view">
 
     <UserControl.Resources>
         <SolidColorBrush x:Key="NodeBackGroundColor" Color="#121212"/>
@@ -60,6 +59,7 @@
                 <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="20"></ColumnDefinition>
                         <ColumnDefinition Width="*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <!--Input-->
@@ -86,7 +86,7 @@
                     </Grid>
 
                     <!--Output-->
-                    <Grid Grid.Column="1">
+                    <Grid Grid.Column="2">
                         <ItemsControl ItemsSource="{Binding Path=OutputCollection}"
                                       Background="Transparent"
                                       HorizontalAlignment="Right"

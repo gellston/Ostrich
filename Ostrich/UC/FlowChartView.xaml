@@ -9,8 +9,8 @@
              xmlns:view="clr-namespace:UC"
              x:Name="FlowChartViewControl"
              Loaded="FlowChartViewControl_Loaded"
-             DataContextChanged="FlowChartViewControl_DataContextChanged"
-             SizeChanged="FlowChartViewControl_SizeChanged">
+             SizeChanged="FlowChartViewControl_SizeChanged"
+             DragOver="FlowChartViewControl_DragOver">
 
     <UserControl.Resources>
         <SolidColorBrush x:Key="FlowChartViewBackGroundColor" Color="#303030"/>

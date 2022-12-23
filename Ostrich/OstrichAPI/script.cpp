@@ -559,6 +559,13 @@ void hv::v2::script::run(std::string context_name) {
 void hv::v2::script::createContext(std::string name) {
 
 	try {
+
+		if (name.length() == 0) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid context name");
+			throw hv::v2::oexception(message);
+		}
+
+
 		if (this->_instance->_contextes.find(name) != this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is already exists");
 			throw hv::v2::oexception(message);
@@ -584,6 +591,13 @@ void hv::v2::script::createContext(std::string name) {
 void hv::v2::script::renameContext(std::string sourceName, std::string targetName) {
 
 	try {
+
+		if (sourceName.length() == 0 || targetName.length() == 0) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid context name");
+			throw hv::v2::oexception(message);
+		}
+
+
 		if (this->_instance->_contextes.find(sourceName) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "source context is not exists");
 			throw hv::v2::oexception(message);
@@ -614,6 +628,13 @@ void hv::v2::script::renameContext(std::string sourceName, std::string targetNam
 
 void hv::v2::script::removeContext(std::string name) {
 	try {
+
+		if (name.length() == 0) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid context name");
+			throw hv::v2::oexception(message);
+		}
+
+
 		if (this->_instance->_contextes.find(name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "source context is not exists");
 			throw hv::v2::oexception(message);
@@ -636,6 +657,13 @@ void hv::v2::script::removeContext(std::string name) {
 
 void hv::v2::script::copyContext(std::string sourceName, std::string targetName) {
 	try {
+
+
+		if (sourceName.length() == 0 || targetName.length() == 0) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid context name");
+			throw hv::v2::oexception(message);
+		}
+
 		if (this->_instance->_contextes.find(sourceName) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "source context is not exists");
 			throw hv::v2::oexception(message);

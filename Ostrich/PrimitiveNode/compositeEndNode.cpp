@@ -20,6 +20,8 @@ hv::v2::compositeEndNode::compositeEndNode(std::string name, hv::v2::ihandle* co
 
 	this->_instance = std::unique_ptr<hv::v2::impl_compositeEndNode>();
 
+	this->isEventNode(true);
+
 	try {
 		this->registerExecutionNode("Exec", hv::v2::searchType::input);
 	}

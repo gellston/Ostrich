@@ -34,7 +34,7 @@ HV::V2::Context::~Context() {
 }
 
 HV::V2::Context::!Context() {
-	this->_instance.reset();
+	this->_instance.~mananged_shared_ptr();
 }
 
 

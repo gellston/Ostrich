@@ -21,6 +21,7 @@ namespace UC
     /// </summary>
     public partial class NodeView : UserControl
     {
+
         #region Constructor
         public NodeView()
         {
@@ -67,28 +68,5 @@ namespace UC
 
 
         #endregion
-
-        #region EventHandler
-        private void view_Loaded(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                //UI Update
-                var viewModel = this.DataContext as NodeViewModel;
-                var x = viewModel.X;
-                var y = viewModel.Y;
-                viewModel.X = -1;
-                viewModel.Y = -1;
-                viewModel.X = x;
-                viewModel.Y = y;
-            }
-            catch (Exception exception)
-            {
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-            }
-
-        }
-        #endregion
-
     }
 }

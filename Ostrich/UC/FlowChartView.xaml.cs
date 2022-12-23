@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DevExpress.Xpf.Core.Native;
+using DevExpress.Xpf.Navigation.Internal.TypedStyles;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -27,6 +29,7 @@ namespace UC
     /// </summary>
     public partial class FlowChartView : UserControl, INotifyPropertyChanged
     {
+
 
         #region Overrides INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -175,10 +178,7 @@ namespace UC
         }
 
 
-        private void FlowChartViewControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
 
-        }
 
         private void FlowChartViewControl_Loaded(object sender, RoutedEventArgs e)
         {
@@ -195,6 +195,7 @@ namespace UC
 
 
             this._ZoomAndPan.UpdateTransform += _ZoomAndPan_UpdateTransform;
+
         }
 
         private void _ZoomAndPan_UpdateTransform()
@@ -207,6 +208,16 @@ namespace UC
 
             if(this.PART_ConnectorPreviewCanvas != null)
                 this.PART_ConnectorPreviewCanvas.RenderTransform = new MatrixTransform(this._ZoomAndPan.Matrix);
+        }
+
+        private void FlowChartViewControl_DragOver(object sender, DragEventArgs e)
+        {
+            var currentMousePos = e.GetPosition(this._NodeCanvas);
+            this.CurrentDragPositionX = currentMousePos.X;
+            this.CurrentDragPositionY = currentMousePos.Y;
+
+            System.Diagnostics.Debug.WriteLine("Current X = " + this.CurrentDragPositionX + " Current Y = " + this.CurrentDragPositionY);
+
         }
 
 
@@ -222,6 +233,8 @@ namespace UC
             Point zoomCenter = this._ZoomAndPan.MatrixInv.Transform(vsZoomCenter);
 
             this._ZoomAndPan.Scale = newScale;
+
+            this.Scale = this._ZoomAndPan.Scale;
 
             Point vsNextZoomCenter = this._ZoomAndPan.Matrix.Transform(zoomCenter);
             Point vsDelta = new Point(vsZoomCenter.X - vsNextZoomCenter.X, vsZoomCenter.Y - vsNextZoomCenter.Y);
@@ -267,6 +280,29 @@ namespace UC
                     nodeViewModel.IsSelected = true;
                 }
 
+                if (clickedItem.DataContext.GetType() == typeof(ConnectorViewModel))
+                {
+
+                    var connectorViewModel = clickedItem.DataContext as ConnectorViewModel;
+
+
+                    //그룹선택하여 이동시에 선택이 해제되지 않도록 
+                    if (Keyboard.IsKeyDown(Key.LeftShift) == false)
+                    {
+                        //DeSelection
+                        foreach (var connector in this.ConnectorViewModellCollection)
+                        {
+
+                            connector.IsSelected = false;
+                        }
+                        //DeSelection
+                    }
+
+                    //Selection Activation;
+                    connectorViewModel.IsSelected = true;
+                }
+
+
 
                 if (clickedItem.DataContext.GetType() == typeof(NodePropertyViewModel))
                 {
@@ -310,10 +346,22 @@ namespace UC
             {
 
                 //DeSelection
-                foreach (var node in this.NodeViewModelCollection)
+                if(this.NodeViewModelCollection != null)
                 {
-                    node.IsSelected = false;
+                    foreach (var node in this.NodeViewModelCollection)
+                    {
+                        node.IsSelected = false;
+                    }
                 }
+
+                if(this.ConnectorViewModellCollection != null)
+                {
+                    foreach(var connector in this.ConnectorViewModellCollection)
+                    {
+                        connector.IsSelected = false;
+                    }
+                }
+  
                 //DeSelection
 
                 //Selection Start 
@@ -363,82 +411,144 @@ namespace UC
                         {
                             var targetNodePropertyViewModel = clickedItem.DataContext as NodePropertyViewModel;
 
-
-
-                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
-                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
-                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
-                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
-                            if ((this.PreviewCurveStart2End == true && targetNodePropertyViewModel.IsConnected == false) ||
-                                (this.PreviewCurveStart2End == true && targetNodePropertyViewModel.IsMultiple == true))
+                            if (this.PreviewCurveStart2End == true && this.NodeConnectivityCheckCommand != null)
                             {
-
-                                var connector = new ConnectorViewModel()
+                                var eventArg = new EventParameter.NodeConnectivityArg()
                                 {
-                                    SourceNodeUID = this._SelectedNodePropertyViewModel.Uid,
-                                    SourceObjectType = this._SelectedNodePropertyViewModel.ObjectType,
+                                    ContextName = this.ContextName,
+                                    SourceNodeUID = this._SelectedNodePropertyViewModel.ParentNodeViewModel.Uid,
+                                    SourcePropertyUID = this._SelectedNodePropertyViewModel.Uid,
                                     SourcePropertyName = this._SelectedNodePropertyViewModel.Name,
-                                    SourceX = this._SelectedNodePropertyViewModel.X,
-                                    SourceY = this._SelectedNodePropertyViewModel.Y,
 
-
-                                    IsExecution = this._SelectedNodePropertyViewModel.IsExecution,
-
-                                    TargetNodeUID = targetNodePropertyViewModel.Uid,
-                                    TargetObjectType = targetNodePropertyViewModel.ObjectType,
-                                    TargetPropertyName = targetNodePropertyViewModel.Name,
-                                    TargetX = targetNodePropertyViewModel.X,
-                                    TargetY = targetNodePropertyViewModel.Y
+                                    TargetNodUID = targetNodePropertyViewModel.ParentNodeViewModel.Uid,
+                                    TargetPropertyUID = targetNodePropertyViewModel.Uid,
+                                    TargetPropertyName = targetNodePropertyViewModel.Name
                                 };
 
-                                this._SelectedNodePropertyViewModel.RegisterSourceConnectorViewModel(connector);
-                                targetNodePropertyViewModel.RegisterTargetConnectorViewModel(connector);
-                                this.ConnectorViewModellCollection.Add(connector);
+                                this.NodeConnectivityCheckCommand.Execute(eventArg);
 
-                                // 실행 노드일 경우 이후에 연결이 불가능하도록 IsConnected 값을 true로 변경
-                                targetNodePropertyViewModel.IsConnected = true;
-                                if (this._SelectedNodePropertyViewModel.IsExecution == true)
-                                    this._SelectedNodePropertyViewModel.IsConnected = true;
-
-                            }
-
-                            if((this.PreviewCurveEnd2Start == true && this._SelectedNodePropertyViewModel.IsConnected == false) ||
-                               (this.PreviewCurveEnd2Start == true && this._SelectedNodePropertyViewModel.IsMultiple == true))
-                            {
-                                var connector = new ConnectorViewModel()
+                                if(eventArg.CanConnect == true)
                                 {
-                                    SourceNodeUID = targetNodePropertyViewModel.Uid,
-                                    SourceObjectType = targetNodePropertyViewModel.ObjectType,
+                                    var connector = new ConnectorViewModel()
+                                    {
+                                        SourcePropertyUID = this._SelectedNodePropertyViewModel.Uid,
+                                        SourceObjectType = this._SelectedNodePropertyViewModel.ObjectType,
+                                        SourcePropertyName = this._SelectedNodePropertyViewModel.Name,
+                                        SourceX = this._SelectedNodePropertyViewModel.X,
+                                        SourceY = this._SelectedNodePropertyViewModel.Y,
+
+
+                                        IsExecution = this._SelectedNodePropertyViewModel.IsExecution,
+
+                                        TargetPropertyUID = targetNodePropertyViewModel.Uid,
+                                        TargetObjectType = targetNodePropertyViewModel.ObjectType,
+                                        TargetPropertyName = targetNodePropertyViewModel.Name,
+                                        TargetX = targetNodePropertyViewModel.X,
+                                        TargetY = targetNodePropertyViewModel.Y
+                                    };
+
+                                    connector.ComputeCurve();
+
+                                    var requestArg = new EventParameter.NodeConnectRequestArg()
+                                    {
+                                        ContextName = this.ContextName,
+                                        SourceNodeUID = this._SelectedNodePropertyViewModel.ParentNodeViewModel.Uid,
+                                        SourcePropertyUID = this._SelectedNodePropertyViewModel.Uid,
+                                        SourcePropertyName = this._SelectedNodePropertyViewModel.Name,
+
+                                        TargetNodUID = targetNodePropertyViewModel.ParentNodeViewModel.Uid,
+                                        TargetPropertyUID = targetNodePropertyViewModel.Uid,
+                                        TargetPropertyName = targetNodePropertyViewModel.Name
+                                    };
+
+                                    this.NodeConnectRequestCommand?.Execute(requestArg);
+
+                                    if (requestArg.ConnectComplete)
+                                    {
+                                        this._SelectedNodePropertyViewModel.RegisterSourceConnectorViewModel(connector);
+                                        targetNodePropertyViewModel.RegisterTargetConnectorViewModel(connector);
+                                        this.ConnectorViewModellCollection.Add(connector);
+                                    }
+                                    else
+                                    {
+                                        System.Diagnostics.Debug.WriteLine("Addicaitonal check!!");
+                                    }
+                                }
+                                else
+                                {
+                                    System.Diagnostics.Debug.WriteLine("Addicaitonal check!!");
+                                }
+                            }
+
+                            if(this.PreviewCurveEnd2Start == true && this.NodeConnectivityCheckCommand != null)
+                            {
+                                var eventArg = new EventParameter.NodeConnectivityArg()
+                                {
+                                    ContextName = this.ContextName,
+                                    SourceNodeUID = targetNodePropertyViewModel.ParentNodeViewModel.Uid,
+                                    SourcePropertyUID = targetNodePropertyViewModel.Uid,
                                     SourcePropertyName = targetNodePropertyViewModel.Name,
-                                    SourceX = targetNodePropertyViewModel.X,
-                                    SourceY = targetNodePropertyViewModel.Y,
 
-                                    IsExecution = this._SelectedNodePropertyViewModel.IsExecution,
-
-                                    TargetNodeUID = _SelectedNodePropertyViewModel.Uid,
-                                    TargetObjectType = _SelectedNodePropertyViewModel.ObjectType,
-                                    TargetPropertyName = _SelectedNodePropertyViewModel.Name,
-                                    TargetX = _SelectedNodePropertyViewModel.X,
-                                    TargetY = _SelectedNodePropertyViewModel.Y
+                                    TargetNodUID = _SelectedNodePropertyViewModel.ParentNodeViewModel.Uid,
+                                    TargetPropertyUID = _SelectedNodePropertyViewModel.Uid,
+                                    TargetPropertyName = _SelectedNodePropertyViewModel.Name
                                 };
 
-                                this._SelectedNodePropertyViewModel.RegisterTargetConnectorViewModel(connector);
-                                targetNodePropertyViewModel.RegisterSourceConnectorViewModel(connector);
-                                this.ConnectorViewModellCollection.Add(connector);
+                                NodeConnectivityCheckCommand.Execute(eventArg);
 
-                                // 실행 노드일 경우 이후에 연결이 불가능하도록 IsConnected 값을 true로 변경
-                                this._SelectedNodePropertyViewModel.IsConnected = true;
-                                if (targetNodePropertyViewModel.IsExecution == true)
-                                    targetNodePropertyViewModel.IsConnected = true;
+                                if (eventArg.CanConnect == true)
+                                {
+                                    var connector = new ConnectorViewModel()
+                                    {
+                                        SourcePropertyUID = targetNodePropertyViewModel.Uid,
+                                        SourceObjectType = targetNodePropertyViewModel.ObjectType,
+                                        SourcePropertyName = targetNodePropertyViewModel.Name,
+                                        SourceX = targetNodePropertyViewModel.X,
+                                        SourceY = targetNodePropertyViewModel.Y,
+
+                                        IsExecution = this._SelectedNodePropertyViewModel.IsExecution,
+
+                                        TargetPropertyUID = _SelectedNodePropertyViewModel.Uid,
+                                        TargetObjectType = _SelectedNodePropertyViewModel.ObjectType,
+                                        TargetPropertyName = _SelectedNodePropertyViewModel.Name,
+                                        TargetX = _SelectedNodePropertyViewModel.X,
+                                        TargetY = _SelectedNodePropertyViewModel.Y
+                                    };
+
+                                    connector.ComputeCurve();
+
+                                    var requestArg = new EventParameter.NodeConnectRequestArg()
+                                    {
+                                        ContextName = this.ContextName,
+                                        SourceNodeUID = targetNodePropertyViewModel.ParentNodeViewModel.Uid,
+                                        SourcePropertyUID = targetNodePropertyViewModel.Uid,
+                                        SourcePropertyName = targetNodePropertyViewModel.Name,
+
+                                        TargetNodUID = _SelectedNodePropertyViewModel.ParentNodeViewModel.Uid,
+                                        TargetPropertyUID = _SelectedNodePropertyViewModel.Uid,
+                                        TargetPropertyName = _SelectedNodePropertyViewModel.Name
+                                    };
+
+                                    this.NodeConnectRequestCommand?.Execute(requestArg);
+
+                                    if (requestArg.ConnectComplete)
+                                    {
+                                        this._SelectedNodePropertyViewModel.RegisterTargetConnectorViewModel(connector);
+                                        targetNodePropertyViewModel.RegisterSourceConnectorViewModel(connector);
+                                        this.ConnectorViewModellCollection.Add(connector);
+                                    }
+                                    else
+                                    {
+                                        System.Diagnostics.Debug.WriteLine("Addicaitonal check!!");
+                                    }
+                                }
+                                else
+                                {
+                                    System.Diagnostics.Debug.WriteLine("Addicaitonal check!!");
+                                }
                             }
-                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
-                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
-                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
-                            // Script Engine과 같이 연동이 필요해보임... 연결 체크하는게 쉽지 않음.
                         }
                     }
-                    //Final Connection 
-                    //Final Connection 
                 }
 
                 this._IsNodePropertyDragging = false;
@@ -489,11 +599,16 @@ namespace UC
             Point mousePos = e.GetPosition(this);
             Point delta = new Point(mousePos.X - _PrevMousePosOnCanvas.X, mousePos.Y - _PrevMousePosOnCanvas.Y);
 
+
             if (this._IsDraggingCanvas)
             {
                 _ZoomAndPan.StartX -= delta.X;
                 _ZoomAndPan.StartY -= delta.Y;
+
+                this.CanvasStartX = _ZoomAndPan.StartX;
+                this.CanvasStartY = _ZoomAndPan.StartY;
             }
+
 
             if (this._IsNodeDragging)
             {
@@ -723,7 +838,146 @@ namespace UC
         }
 
 
+
+        public static readonly DependencyProperty ScaleProperty = DependencyProperty.Register("Scale", typeof(double), typeof(FlowChartView), new PropertyMetadata(1.0));
+
+
+        public double Scale
+        {
+            get
+            {
+                return (double)GetValue(ScaleProperty);
+            }
+
+            set
+            {
+                SetValue(ScaleProperty, value);
+            }
+        }
+
+
+        public static readonly DependencyProperty CanvsStartXProperty = DependencyProperty.Register("CanvasStartX", typeof(double), typeof(FlowChartView), new PropertyMetadata(0.0));
+
+
+        public double CanvasStartX
+        {
+            get
+            {
+                return (double)GetValue(CanvsStartXProperty);
+            }
+
+            set
+            {
+                SetValue(CanvsStartXProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty CanvsStartYProperty = DependencyProperty.Register("CanvasStartY", typeof(double), typeof(FlowChartView), new PropertyMetadata(0.0));
+
+
+        public double CanvasStartY
+        {
+            get
+            {
+                return (double)GetValue(CanvsStartYProperty);
+            }
+
+            set
+            {
+                SetValue(CanvsStartYProperty, value);
+            }
+        }
+
+
+
+
+        public static readonly DependencyProperty ContextNameProperty = DependencyProperty.Register("ContextName", typeof(string), typeof(FlowChartView), new PropertyMetadata(""));
+
+
+        public string ContextName
+        {
+            get
+            {
+                return (string)GetValue(ContextNameProperty);
+            }
+
+            set
+            {
+                SetValue(ContextNameProperty, value);
+            }
+        }
+
+
+        public static readonly DependencyProperty NodeConnectivityCheckCommandProperty = DependencyProperty.Register("NodeConnectivityCheckCommand", typeof(ICommand), typeof(FlowChartView));
+
+
+        public ICommand NodeConnectivityCheckCommand
+        {
+            get
+            {
+                return (ICommand)GetValue(NodeConnectivityCheckCommandProperty);
+            }
+
+            set
+            {
+                SetValue(NodeConnectivityCheckCommandProperty, value);
+            }
+        }
+
+
+        public static readonly DependencyProperty NodeConnectRequestCommandProperty = DependencyProperty.Register("NodeConnectRequestCommand", typeof(ICommand), typeof(FlowChartView));
+
+
+        public ICommand NodeConnectRequestCommand
+        {
+            get
+            {
+                return (ICommand)GetValue(NodeConnectRequestCommandProperty);
+            }
+
+            set
+            {
+                SetValue(NodeConnectRequestCommandProperty, value);
+            }
+        }
+
+
+
+        public static readonly DependencyProperty CurrentDragPositionXProperty = DependencyProperty.Register("CurrentDragPositionX", typeof(double), typeof(FlowChartView));
+
+
+        public double CurrentDragPositionX
+        {
+            get
+            {
+                return (double)GetValue(CurrentDragPositionXProperty);
+            }
+
+            set
+            {
+                SetValue(CurrentDragPositionXProperty, value);
+            }
+        }
+
+        public static readonly DependencyProperty CurrentDragPositionYProperty = DependencyProperty.Register("CurrentDragPositionY", typeof(double), typeof(FlowChartView));
+
+
+        public double CurrentDragPositionY
+        {
+            get
+            {
+                return (double)GetValue(CurrentDragPositionYProperty);
+            }
+
+            set
+            {
+                SetValue(CurrentDragPositionYProperty, value);
+            }
+        }
+
+
         #endregion
+
 
     }
 }

@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 
 namespace ViewModel
 {
-    public class NodePropertyViewModel : ViewModelBase
+    public class NodePropertyViewModel : ViewModelBase, ICloneable
     {
 
         #region Private Property
         private bool _IsOutput = false;
-        private bool _IsExecution = false;
         private string _Name = "";
         private ulong _Uid = 0;
         private bool _IsPressed = false;
-        private bool _IsConnected = false;
         private int _ObjectType = -1;
         private bool _IsMultiple = false;
         private double _X = 0;
@@ -43,8 +41,17 @@ namespace ViewModel
 
         public bool IsExecution
         {
-            get => _IsExecution;
-            set => SetProperty(ref _IsExecution, value);
+            get
+            {
+                if(this.ObjectType == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         public bool IsOutput
@@ -61,8 +68,15 @@ namespace ViewModel
 
         public bool IsConnected
         {
-            get => _IsConnected;
-            set => SetProperty(ref _IsConnected, value);
+            get
+            {
+                if (this.IsOutput == true && this._SourceConnectorCollection.Count > 0)
+                    return true;
+                else if (this.IsOutput == false && this._TargetConnectorCollection.Count > 0)
+                    return true;
+                else return false;
+
+            }
         }
 
         public bool IsMultiple
@@ -138,26 +152,72 @@ namespace ViewModel
             }
         }
 
+
+        #endregion
+
+
+        #region Functions
+
+
+        public List<ConnectorViewModel> Connectors()
+        {
+            List<ConnectorViewModel> connectors = new List<ConnectorViewModel>();
+
+            foreach(var connnector in this._SourceConnectorCollection)
+            {
+                connectors.Add(connnector);
+            }
+
+            foreach(var connector in this._TargetConnectorCollection)
+            {
+                connectors.Add(connector);
+            }
+
+            return connectors;
+        }
+
+
+
         public void RegisterSourceConnectorViewModel(ConnectorViewModel viewModel)
         {
             this._SourceConnectorCollection.Add(viewModel);
+            this.RaisePropertyChanged("IsConnected");
         }
 
         public void UnRegisterSourceConnectorViewModel(ConnectorViewModel viewModel)
         {
             this._SourceConnectorCollection.Remove(viewModel);
+            this.RaisePropertyChanged("IsConnected");
         }
 
         public void RegisterTargetConnectorViewModel(ConnectorViewModel viewModel)
         {
             this._TargetConnectorCollection.Add(viewModel);
+            this.RaisePropertyChanged("IsConnected");
         }
 
         public void UnRegisterTargetConnectorViewModel(ConnectorViewModel viewModel)
         {
             this._TargetConnectorCollection.Remove(viewModel);
+            this.RaisePropertyChanged("IsConnected");
         }
 
+        public object Clone()
+        {
+            var property = new NodePropertyViewModel()
+            {
+                IsMultiple = this.IsMultiple,
+                IsOutput = this.IsOutput,
+                IsPressed = this.IsPressed,
+                X = this.X,
+                Y = this.Y,
+                Name = this.Name,
+                ObjectType = this.ObjectType,
+                Uid = this.Uid,
+            };
+
+            return property;
+        }
 
         #endregion
     }

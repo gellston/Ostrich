@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:UC"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             Background="Transparent">
+             Background="Transparent"
+             LayoutUpdated="UserControl_LayoutUpdated">
     <Grid Background="Transparent"
           VerticalAlignment="Center">
 

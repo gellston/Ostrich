@@ -20,7 +20,7 @@ HV::V2::Addon::~Addon() {
 }
 
 HV::V2::Addon::!Addon() {
-	this->_instance.reset();
+	this->_instance.~mananged_shared_ptr();
 }
 
 bool HV::V2::Addon::Exist(int type) {

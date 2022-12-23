@@ -23,9 +23,21 @@
                             <Style TargetType="{x:Type Path}">
                                 <Setter Property="Stroke" Value="Green"></Setter>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsExecution}" Value="True">
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsExecution}" Value="True"></Condition>
+                                            <Condition Binding="{Binding IsSelected}" Value="False"></Condition>
+                                        </MultiDataTrigger.Conditions>
                                         <Setter Property="Stroke" Value="#00796b"></Setter>
-                                    </DataTrigger>
+                                    </MultiDataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsExecution}" Value="True"></Condition>
+                                            <Condition Binding="{Binding IsSelected}" Value="True"></Condition>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Stroke" Value="Orange"></Setter>
+                                    </MultiDataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </Path.Style>
@@ -37,7 +49,7 @@
                               StrokeDashArray="2 0 0 2"
                               Stroke="White">
                         <Path.Triggers>
-
+                            
                             <EventTrigger RoutedEvent="Loaded">
                                 <BeginStoryboard>
                                     <Storyboard>

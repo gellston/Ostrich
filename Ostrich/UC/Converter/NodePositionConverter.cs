@@ -41,7 +41,7 @@ namespace UC.Converter
                         ViewUtil.FindChildren<Border>(input, propertySpotCollection);
 
                         var borderControl = propertySpotCollection.Find(data => data.Name == "PART_Node_Spot");
-                        System.Diagnostics.Debug.WriteLine("check");
+
 
                         if (borderControl != null)
                         {
@@ -58,16 +58,17 @@ namespace UC.Converter
                         ViewUtil.FindChildren<Border>(output, propertySpotCollection);
 
                         var borderControl = propertySpotCollection.Find(data => data.Name == "PART_Node_Spot");
-                        System.Diagnostics.Debug.WriteLine("check");
+   
 
                         if (borderControl != null)
                         {
-                            var inputDataContext = output.DataContext as NodePropertyViewModel;
+                            var outputDataContext = output.DataContext as NodePropertyViewModel;
                             Point point = borderControl.TransformToAncestor(contentPresenter).Transform(new Point(0, 0));
-                            inputDataContext.X = point.X + dataContext.X + borderControl.ActualWidth / 2;
-                            inputDataContext.Y = point.Y + dataContext.Y + borderControl.ActualHeight / 2;
+                            outputDataContext.X = point.X + dataContext.X + borderControl.ActualWidth / 2;
+                            outputDataContext.Y = point.Y + dataContext.Y + borderControl.ActualHeight / 2;
                         }
                     }
+
 
                     if (values[1] != DependencyProperty.UnsetValue)
                     {

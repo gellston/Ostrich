@@ -1,5 +1,6 @@
 ﻿using DevExpress.XtraPrinting.Native;
 using Microsoft.Extensions.DependencyInjection;
+using Ostrich.Service;
 using Ostrich.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -35,8 +36,17 @@ namespace Ostrich
         {
             var services = new ServiceCollection();
 
-            services.AddSingleton<MainWindowViewModel>();
 
+
+            //Service
+            services.AddSingleton<NodeEngineManagerService>();
+
+
+            //ViewModel
+            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<CalculatorViewModel>();
+            services.AddSingleton<MessageViewModel>();
+            services.AddSingleton<ContextManageViewModel>();
 
             return services.BuildServiceProvider();
         }

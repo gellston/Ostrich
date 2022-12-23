@@ -23,6 +23,10 @@ namespace HV {
 			~NodeInfo();
 			!NodeInfo();
 
+			property System::String^ NodeName {
+				System::String^ get();
+			}
+
 			property System::String^ Name {
 				System::String^ get();
 			}

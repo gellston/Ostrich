@@ -21,13 +21,17 @@ HV::V2::NodeInfo::~NodeInfo() {
 }
 
 HV::V2::NodeInfo::!NodeInfo() {
-	this->_instance.reset();
+	this->_instance.~mananged_shared_ptr();
 }
 
 
 System::String^ HV::V2::NodeInfo::Name::get() {
 
 	return gcnew System::String(this->_instance->name().c_str());
+}
+
+System::String^ HV::V2::NodeInfo::NodeName::get() {
+	return gcnew System::String(this->_instance->nodeName().c_str());
 }
 
 System::String^ HV::V2::NodeInfo::Category::get() {

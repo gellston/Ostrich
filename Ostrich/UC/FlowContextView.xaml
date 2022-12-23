@@ -21,7 +21,15 @@
             <ItemContainerTemplate>
                 <Grid>
                     <view:FlowChartView ConnectorViewModellCollection="{Binding ConnectorViewModelCollection}"
-                                        NodeViewModelCollection="{Binding NodeViewModelCollection}"></view:FlowChartView>
+                                        NodeViewModelCollection="{Binding NodeViewModelCollection}"
+                                        Scale="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CanvasStartX="{Binding CanvasStartX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CanvasStartY="{Binding CanvasStartY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        NodeConnectivityCheckCommand="{Binding ElementName=view, Mode=TwoWay, Path=NodeConnectivityCheckCommand}"
+                                        NodeConnectRequestCommand="{Binding ElementName=view, Mode=TwoWay, Path=NodeConnectRequestCommand}"
+                                        ContextName="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CurrentDragPositionX="{Binding CurrentDragPositionX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        CurrentDragPositionY="{Binding CurrentDragPositionY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></view:FlowChartView>
                 </Grid>
             </ItemContainerTemplate>
         </dx:DXTabControl.ItemTemplate>
@@ -33,6 +41,7 @@
                 <Setter Property="ToolTip" Value="{Binding Name}"/>
                 <Setter Property="CloseCommand" Value="{Binding ElementName=view, Path=ContextCloseCommand}"/>
                 <Setter Property="CloseCommandParameter" Value="{Binding}"/>
+                <Setter Property="AllowHide" Value="False"></Setter>
             </Style>
         </dx:DXTabControl.ItemContainerStyle>
 

@@ -27,6 +27,7 @@ namespace hv {
 
 			OSTRICH_COMMON_API std::string name();
 			OSTRICH_COMMON_API std::string category();
+			OSTRICH_COMMON_API std::string nodeName();
 			OSTRICH_COMMON_API int type();
 		};
 	}

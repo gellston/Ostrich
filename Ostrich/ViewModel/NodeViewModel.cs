@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Windows.Documents;
 
 namespace ViewModel
 {
-    public class NodeViewModel : ViewModelBase
+    public class NodeViewModel : ViewModelBase, ICloneable
     {
 
         #region Private Property
@@ -20,72 +22,6 @@ namespace ViewModel
 
         #region Constructor
         public NodeViewModel() {
-
-            //Test Code
-            this._InputCollection.Add(new NodePropertyViewModel()
-            {
-                Name = "Exec",
-                IsConnected = false,
-                IsOutput = false,
-                IsExecution = true,
-                ObjectType = 1,
-                Uid = this.Uid,
-                ParentNodeViewModel = this
-            });
-            this._InputCollection.Add(new NodePropertyViewModel()
-            {
-                Name = "Input",
-                IsConnected = false,
-                IsMultiple = true,
-                IsExecution = false,
-                IsOutput = false,
-                ObjectType = 50001,
-                Uid = this.Uid,
-                ParentNodeViewModel = this
-            });
-            this._InputCollection.Add(new NodePropertyViewModel()
-            {
-                Name = "X",
-                IsConnected = false,
-                IsExecution = false,
-                IsOutput = false,
-                ObjectType = 50002,
-                Uid = this.Uid,
-                ParentNodeViewModel = this
-            });
-
-            this._OutputCollection.Add(new NodePropertyViewModel()
-            {
-                Name = "Exec",
-                IsConnected = false,
-                IsOutput = true,
-                IsExecution = true,
-                ObjectType = 1,
-                Uid = this.Uid,
-                ParentNodeViewModel = this
-            });
-            this._OutputCollection.Add(new NodePropertyViewModel()
-            {
-                Name = "Result",
-                IsExecution = false,
-                IsConnected = false,
-                IsOutput = true,
-                ObjectType = 50001,
-                Uid = this.Uid,
-                ParentNodeViewModel = this
-            });
-            this._OutputCollection.Add(new NodePropertyViewModel()
-            {
-                Name = "Y",
-                IsExecution = false,
-                IsConnected = false,
-                IsOutput = true,
-                ObjectType = 50002,
-                Uid = this.Uid,
-                ParentNodeViewModel = this
-            });
-
-            //Test Code
 
         }
         #endregion
@@ -142,6 +78,100 @@ namespace ViewModel
         {
             get => _OutputCollection;
             set => SetProperty(ref _OutputCollection, value);
+        }
+
+
+        #endregion
+
+
+        #region Functions
+        public void RegisterInputProperty(NodePropertyViewModel property)
+        {
+            property.ParentNodeViewModel = this;
+            this.InputCollection.Add(property);
+        }
+
+        public void RegisterOutputProperty(NodePropertyViewModel property)
+        {
+            property.ParentNodeViewModel = this;
+            this.OutputCollection.Add(property);
+        }
+
+
+        public void UnRegisterConnector(List<ConnectorViewModel> connectors)
+        {
+            foreach(var connector in connectors)
+            {
+                this.UnRegisterConnector(connector);
+            }
+        }
+
+        public void UnRegisterConnector(ConnectorViewModel connector)
+        {
+            foreach (var input in this.InputCollection)
+            {
+                input.UnRegisterSourceConnectorViewModel(connector);
+                input.UnRegisterTargetConnectorViewModel(connector);
+            }
+
+            foreach (var output in this.OutputCollection)
+            {
+                output.UnRegisterSourceConnectorViewModel(connector);
+                output.UnRegisterTargetConnectorViewModel(connector);
+            }
+        }
+
+        public List<ConnectorViewModel> Connectors()
+        {
+            List<ConnectorViewModel> connectors = new List<ConnectorViewModel>();
+            foreach(var input in this.InputCollection)
+            {
+                var inputConnectors = input.Connectors();
+                foreach(var inputConnector in inputConnectors)
+                {
+                    connectors.Add(inputConnector);
+                }
+            }
+
+            foreach (var output in this.OutputCollection)
+            {
+                var outputConnectors = output.Connectors();
+                foreach (var outputConnector in outputConnectors)
+                {
+                    connectors.Add(outputConnector);
+                }
+            }
+
+            return connectors;
+        }
+
+
+        public object Clone()
+        {
+            var node = new NodeViewModel()
+            {
+                X = this.X,
+                Y = this.Y,
+                IsEvent = this.IsEvent,
+                IsSelected = this.IsSelected,
+                Name = this.Name,
+                Uid = this.Uid,
+
+            };
+
+
+            foreach(var input in this.InputCollection)
+            {
+                node.RegisterInputProperty((NodePropertyViewModel)input.Clone());
+            }
+
+            foreach(var output in this.OutputCollection)
+            {
+                node.RegisterOutputProperty((NodePropertyViewModel)output.Clone());
+            }
+
+
+            return node;
         }
         #endregion
 

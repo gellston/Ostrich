@@ -35,7 +35,7 @@ HV::V2::Script::~Script() {
 }
 
 HV::V2::Script::!Script() {
-	this->_instance.reset();
+	this->_instance.~mananged_shared_ptr();
 }
 
 
@@ -346,7 +346,7 @@ void HV::V2::Script::SetAddonPath(System::String^ path) {
 
 System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ HV::V2::Script::AddonInfo(System::String^ context_name) {
 	try {
-		System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ result;
+		System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ result = gcnew System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>();
 		auto nativeResult = this->_instance->addonInfo(msclr::interop::marshal_as<std::string>(context_name));
 		for (auto& addonInfo : nativeResult) {
 			result->Add(gcnew System::Tuple<System::String^, System::String^>(
@@ -367,7 +367,7 @@ System::Collections::Generic::List<System::Tuple<System::String^, System::String
 
 System::Collections::Generic::List<HV::V2::IAddon^>^ HV::V2::Script::Addons(System::String^ context_name) {
 	try {
-		System::Collections::Generic::List<HV::V2::IAddon^>^ result;
+		System::Collections::Generic::List<HV::V2::IAddon^>^ result = gcnew System::Collections::Generic::List<HV::V2::IAddon^>();
 		auto nativeResult = this->_instance->addons(msclr::interop::marshal_as<std::string>(context_name));
 		for (auto& addon : nativeResult) {
 			result->Add(gcnew HV::V2::Addon(System::IntPtr(&addon), true));
