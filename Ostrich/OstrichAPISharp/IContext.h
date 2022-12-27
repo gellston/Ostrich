@@ -12,13 +12,45 @@ using namespace System;
 namespace HV {
 	namespace V2 {
 
-		public interface class IContext : public IHandle, public ICloneable {
+		public interface class IContext : public IHandle, public ICloneable, public System::IDisposable{
+
+
 		public:
 
 
 			virtual property System::IntPtr Handle {
 				System::IntPtr get();
 			}
+
+			virtual System::Object^ Clone();
+
+
+
+
+			//Event Callback
+			delegate void OnProcessCompleteEventCallback(int nodeType, std::size_t composite_uid);
+			delegate void OnConstChangedEventCallback(std::size_t constUID);
+
+
+			//Event Handler
+			delegate void OnProcessCompleteHandler(System::Object^ sender, int nodeType, std::size_t compositeUID);
+			delegate void OnConstChangedHandler(System::Object^ sender, std::size_t constUID);
+
+
+
+			event OnProcessCompleteHandler^ OnProcessComplete;
+			event OnConstChangedHandler^ OnConstChanged;
+
+
+
+			virtual void RegisterProcessCompleteEvent(OnProcessCompleteHandler^ eventHandler);
+			virtual void RegisterConstChangedEvent(OnConstChangedHandler^ eventHandler);
+
+			virtual void ResetProcessCompleteEvent(OnProcessCompleteHandler^ eventHandler);
+			virtual void ResetConstChangedEvent(OnConstChangedHandler^ eventHandler);
+
+
+
 
 			virtual void Loadlibrary();
 			virtual void Unloadlibrary();
@@ -43,7 +75,7 @@ namespace HV {
 
 			virtual System::String^ Serialization();
 			virtual void DeSerialization(System::String^ value);
-			//Clone Here
+
 
 			virtual HV::V2::ICompositeNode^ Search(std::size_t uid);
 			virtual HV::V2::ICompositeNode^ Search(System::String^ name);

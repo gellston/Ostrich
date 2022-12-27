@@ -18,10 +18,10 @@
 
     <Grid ClipToBounds="True"
           Background="{StaticResource FlowChartViewBackGroundColor}">
-        <view:ConnectorViewContainer x:Name="PART_ConnectorViewContainer"
-                                     ConnectorViewModelCollection="{Binding ElementName=FlowChartViewControl, Path=ConnectorViewModellCollection, UpdateSourceTrigger=PropertyChanged}">
+        <view:NodePathViewContainer x:Name="PART_PathViewContainer"
+                                   NodePathViewModelCollection="{Binding ElementName=FlowChartViewControl, Path=NodePathViewModelCollection, UpdateSourceTrigger=PropertyChanged}">
 
-        </view:ConnectorViewContainer>
+        </view:NodePathViewContainer>
 
         <view:NodeViewsContainer x:Name="PART_NodeViewContainer"
                                  NodeViewModelCollection="{Binding ElementName=FlowChartViewControl, Path=NodeViewModelCollection, UpdateSourceTrigger=PropertyChanged}">
@@ -49,7 +49,7 @@
         </Canvas>
 
         <Canvas Name="PART_ConnectorPreviewCanvas" 
-				Visibility="{Binding ElementName=FlowChartViewControl, Path=ConnectorVisibility}"
+				Visibility="{Binding ElementName=FlowChartViewControl, Path=PathVisibility}"
 				IsHitTestVisible="False"
 				HorizontalAlignment="Left" VerticalAlignment="Top">
 
@@ -91,7 +91,7 @@
                     Height="10"
                     Canvas.Left="{Binding ElementName=FlowChartViewControl, Path=PreviewCurveStartX, Mode=OneWay}"
                     Canvas.Top="{Binding ElementName=FlowChartViewControl, Path=PreviewCurveStartY,Mode=OneWay}"
-                    Visibility="{Binding ElementName=FlowChartViewControl, Path=ConnectorVisibility, Mode=OneWay}"
+                    Visibility="{Binding ElementName=FlowChartViewControl, Path=PathVisibility, Mode=OneWay}"
                     CornerRadius="5"
                     Margin="-5, -5, 0, 0"
                     BorderBrush="Orange"
@@ -103,7 +103,7 @@
                     CornerRadius="5"
                     Canvas.Left="{Binding ElementName=FlowChartViewControl, Path=PreviewCurveEndX, Mode=OneWay}"
                     Canvas.Top="{Binding ElementName=FlowChartViewControl, Path=PreviewCurveEndY,Mode=OneWay}"
-                    Visibility="{Binding ElementName=FlowChartViewControl, Path=ConnectorVisibility, Mode=OneWay}"
+                    Visibility="{Binding ElementName=FlowChartViewControl, Path=PathVisibility, Mode=OneWay}"
                     Margin="-5, -5, 0, 0"
                     BorderBrush="Orange"
                     Background="Orange">

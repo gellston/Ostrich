@@ -49,6 +49,12 @@ namespace hv {
 			int _depth;
 
 
+			//Event Handler poiner
+
+			std::function<void(int nodeType, std::size_t composite_uid)> _processCompleteEvent;
+			std::function<void(std::size_t constUID)> _constChangedEvent;
+			
+
 			impl_context() {
 
 				_depth = 0;
@@ -70,12 +76,21 @@ hv::v2::context::context() {
 
 	this->_instance = std::make_unique<hv::v2::impl_context>();
 
-
+	this->resetConstChangedEvent();
+	this->resetProcessCompleteEvent();
 
 }
 
 hv::v2::context::~context() {
+
+
+
 	try {
+
+		this->resetConstChangedEvent();
+		this->resetProcessCompleteEvent();
+
+
 		this->unloadLibrary();
 	}
 	catch (hv::v2::oexception e) {
@@ -85,15 +100,45 @@ hv::v2::context::~context() {
 
 
 
-void hv::v2::context::onProcessComplete(int nodeType, std::size_t composite_uid, std::vector<std::size_t> output_uid) {
+void hv::v2::context::onProcessComplete(int nodeType, std::size_t composite_uid) {
 
 	std::cout << "type : " << nodeType << ", uid : " << composite_uid << std::endl;
+
+	this->_instance->_processCompleteEvent(nodeType, composite_uid);
+
 }
 
 void hv::v2::context::onConstChanged(std::size_t constUID) {
 
 	std::cout << "const uid : " << constUID << std::endl;
+
+	this->_instance->_constChangedEvent(constUID);
 }
+
+void hv::v2::context::registerProcessCompleteEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) {
+	this->_instance->_processCompleteEvent = eventHandler;
+}
+void hv::v2::context::registerConstChangedEvent(std::function<void(std::size_t constUID)> eventHandler) {
+	this->_instance->_constChangedEvent = eventHandler;
+}
+
+void hv::v2::context::resetConstChangedEvent() {
+
+	this->_instance->_constChangedEvent=[&](std::size_t constUID){
+		std::cout << "constChanged Event!!" << std::endl;
+		std::cout << "event handler check : " << constUID << std::endl;
+		std::cout << "constChanged Event!!" << std::endl;
+	};
+}
+
+void hv::v2::context::resetProcessCompleteEvent() {
+	this->_instance->_processCompleteEvent = [&](int nodeType, std::size_t composite_uid) {
+		std::cout << "ProcessCompleteEvent!!" << std::endl;
+		std::cout << "event handler check : " << nodeType << ", " << composite_uid << std::endl;
+		std::cout << "ProcessCompleteEvent!!" << std::endl;
+	};
+}
+
 
 
 std::shared_ptr<hv::v2::icompositeNode> hv::v2::context::search(std::size_t uid) {

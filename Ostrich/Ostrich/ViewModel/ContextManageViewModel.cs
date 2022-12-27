@@ -19,9 +19,12 @@ namespace Ostrich.ViewModel
         private ICommand _CloseCommand = null;
         #endregion
 
+
+        #region Constructor
         public ContextManageViewModel() { 
         
         }
+        #endregion
 
         #region Public Property
         public string ContextName
@@ -30,6 +33,10 @@ namespace Ostrich.ViewModel
             set => SetProperty(ref _ContextName, value);
         }
 
+
+        #endregion
+
+        #region Command
 
         public ICommand ConfirmCommand
         {

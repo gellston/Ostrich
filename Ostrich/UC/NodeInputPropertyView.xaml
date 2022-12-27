@@ -4,16 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UC"
+             xmlns:model="clr-namespace:Model.Property;assembly=Model"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="Transparent"
-             LayoutUpdated="UserControl_LayoutUpdated">
+             LayoutUpdated="UserControl_LayoutUpdated"
+             x:Name="view">
     <Grid Background="Transparent"
           VerticalAlignment="Center">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="14"></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <Border Grid.Column="0"
@@ -87,7 +90,8 @@
                    Grid.Column="1"
                    VerticalAlignment="Center"
                    Margin="5,0,0,0"
-                   TextAlignment="Left"
+                   TextAlignment="Center"
+                   Focusable="False"
                    Name="NodeName">
             <TextBlock.Style>
                 <Style TargetType="{x:Type TextBlock}">
@@ -100,5 +104,30 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
+        <ContentPresenter Grid.Column="2"
+                          Margin="5,0,0,0"
+                          Content="{Binding PropertyModel}">
+            <ContentPresenter.Resources>
+                <DataTemplate DataType="{x:Type model:BasePropertyModel}">
+                    <Grid></Grid>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type model:ConstNumberModel}">
+                    <TextBox Text="{Binding Data, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalAlignment="Center"
+                             Cursor="Arrow"
+                             CaretBrush="Transparent"></TextBox>
+                </DataTemplate>
+            </ContentPresenter.Resources>
+            <ContentPresenter.Style>
+                <Style TargetType="{x:Type ContentPresenter}">
+                    <Setter Property="Visibility" Value="Visible"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=view, Path=DataContext.IsConnected}" Value="True">
+                            <Setter Property="Visibility" Value="Hidden"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ContentPresenter.Style>
+        </ContentPresenter>
     </Grid>
 </UserControl>

@@ -14,6 +14,17 @@ namespace hv {
 		public:
 			virtual ~iscript() {  }
 
+
+
+
+			virtual void registerProcessCompleteEvent(std::string context_name, std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) = 0;
+			virtual void registerConstChangedEvent(std::string context_name, std::function<void(std::size_t constUID)> eventHandler) = 0;
+
+			virtual void resetProcessCompleteEvent(std::string context_name) = 0;
+			virtual void resetConstChangedEvent(std::string context_name) = 0;
+
+
+
 			virtual std::shared_ptr<hv::v2::icompositeNode> search(std::string context_name, std::size_t uid) = 0;
 			virtual std::shared_ptr<hv::v2::icompositeNode> search(std::string context_name, std::string name) = 0;
 			template<typename T> std::shared_ptr<T> search(std::string context_name, std::string name) {
@@ -74,6 +85,8 @@ namespace hv {
 			virtual void run(std::string context_name, int objectType, std::string name) = 0;
 			virtual void run(std::string context_name) = 0;
 
+
+			virtual std::shared_ptr<hv::v2::icontext> context(std::string name) = 0;
 			virtual void createContext(std::string name) = 0;
 			virtual void renameContext(std::string sourceName, std::string targetName) = 0;
 			virtual void removeContext(std::string name) = 0;

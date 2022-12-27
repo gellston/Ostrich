@@ -4,35 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UC"
+             xmlns:model="clr-namespace:Model.Property;assembly=Model"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="Transparent"
              LayoutUpdated="UserControl_LayoutUpdated">
 
-    <Grid Background="Transparent"
-          VerticalAlignment="Center">
+    <Grid VerticalAlignment="Center"
+          Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="14"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <TextBlock Text="{Binding Name}"
-                   Grid.Column="0"
-                   VerticalAlignment="Center"
-                   Margin="0,0,5,0"
-                   TextAlignment="Right">
-            <TextBlock.Style>
-                <Style TargetType="{x:Type TextBlock}">
-                    <Setter Property="Foreground" Value="White"></Setter>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsExecution}" Value="True">
-                            <Setter Property="Foreground" Value="#00796b"></Setter>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
 
-        <Border Grid.Column="1"
+        <Border Grid.Column="2"
                 BorderThickness="2"
                 Height="10"
                 Width="10"
@@ -59,5 +45,42 @@
             </Border.Style>
 
         </Border>
+
+        <TextBlock Text="{Binding Name}"
+                   Grid.Column="1"
+                   VerticalAlignment="Center"
+                   Margin="0,0,5,0"
+                   TextAlignment="Center">
+            <TextBlock.Style>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="Foreground" Value="White"></Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsExecution}" Value="True">
+                            <Setter Property="Foreground" Value="#00796b"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+
+        <ContentPresenter Grid.Column="0"
+                          Margin="0,0,5,0"
+                          Content="{Binding PropertyModel}">
+            <ContentPresenter.Resources>
+                <DataTemplate DataType="{x:Type model:BasePropertyModel}">
+                    <Grid></Grid>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type model:ConstNumberModel}">
+                    <TextBox Text="{Binding Data, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Cursor="Arrow"
+                             CaretBrush="Transparent"
+                             VerticalAlignment="Center"
+                             IsReadOnly="True"
+                             Focusable="False"></TextBox>
+                </DataTemplate>
+            </ContentPresenter.Resources>
+           
+        </ContentPresenter>
     </Grid>
 </UserControl>

@@ -154,7 +154,7 @@ hv::v2::resultType hv::v2::compositeNode::call() {
 	auto result = this->process();
 
 
-	this->_instance->_context->onProcessComplete(this->type(), this->uid(), this->outputConstUID());
+	this->_instance->_context->onProcessComplete(this->type(), this->uid());
 
 	return result;
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__);

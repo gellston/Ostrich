@@ -6,6 +6,9 @@
 #include "IScript.h"
 #include "managed_shared_ptr.h"
 
+
+
+
 namespace HV {
 	namespace V2 {
 		public ref class Script : public HV::V2::IScript {
@@ -13,11 +16,19 @@ namespace HV {
 
 			HV::V2::mananged_shared_ptr<hv::v2::iscript> _instance;
 
+			System::Collections::Generic::Dictionary<System::String^, HV::V2::IContext^>^ _managedContext;
+
 		public:
 
 			Script();
 			!Script();
 			~Script();
+
+			virtual void RegisterProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
+			virtual void RegisterConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler);
+
+			virtual void ResetProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
+			virtual void ResetConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler);
 
 
 			virtual HV::V2::ICompositeNode^ Search(System::String^ context_name, std::size_t uid);
@@ -69,6 +80,8 @@ namespace HV {
 			virtual System::String^ Serialization(System::String^ context_name);
 			virtual void DeSerialization(System::String^ context_name, System::String^ value);
 
+
+			virtual HV::V2::IContext^ Context(System::String^ context_name);
 			virtual void CreateContext(System::String^ context_name);
 			virtual void RenameContext(System::String^ sourceName, System::String^ targetName);
 			virtual void RemoveContext(System::String^ name);

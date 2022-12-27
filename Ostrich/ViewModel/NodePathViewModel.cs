@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace ViewModel
 {
-    public class ConnectorViewModel : ViewModelBase, ICloneable
+    public class NodePathViewModel : ViewModelBase, ICloneable
     {
 
         #region Private Property
@@ -17,10 +17,12 @@ namespace ViewModel
         private bool _IsSelected = false;
 
         private ulong _SourcePropertyUID = 0;
+        private ulong _SourceNodeUID = 0;
         private string _SourcePropertyName = "";
         private int _SourceObjectType = 0;
 
         private ulong _TargetPropertyUID = 0;
+        private ulong _TargetNodeUID = 0;
         private string _TargetPropertyName = "";
         private int _TargetObjectType = 0;
 
@@ -38,7 +40,7 @@ namespace ViewModel
 
 
         #region Consturctor
-        public ConnectorViewModel() { 
+        public NodePathViewModel() { 
 
         }
 
@@ -104,6 +106,12 @@ namespace ViewModel
             }
         }
 
+        public ulong SourceNodeUID
+        {
+            get => _SourceNodeUID;
+            set => SetProperty(ref _SourceNodeUID, value);
+        }
+
         public ulong SourcePropertyUID
         {
             get => _SourcePropertyUID;
@@ -123,6 +131,11 @@ namespace ViewModel
         }
 
 
+        public ulong TargetNodeUID
+        {
+            get => _TargetNodeUID;
+            set => SetProperty(ref _TargetNodeUID, value);
+        }
 
         public ulong TargetPropertyUID
         {
@@ -144,7 +157,7 @@ namespace ViewModel
 
         public object Clone()
         {
-            var connector = new ConnectorViewModel()
+            var path = new NodePathViewModel()
             {
                 IsExecution = this.IsExecution,
 
@@ -166,7 +179,7 @@ namespace ViewModel
 
             System.Diagnostics.Debug.WriteLine("Curve Data = " + this.Curve);
 
-            return connector;
+            return path;
         }
 
 

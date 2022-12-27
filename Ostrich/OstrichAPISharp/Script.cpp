@@ -8,6 +8,7 @@
 #include "CommonException.h"
 #include "CompositeNode.h"
 #include "Addon.h"
+#include "Context.h"
 
 //C++ Header
 #include <commonException.h>
@@ -20,6 +21,10 @@ HV::V2::Script::Script() {
 		auto nativePointer = std::make_shared<hv::v2::script>();
 		auto castedNativePointer = std::dynamic_pointer_cast<hv::v2::iscript>(nativePointer);
 		this->_instance = castedNativePointer;
+
+
+		this->_managedContext = gcnew System::Collections::Generic::Dictionary<System::String^, HV::V2::IContext^>();
+
 	}
 	catch (hv::v2::oexception e) {
 		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
@@ -31,12 +36,103 @@ HV::V2::Script::Script() {
 }
 
 HV::V2::Script::~Script() {
+
+
 	this->!Script();
 }
 
 HV::V2::Script::!Script() {
+
+	for each (auto keyPair in this->_managedContext)
+	{
+		HV::V2::IContext^ context = keyPair.Value;
+		context->~IContext();
+	}
 	this->_instance.~mananged_shared_ptr();
 }
+
+
+
+void HV::V2::Script::RegisterProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
+	try {
+		if (this->_managedContext->ContainsKey(context_name) == false) {
+			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
+			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
+			this->_managedContext->Add(context_name, managedContext);
+		}
+
+		this->_managedContext[context_name]->RegisterProcessCompleteEvent(eventHandler);
+
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+
+}
+
+
+void HV::V2::Script::RegisterConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler) {
+	try {
+		if (this->_managedContext->ContainsKey(context_name) == false) {
+			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
+			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
+			this->_managedContext->Add(context_name, managedContext);
+		}
+
+		this->_managedContext[context_name]->RegisterConstChangedEvent(eventHandler);
+
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+
+void HV::V2::Script::ResetProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
+	try {
+		if (this->_managedContext->ContainsKey(context_name) == false) {
+			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
+			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
+			this->_managedContext->Add(context_name, managedContext);
+		}
+
+		this->_managedContext[context_name]->ResetProcessCompleteEvent(eventHandler);
+
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::Script::ResetConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler) {
+	try {
+		if (this->_managedContext->ContainsKey(context_name) == false) {
+			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
+			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
+			this->_managedContext->Add(context_name, managedContext);
+		}
+
+		this->_managedContext[context_name]->ResetConstChangedEvent(eventHandler);
+
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+
 
 
 HV::V2::ICompositeNode^ HV::V2::Script::Search(System::String^ context_name, std::size_t uid) {
@@ -489,6 +585,31 @@ void HV::V2::Script::DeSerialization(System::String^ context_name, System::Strin
 		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
 	}
 }
+
+
+
+
+
+
+HV::V2::IContext^ HV::V2::Script::Context(System::String^ context_name) {
+	try {
+
+		auto context = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
+
+		auto managedContext = gcnew HV::V2::Context(System::IntPtr(&context), true);
+
+		return managedContext;
+
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+
 
 
 void HV::V2::Script::CreateContext(System::String^ context_name) {

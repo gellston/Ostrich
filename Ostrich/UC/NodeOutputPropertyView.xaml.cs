@@ -22,16 +22,23 @@ namespace UC
     /// </summary>
     public partial class NodeOutputPropertyView : UserControl
     {
-        #region
+        #region Private Property
         private bool loaded = false;
         #endregion
+
+
+
+        #region Constructor
 
         public NodeOutputPropertyView()
         {
             InitializeComponent();
         }
+        #endregion
 
 
+
+        #region Private Property
         private void UserControl_LayoutUpdated(object sender, EventArgs e)
         {
             try
@@ -51,6 +58,7 @@ namespace UC
                 System.Diagnostics.Debug.WriteLine(exception.Message);
             }
         }
+        #endregion
 
     }
 }

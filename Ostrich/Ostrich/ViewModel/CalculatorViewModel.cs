@@ -29,7 +29,7 @@ namespace Ostrich.ViewModel
         #endregion
 
 
-
+        #region Constructor
         public CalculatorViewModel(NodeEngineManagerService _nodeEngineService) { 
             this.IsActive = true;
 
@@ -40,6 +40,8 @@ namespace Ostrich.ViewModel
 
             this.ContextViewModelCollection = this.nodeEngineService.ContextViewModelCollection;
         }
+
+        #endregion
 
 
         #region Functions
@@ -68,6 +70,8 @@ namespace Ostrich.ViewModel
         #endregion
 
         #region Command
+
+
 
 
         public ICommand NodeConnectRequestCommand
@@ -100,6 +104,65 @@ namespace Ostrich.ViewModel
         }
 
 
+        public ICommand RunScriptCommand
+        {
+            get => new RelayCommand(() =>
+            {
+
+                try
+                {
+                    System.Diagnostics.Debug.WriteLine("Start");
+                    this.nodeEngineService.Run(this.SelectedContextViewModel.Name);
+                    System.Diagnostics.Debug.WriteLine("End");
+
+                }
+                catch(Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e.Message);
+                }
+
+            });
+        }
+        public ICommand ContinusRunScriptCommand
+        {
+            get => new RelayCommand(() =>
+            {
+
+                try
+                {
+
+                    ///this.nodeEngineService.Run(this.SelectedContextViewModel.Name);
+
+                }
+                catch (Exception e)
+                {
+
+                }
+
+            });
+        }
+
+        public ICommand StopRunScriptCommand
+        {
+            get => new RelayCommand(() =>
+            {
+
+                try
+                {
+
+                    ///this.nodeEngineService.Run(this.SelectedContextViewModel.Name);
+
+                }
+                catch (Exception e)
+                {
+
+                }
+
+            });
+        }
+
+
+
         public ICommand NodeConnectivityCheckCommand
         {
             get => new RelayCommand<UC.EventParameter.NodeConnectivityArg>((arg) =>
@@ -123,7 +186,19 @@ namespace Ostrich.ViewModel
                 }
             });
         }
+        public ICommand DeleteSelectedPathsCommand
+        {
+            get => new RelayCommand(() =>
+            {
+                try
+                {
+                    this.nodeEngineService.DeleteSelectedPaths(this.SelectedContextViewModel.Name);
+                }catch(Exception ex)
+                {
 
+                }
+            });
+        }
         public ICommand DeleteSelectedNodesCommand
         {
             get => new RelayCommand(() =>

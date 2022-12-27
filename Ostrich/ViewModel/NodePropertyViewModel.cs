@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model.Property;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,9 +19,12 @@ namespace ViewModel
         private bool _IsMultiple = false;
         private double _X = 0;
         private double _Y = 0;
-        private List<ConnectorViewModel> _SourceConnectorCollection = new List<ConnectorViewModel>();
-        private List<ConnectorViewModel> _TargetConnectorCollection = new List<ConnectorViewModel>();
+        private List<NodePathViewModel> _SourcePathCollection = new List<NodePathViewModel>();
+        private List<NodePathViewModel> _TargetPathCollection = new List<NodePathViewModel>();
         private NodeViewModel _ParentNodeViewModel = null;
+
+
+        private BasePropertyModel _PropertyModel = new BasePropertyModel();
         #endregion
 
 
@@ -70,9 +74,9 @@ namespace ViewModel
         {
             get
             {
-                if (this.IsOutput == true && this._SourceConnectorCollection.Count > 0)
+                if (this.IsOutput == true && this._SourcePathCollection.Count > 0)
                     return true;
-                else if (this.IsOutput == false && this._TargetConnectorCollection.Count > 0)
+                else if (this.IsOutput == false && this._TargetPathCollection.Count > 0)
                     return true;
                 else return false;
 
@@ -105,6 +109,11 @@ namespace ViewModel
             set => SetProperty(ref _ParentNodeViewModel, value);
         }
 
+        public BasePropertyModel PropertyModel
+        {
+            get => _PropertyModel;
+            set => SetProperty(ref _PropertyModel, value);
+        }
 
         public double X
         {
@@ -114,14 +123,14 @@ namespace ViewModel
                 SetProperty(ref _X, value);
                 if (this.IsOutput == false)
                 {
-                    foreach (var viewModel in this._TargetConnectorCollection)
+                    foreach (var viewModel in this._TargetPathCollection)
                     {
                         viewModel.TargetX = _X;
                     }
                 }
                 else
                 {
-                    foreach (var viewModel in this._SourceConnectorCollection)
+                    foreach (var viewModel in this._SourcePathCollection)
                     {
                         viewModel.SourceX = _X;
                     }
@@ -137,14 +146,14 @@ namespace ViewModel
                 SetProperty(ref _Y, value);
                 if (this.IsOutput == false)
                 {
-                    foreach (var viewModel in this._TargetConnectorCollection)
+                    foreach (var viewModel in this._TargetPathCollection)
                     {
                         viewModel.TargetY = _Y;
                     }
                 }
                 else
                 {
-                    foreach (var viewModel in this._SourceConnectorCollection)
+                    foreach (var viewModel in this._SourcePathCollection)
                     {
                         viewModel.SourceY = _Y;
                     }
@@ -159,46 +168,46 @@ namespace ViewModel
         #region Functions
 
 
-        public List<ConnectorViewModel> Connectors()
+        public List<NodePathViewModel> Paths()
         {
-            List<ConnectorViewModel> connectors = new List<ConnectorViewModel>();
+            List<NodePathViewModel> paths = new List<NodePathViewModel>();
 
-            foreach(var connnector in this._SourceConnectorCollection)
+            foreach(var path in this._SourcePathCollection)
             {
-                connectors.Add(connnector);
+                paths.Add(path);
             }
 
-            foreach(var connector in this._TargetConnectorCollection)
+            foreach(var path in this._TargetPathCollection)
             {
-                connectors.Add(connector);
+                paths.Add(path);
             }
 
-            return connectors;
+            return paths;
         }
 
 
 
-        public void RegisterSourceConnectorViewModel(ConnectorViewModel viewModel)
+        public void RegisterSourcePathViewModel(NodePathViewModel viewModel)
         {
-            this._SourceConnectorCollection.Add(viewModel);
+            this._SourcePathCollection.Add(viewModel);
             this.RaisePropertyChanged("IsConnected");
         }
 
-        public void UnRegisterSourceConnectorViewModel(ConnectorViewModel viewModel)
+        public void UnRegisterSourcePathViewModel(NodePathViewModel viewModel)
         {
-            this._SourceConnectorCollection.Remove(viewModel);
+            this._SourcePathCollection.Remove(viewModel);
             this.RaisePropertyChanged("IsConnected");
         }
 
-        public void RegisterTargetConnectorViewModel(ConnectorViewModel viewModel)
+        public void RegisterTargetPathViewModel(NodePathViewModel viewModel)
         {
-            this._TargetConnectorCollection.Add(viewModel);
+            this._TargetPathCollection.Add(viewModel);
             this.RaisePropertyChanged("IsConnected");
         }
 
-        public void UnRegisterTargetConnectorViewModel(ConnectorViewModel viewModel)
+        public void UnRegisterTargetPathViewModel(NodePathViewModel viewModel)
         {
-            this._TargetConnectorCollection.Remove(viewModel);
+            this._TargetPathCollection.Remove(viewModel);
             this.RaisePropertyChanged("IsConnected");
         }
 
@@ -214,6 +223,7 @@ namespace ViewModel
                 Name = this.Name,
                 ObjectType = this.ObjectType,
                 Uid = this.Uid,
+                PropertyModel = this.PropertyModel
             };
 
             return property;

@@ -10,10 +10,12 @@ namespace Ostrich.ViewModel
     public class MessageViewModel : ObservableObject
     {
 
+
+        #region Constructor
         public MessageViewModel() { 
         
         }
-
+        #endregion
 
     }
 }

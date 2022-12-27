@@ -1,6 +1,10 @@
-﻿using DevExpress.Mvvm.Native;
+﻿using CommunityToolkit.Mvvm.Input;
+using DevExpress.Mvvm.Native;
 using DevExpress.Utils.Extensions;
+using DevExpress.Xpf.Printing.PreviewControl;
 using HV.V2;
+using Model;
+using Model.EventParameter;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,6 +12,7 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ViewModel;
 
 namespace Ostrich.Service
@@ -53,6 +58,40 @@ namespace Ostrich.Service
             return this._NodeEngineModel;
         }
 
+
+
+        public void Run(string contextName)
+        {
+            try
+            {
+                var context = this.ContextViewModelCollection.First(context => context.Name == contextName);
+
+                var selectedNode = context.NodeViewModelCollection.Where(node => node.IsSelected == true).ToList();
+
+
+                if(selectedNode.Count == 0)
+                {
+                    throw new Exception("Node is not selected");
+                }
+
+
+                if(selectedNode.Count > 1)
+                {
+                    throw new Exception("You should select only one node.");
+
+                }
+
+                this._NodeEngineModel.Run(contextName, selectedNode[0].Uid);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
         public bool CheckNodeConnectivity(string contextName, ulong sourceUID, string sourcePropertyName, ulong targetUID, string targetPropertyName)
         {
 
@@ -84,6 +123,37 @@ namespace Ostrich.Service
             }
         }
 
+        public void DeleteSelectedPaths(string contextName)
+        {
+            try
+            {
+
+                var context = this.ContextViewModelCollection.First(context => context.Name == contextName);
+                var selectedPathViewModelCollection = context.NodePathViewModelCollection.Where(path => path.IsSelected == true).ToList();
+
+                foreach(var pathViewModel in selectedPathViewModelCollection)
+                {
+                    try
+                    {
+                        this._NodeEngineModel.Disconnect(contextName, pathViewModel.TargetNodeUID, pathViewModel.TargetPropertyName);
+                        foreach(var node in context.NodeViewModelCollection)
+                        {
+                            node.UnRegisterPath(pathViewModel);
+                        }
+                        context.NodePathViewModelCollection.Remove(pathViewModel);
+                    }
+                    catch(Exception exception1)
+                    {
+
+                    }
+                }
+            }
+            catch(Exception exception2)
+            {
+                throw exception2;
+            }
+        }
+
 
         public void DeleteSelectedNodes(string contextName)
         {
@@ -91,9 +161,9 @@ namespace Ostrich.Service
             {
                 var context = this.ContextViewModelCollection.First(context => context.Name == contextName);
                 var nodeViewModelCollection = context.NodeViewModelCollection.ToList();
-                var connectorViewModelCollection = context.ConnectorViewModelCollection.ToList();
+                var pathViewModelCollection = context.NodePathViewModelCollection.ToList();
 
-                List<ConnectorViewModel> removeConnectorCollection = new List<ConnectorViewModel>();
+                List<NodePathViewModel> removePathCollection = new List<NodePathViewModel>();
 
                 foreach (var nodeViewModel in nodeViewModelCollection)
                 {
@@ -103,9 +173,9 @@ namespace Ostrich.Service
                         {
                             this._NodeEngineModel.RemoveNode(contextName, nodeViewModel.Uid);
                             context.NodeViewModelCollection.Remove(nodeViewModel);
-                            var connectors = nodeViewModel.Connectors();
-                            foreach(var connector in connectors)
-                                removeConnectorCollection.Add(connector);
+                            var paths = nodeViewModel.Paths();
+                            foreach(var path in paths)
+                                removePathCollection.Add(path);
                         }
                         catch(Exception e)
                         {
@@ -116,10 +186,10 @@ namespace Ostrich.Service
 
                 foreach(var nodeViewModel in nodeViewModelCollection)
                 {
-                    nodeViewModel.UnRegisterConnector(removeConnectorCollection);
+                    nodeViewModel.UnRegisterPath(removePathCollection);
                 }
 
-                context.UnRegisterConnector(removeConnectorCollection);
+                context.UnRegisterPath(removePathCollection);
 
             }
             catch(Exception ex)
@@ -162,6 +232,7 @@ namespace Ostrich.Service
                                 Name = input.Name,
                                 ObjectType = input.Type,
                                 IsMultiple = input.IsMultiple,
+                                PropertyModel = PropertyModelConstructor.Create(input.Type, this.ModelChangingCommand),
                                 IsOutput = false,
                                 ParentNodeViewModel = nodeViewModel,
                                 Uid = input.Uid,
@@ -176,6 +247,7 @@ namespace Ostrich.Service
                                 Name = output.Name,
                                 ObjectType = output.Type,
                                 IsMultiple = output.IsMultiple,
+                                PropertyModel = PropertyModelConstructor.Create(output.Type, this.ModelChangingCommand),
                                 IsOutput = true,
                                 ParentNodeViewModel = nodeViewModel,
                                 Uid = output.Uid,
@@ -257,10 +329,20 @@ namespace Ostrich.Service
 
 
                 this._NodeEngineModel.CreateContext(name);
+
+
+
                 var context = new ContextViewModel()
                 {
                     Name = name
                 };
+
+
+                var managedContext = this._NodeEngineModel.Context(name);
+
+                managedContext.RegisterProcessCompleteEvent(context.OnProcessCompleteHandler);
+                managedContext.RegisterConstChangedEvent(context.OnConstChangedHandler);
+
 
                 this.ContextViewModelCollection.Add(context);
                 var addonInfo = this._NodeEngineModel.AddonInfo(name);
@@ -297,8 +379,6 @@ namespace Ostrich.Service
                     }
                     addon.Dispose();
                 }
-    
-
             }catch(Exception ex)
             {
 
@@ -308,6 +388,26 @@ namespace Ostrich.Service
         }
 
 
+        #endregion
+
+
+        #region Command
+        public ICommand ModelChangingCommand
+        {
+            get => new RelayCommand<ModelChangedArg>((arg) =>
+            {
+
+                try
+                {
+                    // ModelChagned Code Here
+                    System.Diagnostics.Debug.WriteLine("Mdoel chagned Test !!! =  " + arg.Data.ToString());
+                    arg.Changed = true;
+                }catch(Exception e)
+                {
+
+                }
+            });
+        }
         #endregion
 
     }

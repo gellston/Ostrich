@@ -98,51 +98,52 @@ namespace ViewModel
         }
 
 
-        public void UnRegisterConnector(List<ConnectorViewModel> connectors)
+        public void UnRegisterPath(List<NodePathViewModel> paths)
         {
-            foreach(var connector in connectors)
+            foreach(var path in paths)
             {
-                this.UnRegisterConnector(connector);
+                this.UnRegisterPath(path);
             }
         }
 
-        public void UnRegisterConnector(ConnectorViewModel connector)
+        public void UnRegisterPath(NodePathViewModel path)
         {
             foreach (var input in this.InputCollection)
             {
-                input.UnRegisterSourceConnectorViewModel(connector);
-                input.UnRegisterTargetConnectorViewModel(connector);
+                input.UnRegisterSourcePathViewModel(path);
+                input.UnRegisterTargetPathViewModel(path);
             }
 
             foreach (var output in this.OutputCollection)
             {
-                output.UnRegisterSourceConnectorViewModel(connector);
-                output.UnRegisterTargetConnectorViewModel(connector);
+                output.UnRegisterSourcePathViewModel(path);
+                output.UnRegisterTargetPathViewModel(path);
             }
         }
 
-        public List<ConnectorViewModel> Connectors()
+
+        public List<NodePathViewModel> Paths()
         {
-            List<ConnectorViewModel> connectors = new List<ConnectorViewModel>();
+            List<NodePathViewModel> paths = new List<NodePathViewModel>();
             foreach(var input in this.InputCollection)
             {
-                var inputConnectors = input.Connectors();
-                foreach(var inputConnector in inputConnectors)
+                var inputPaths = input.Paths();
+                foreach(var inputPath in inputPaths)
                 {
-                    connectors.Add(inputConnector);
+                    paths.Add(inputPath);
                 }
             }
 
             foreach (var output in this.OutputCollection)
             {
-                var outputConnectors = output.Connectors();
-                foreach (var outputConnector in outputConnectors)
+                var outputPaths = output.Paths();
+                foreach (var outputPath in outputPaths)
                 {
-                    connectors.Add(outputConnector);
+                    paths.Add(outputPath);
                 }
             }
 
-            return connectors;
+            return paths;
         }
 
 

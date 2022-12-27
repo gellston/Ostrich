@@ -20,7 +20,7 @@
         <dx:DXTabControl.ItemTemplate>
             <ItemContainerTemplate>
                 <Grid>
-                    <view:FlowChartView ConnectorViewModellCollection="{Binding ConnectorViewModelCollection}"
+                    <view:FlowChartView NodePathViewModelCollection="{Binding NodePathViewModelCollection}"
                                         NodeViewModelCollection="{Binding NodeViewModelCollection}"
                                         Scale="{Binding Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         CanvasStartX="{Binding CanvasStartX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

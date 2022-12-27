@@ -28,12 +28,19 @@ namespace UC
         #endregion
 
 
+        #region Constructor
+
         public NodeInputPropertyView()
         {
             InitializeComponent();
         }
 
+        #endregion
 
+
+
+
+        #region Private Functions
         private void UserControl_LayoutUpdated(object sender, EventArgs e)
         {
             try
@@ -53,5 +60,6 @@ namespace UC
                 System.Diagnostics.Debug.WriteLine(exception.Message);
             }
         }
+        #endregion
     }
 }

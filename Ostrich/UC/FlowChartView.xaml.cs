@@ -60,10 +60,10 @@ namespace UC
             get { return _NodeCanvas; }
         }
 
-        protected FrameworkElement? _ConnectorCanvas = null;
-        public FrameworkElement? ConnectorCanvas
+        protected FrameworkElement? _PathCanvas = null;
+        public FrameworkElement? PathCanvas
         {
-            get { return _ConnectorCanvas; }
+            get { return _PathCanvas; }
         }
 
 
@@ -187,9 +187,9 @@ namespace UC
                 this._NodeCanvas = ViewUtil.FindChild<Canvas>(this.PART_NodeViewContainer);
             }
 
-            if (this._ConnectorCanvas == null)
+            if (this._PathCanvas == null)
             {
-                this._ConnectorCanvas = ViewUtil.FindChild<Canvas>(this.PART_ConnectorViewContainer);
+                this._PathCanvas = ViewUtil.FindChild<Canvas>(this.PART_PathViewContainer);
             }
 
 
@@ -203,8 +203,8 @@ namespace UC
             if (this._NodeCanvas != null)
                 this._NodeCanvas.RenderTransform = new MatrixTransform(this._ZoomAndPan.Matrix);
 
-            if (this._ConnectorCanvas != null)
-                this._ConnectorCanvas.RenderTransform = new MatrixTransform(this._ZoomAndPan.Matrix);
+            if (this._PathCanvas != null)
+                this._PathCanvas.RenderTransform = new MatrixTransform(this._ZoomAndPan.Matrix);
 
             if(this.PART_ConnectorPreviewCanvas != null)
                 this.PART_ConnectorPreviewCanvas.RenderTransform = new MatrixTransform(this._ZoomAndPan.Matrix);
@@ -280,26 +280,26 @@ namespace UC
                     nodeViewModel.IsSelected = true;
                 }
 
-                if (clickedItem.DataContext.GetType() == typeof(ConnectorViewModel))
+                if (clickedItem.DataContext.GetType() == typeof(NodePathViewModel))
                 {
 
-                    var connectorViewModel = clickedItem.DataContext as ConnectorViewModel;
+                    var pathViewModel = clickedItem.DataContext as NodePathViewModel;
 
 
                     //그룹선택하여 이동시에 선택이 해제되지 않도록 
                     if (Keyboard.IsKeyDown(Key.LeftShift) == false)
                     {
                         //DeSelection
-                        foreach (var connector in this.ConnectorViewModellCollection)
+                        foreach (var path in this.NodePathViewModelCollection)
                         {
 
-                            connector.IsSelected = false;
+                            path.IsSelected = false;
                         }
                         //DeSelection
                     }
 
                     //Selection Activation;
-                    connectorViewModel.IsSelected = true;
+                    pathViewModel.IsSelected = true;
                 }
 
 
@@ -314,8 +314,7 @@ namespace UC
                     this._IsNodePropertyDragging = true;
 
 
-                    if ((property.IsOutput == true && property.IsConnected == false) ||
-                        (property.IsOutput == true && property.IsMultiple == true))
+                    if (property.IsOutput == true)
                     {
                         this.PreviewCurveStartX = property.X;
                         this.PreviewCurveStartY = property.Y;
@@ -324,10 +323,9 @@ namespace UC
                         this.PreviewCurveStart2End = true;
                         this.PreviewCurveEnd2Start = false;
                         this.ComputeCurve();
-                        this.ConnectorVisibility = Visibility.Visible;
+                        this.PathVisibility = Visibility.Visible;
                     }
-                    else if ((property.IsOutput == false && property.IsConnected == false) ||
-                             (property.IsOutput == false && property.IsMultiple == true))
+                    else if (property.IsOutput == false)
                     {
                         this.PreviewCurveStartX = property.X;
                         this.PreviewCurveStartY = property.Y;
@@ -336,7 +334,7 @@ namespace UC
                         this.PreviewCurveStart2End = false;
                         this.PreviewCurveEnd2Start = true;
                         this.ComputeCurve();
-                        this.ConnectorVisibility = Visibility.Visible;
+                        this.PathVisibility = Visibility.Visible;
                     }
                 }
 
@@ -354,11 +352,11 @@ namespace UC
                     }
                 }
 
-                if(this.ConnectorViewModellCollection != null)
+                if(this.NodePathViewModelCollection != null)
                 {
-                    foreach(var connector in this.ConnectorViewModellCollection)
+                    foreach(var path in this.NodePathViewModelCollection)
                     {
-                        connector.IsSelected = false;
+                        path.IsSelected = false;
                     }
                 }
   
@@ -429,8 +427,10 @@ namespace UC
 
                                 if(eventArg.CanConnect == true)
                                 {
-                                    var connector = new ConnectorViewModel()
+                                    var connector = new NodePathViewModel()
                                     {
+
+                                        SourceNodeUID = this._SelectedNodePropertyViewModel.ParentNodeViewModel.Uid,
                                         SourcePropertyUID = this._SelectedNodePropertyViewModel.Uid,
                                         SourceObjectType = this._SelectedNodePropertyViewModel.ObjectType,
                                         SourcePropertyName = this._SelectedNodePropertyViewModel.Name,
@@ -440,6 +440,7 @@ namespace UC
 
                                         IsExecution = this._SelectedNodePropertyViewModel.IsExecution,
 
+                                        TargetNodeUID = targetNodePropertyViewModel.ParentNodeViewModel.Uid,
                                         TargetPropertyUID = targetNodePropertyViewModel.Uid,
                                         TargetObjectType = targetNodePropertyViewModel.ObjectType,
                                         TargetPropertyName = targetNodePropertyViewModel.Name,
@@ -465,9 +466,9 @@ namespace UC
 
                                     if (requestArg.ConnectComplete)
                                     {
-                                        this._SelectedNodePropertyViewModel.RegisterSourceConnectorViewModel(connector);
-                                        targetNodePropertyViewModel.RegisterTargetConnectorViewModel(connector);
-                                        this.ConnectorViewModellCollection.Add(connector);
+                                        this._SelectedNodePropertyViewModel.RegisterSourcePathViewModel(connector);
+                                        targetNodePropertyViewModel.RegisterTargetPathViewModel(connector);
+                                        this.NodePathViewModelCollection.Add(connector);
                                     }
                                     else
                                     {
@@ -498,8 +499,9 @@ namespace UC
 
                                 if (eventArg.CanConnect == true)
                                 {
-                                    var connector = new ConnectorViewModel()
+                                    var path = new NodePathViewModel()
                                     {
+                                        SourceNodeUID = targetNodePropertyViewModel.ParentNodeViewModel.Uid,
                                         SourcePropertyUID = targetNodePropertyViewModel.Uid,
                                         SourceObjectType = targetNodePropertyViewModel.ObjectType,
                                         SourcePropertyName = targetNodePropertyViewModel.Name,
@@ -508,6 +510,7 @@ namespace UC
 
                                         IsExecution = this._SelectedNodePropertyViewModel.IsExecution,
 
+                                        TargetNodeUID = _SelectedNodePropertyViewModel.ParentNodeViewModel.Uid,
                                         TargetPropertyUID = _SelectedNodePropertyViewModel.Uid,
                                         TargetObjectType = _SelectedNodePropertyViewModel.ObjectType,
                                         TargetPropertyName = _SelectedNodePropertyViewModel.Name,
@@ -515,7 +518,7 @@ namespace UC
                                         TargetY = _SelectedNodePropertyViewModel.Y
                                     };
 
-                                    connector.ComputeCurve();
+                                    path.ComputeCurve();
 
                                     var requestArg = new EventParameter.NodeConnectRequestArg()
                                     {
@@ -533,9 +536,9 @@ namespace UC
 
                                     if (requestArg.ConnectComplete)
                                     {
-                                        this._SelectedNodePropertyViewModel.RegisterTargetConnectorViewModel(connector);
-                                        targetNodePropertyViewModel.RegisterSourceConnectorViewModel(connector);
-                                        this.ConnectorViewModellCollection.Add(connector);
+                                        this._SelectedNodePropertyViewModel.RegisterTargetPathViewModel(path);
+                                        targetNodePropertyViewModel.RegisterSourcePathViewModel(path);
+                                        this.NodePathViewModelCollection.Add(path);
                                     }
                                     else
                                     {
@@ -552,7 +555,7 @@ namespace UC
                 }
 
                 this._IsNodePropertyDragging = false;
-                this.ConnectorVisibility = Visibility.Hidden;
+                this.PathVisibility = Visibility.Hidden;
                 Mouse.Capture(null);
             }
 
@@ -727,34 +730,34 @@ namespace UC
             }
         }
 
-        public static readonly DependencyProperty ConnectorViewModellCollectionProperty = DependencyProperty.Register("ConnectorViewModellCollection", typeof(ObservableCollection<ViewModel.ConnectorViewModel>), typeof(FlowChartView));
-        public ObservableCollection<ViewModel.ConnectorViewModel> ConnectorViewModellCollection
+        public static readonly DependencyProperty NodePathViewModelCollectionProperty = DependencyProperty.Register("NodePathViewModelCollection", typeof(ObservableCollection<ViewModel.NodePathViewModel>), typeof(FlowChartView));
+        public ObservableCollection<ViewModel.NodePathViewModel> NodePathViewModelCollection
         {
             get
             {
-                return (ObservableCollection<ViewModel.ConnectorViewModel>)GetValue(ConnectorViewModellCollectionProperty);
+                return (ObservableCollection<ViewModel.NodePathViewModel>)GetValue(NodePathViewModelCollectionProperty);
             }
 
             set
             {
-                SetValue(ConnectorViewModellCollectionProperty, value);
+                SetValue(NodePathViewModelCollectionProperty, value);
             }
         }
 
 
 
 
-        public static readonly DependencyProperty ConnectorVisibilityProperty = DependencyProperty.Register("ConnectorVisibility", typeof(Visibility), typeof(FlowChartView), new PropertyMetadata(Visibility.Hidden));
-        public Visibility ConnectorVisibility
+        public static readonly DependencyProperty PathVisibilityProperty = DependencyProperty.Register("PathVisibility", typeof(Visibility), typeof(FlowChartView), new PropertyMetadata(Visibility.Hidden));
+        public Visibility PathVisibility
         {
             get
             {
-                return (Visibility)GetValue(ConnectorVisibilityProperty);
+                return (Visibility)GetValue(PathVisibilityProperty);
             }
 
             set
             {
-                SetValue(ConnectorVisibilityProperty, value);
+                SetValue(PathVisibilityProperty, value);
             }
         }
 

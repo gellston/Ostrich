@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "View", "View\View.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UC", "UC\UC.csproj", "{067A19F1-ABD7-4C33-AB64-B0E1AF7CEC0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ostrich", "Ostrich\Ostrich.csproj", "{144670CB-6396-488C-A76D-2E03A3B69E78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ostrich", "Ostrich\Ostrich.csproj", "{144670CB-6396-488C-A76D-2E03A3B69E78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

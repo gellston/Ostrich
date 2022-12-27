@@ -15,7 +15,7 @@ namespace ViewModel
         private string _Name = "";
         private string _NativeContext = "";
         private ObservableCollection<NodeViewModel> _NodeViewModelCollection = new ObservableCollection<NodeViewModel>();
-        private ObservableCollection<ConnectorViewModel> _ConnectorViewModelCollection = new ObservableCollection<ConnectorViewModel>();
+        private ObservableCollection<NodePathViewModel> _NodePathViewModelCollection = new ObservableCollection<NodePathViewModel>();
         private ObservableCollection<AddonViewModel> _AddonViewModelCollection = new ObservableCollection<AddonViewModel>();
         private ObservableCollection<NodeInfoViewModel> _NodeInfoViewModelCollection = new ObservableCollection<NodeInfoViewModel>();
         private double _Scale = 1;
@@ -52,10 +52,10 @@ namespace ViewModel
             set => SetProperty(ref _NativeContext, value);  
         }
 
-        public ObservableCollection<ConnectorViewModel> ConnectorViewModelCollection
+        public ObservableCollection<NodePathViewModel> NodePathViewModelCollection
         {
-            get => _ConnectorViewModelCollection;
-            set => SetProperty(ref _ConnectorViewModelCollection, value);
+            get => _NodePathViewModelCollection;
+            set => SetProperty(ref _NodePathViewModelCollection, value);
         }
 
         public ObservableCollection<NodeViewModel> NodeViewModelCollection
@@ -106,36 +106,50 @@ namespace ViewModel
             set => SetProperty(ref _CurrentDragPositionY, value);
         }
 
+
+        public void OnProcessCompleteHandler(System.Object sender, int nodeType, ulong compositeUID)
+        {
+
+            System.Diagnostics.Debug.WriteLine("Process Event Handler node Type = " + nodeType + " compositeUID = " + compositeUID);
+        }
+
+        public void OnConstChangedHandler(System.Object sender, ulong constUID)
+        {
+            System.Diagnostics.Debug.WriteLine("Const Chagned Handler node Type = "  + constUID);
+        }
+
         #endregion
+
+
 
         #region Function
 
 
-        public void UnRegisterConnector(List<ConnectorViewModel> connectors)
+        public void UnRegisterPath(List<NodePathViewModel> paths)
         {
-            foreach(var connector in connectors)
+            foreach(var path in paths)
             {
-                this.ConnectorViewModelCollection.Remove(connector);
+                this.NodePathViewModelCollection.Remove(path);
             }
         }
 
-        public void UnRegisterConnector(ConnectorViewModel connector)
+        public void UnRegisterPath(NodePathViewModel paths)
         {
-            this.ConnectorViewModelCollection.Remove(connector);
+            this.NodePathViewModelCollection.Remove(paths);
         }
 
 
         public object Clone()
         {
 
-            ObservableCollection<ConnectorViewModel> connectorViewModelCollection = new ObservableCollection<ConnectorViewModel>();
+            ObservableCollection<NodePathViewModel> nodePathViewModelCollection = new ObservableCollection<NodePathViewModel>();
             ObservableCollection<NodeViewModel> nodeViewModelCollection = new ObservableCollection<NodeViewModel>();
             ObservableCollection<NodeInfoViewModel> nodeInfoViewModelCollection = new ObservableCollection<NodeInfoViewModel>();
             ObservableCollection<AddonViewModel> addonViewModelCollection = new ObservableCollection<AddonViewModel>();
 
-            foreach (var connector in this.ConnectorViewModelCollection)
+            foreach (var path in this.NodePathViewModelCollection)
             {
-                connectorViewModelCollection.Add((ConnectorViewModel)connector.Clone());
+                nodePathViewModelCollection.Add((NodePathViewModel)path.Clone());
             }
 
             foreach (var node in this.NodeViewModelCollection)
@@ -143,26 +157,26 @@ namespace ViewModel
                 var _node = (NodeViewModel)node.Clone();
                 foreach (var inputProperty in _node.InputCollection)
                 {
-                    foreach (var connector in connectorViewModelCollection)
+                    foreach (var path in nodePathViewModelCollection)
                     {
-                        if (inputProperty.Uid == connector.TargetPropertyUID &&
-                           inputProperty.ObjectType == connector.TargetObjectType &&
-                           inputProperty.Name == connector.TargetPropertyName)
+                        if (inputProperty.Uid == path.TargetPropertyUID &&
+                           inputProperty.ObjectType == path.TargetObjectType &&
+                           inputProperty.Name == path.TargetPropertyName)
                         {
-                            inputProperty.RegisterTargetConnectorViewModel(connector);
+                            inputProperty.RegisterTargetPathViewModel(path);
                         }
                     }
                 }
 
                 foreach (var outputProperty in _node.OutputCollection)
                 {
-                    foreach (var connector in connectorViewModelCollection)
+                    foreach (var nodePath in nodePathViewModelCollection)
                     {
-                        if (outputProperty.Uid == connector.SourcePropertyUID &&
-                            outputProperty.ObjectType == connector.SourceObjectType &&
-                            outputProperty.Name == connector.SourcePropertyName)
+                        if (outputProperty.Uid == nodePath.SourcePropertyUID &&
+                            outputProperty.ObjectType == nodePath.SourceObjectType &&
+                            outputProperty.Name == nodePath.SourcePropertyName)
                         {
-                            outputProperty.RegisterSourceConnectorViewModel(connector);
+                            outputProperty.RegisterTargetPathViewModel(nodePath);
                         }
                     }
                 }
@@ -187,7 +201,7 @@ namespace ViewModel
                 CanvasStartY = this.CanvasStartY,
                 Scale = this.Scale,
                 NativeContext = this.NativeContext,
-                ConnectorViewModelCollection = connectorViewModelCollection,
+                NodePathViewModelCollection = nodePathViewModelCollection,
                 NodeViewModelCollection = nodeViewModelCollection,
                 NodeInfoViewModelCollection = nodeInfoViewModelCollection,
                 AddonViewModelCollection = addonViewModelCollection

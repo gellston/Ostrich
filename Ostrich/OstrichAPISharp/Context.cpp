@@ -21,10 +21,38 @@ HV::V2::Context::Context(System::IntPtr _pointer, bool is_smart_pointer) {
 
 		std::shared_ptr<hv::v2::icontext>* pointer = (std::shared_ptr<hv::v2::icontext>*) _pointer.ToPointer();
 		this->_instance = *pointer;
+
+
+		//Native Function pointer connection
+		//Process Complete Event
+		auto managedProcessCompleteEventCallback = gcnew HV::V2::IContext::OnProcessCompleteEventCallback(this, &HV::V2::Context::NativeProcessCompleteEvent);
+		this->ProcessCompleteEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedProcessCompleteEventCallback);
+		System::IntPtr nativeProcessCompleteEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedProcessCompleteEventCallback);
+		this->_instance->registerProcessCompleteEvent((void (*)(int, std::size_t))nativeProcessCompleteEventCallback.ToPointer());
+
+		//Const Changed Event
+		auto managedConstChangedEventCallback = gcnew HV::V2::IContext::OnConstChangedEventCallback(this, &HV::V2::Context::NativeConstChangedEvent);
+		this->ConstChangedEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedConstChangedEventCallback);
+		System::IntPtr nativeConstChangedEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedConstChangedEventCallback);
+		this->_instance->registerConstChangedEvent((void (*)(std::size_t)) nativeConstChangedEventCallback.ToPointer());
+
 	}
 	else {
 		hv::v2::icontext* pointer = (hv::v2::icontext*)_pointer.ToPointer();
 		this->_instance = pointer;
+
+		//Native Function pointer connection
+		//Process Complete Event
+		auto managedProcessCompleteEventCallback = gcnew HV::V2::IContext::OnProcessCompleteEventCallback(this, &HV::V2::Context::NativeProcessCompleteEvent);
+		this->ProcessCompleteEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedProcessCompleteEventCallback);
+		System::IntPtr nativeProcessCompleteEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedProcessCompleteEventCallback);
+		this->_instance->registerProcessCompleteEvent((void (*)(int, std::size_t))nativeProcessCompleteEventCallback.ToPointer());
+
+		//Const Changed Event
+		auto managedConstChangedEventCallback = gcnew HV::V2::IContext::OnConstChangedEventCallback(this, &HV::V2::Context::NativeConstChangedEvent);
+		this->ConstChangedEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedConstChangedEventCallback);
+		System::IntPtr nativeConstChangedEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedConstChangedEventCallback);
+		this->_instance->registerConstChangedEvent((void (*)(std::size_t)) nativeConstChangedEventCallback.ToPointer());
 	}
 }
 
@@ -34,8 +62,51 @@ HV::V2::Context::~Context() {
 }
 
 HV::V2::Context::!Context() {
+
+	
+	if (this->ProcessCompleteEventGCHandle.IsAllocated) {
+		this->ProcessCompleteEventGCHandle.Free();
+	}
+
+	if (this->ConstChangedEventGCHandle.IsAllocated) {
+		this->ConstChangedEventGCHandle.Free();
+	}
+
+
+
 	this->_instance.~mananged_shared_ptr();
 }
+
+
+void HV::V2::Context::NativeProcessCompleteEvent(int nodeType, std::size_t composite_uid) {
+
+
+	this->OnProcessComplete(this, nodeType, composite_uid);
+
+}
+void HV::V2::Context::NativeConstChangedEvent(std::size_t constUID) {
+	this->OnConstChanged(this, constUID);
+}
+
+
+
+
+void HV::V2::Context::RegisterProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
+	this->OnProcessComplete -= eventHandler;
+	this->OnProcessComplete += eventHandler;
+}
+void HV::V2::Context::RegisterConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler) {
+	this->OnConstChanged -= eventHandler;
+	this->OnConstChanged += eventHandler;
+}
+
+void HV::V2::Context::ResetProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
+	this->OnProcessComplete -= eventHandler;
+}
+void HV::V2::Context::ResetConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler) {
+	this->OnConstChanged -= eventHandler;
+}
+
 
 
 System::IntPtr HV::V2::Context::Handle::get() {

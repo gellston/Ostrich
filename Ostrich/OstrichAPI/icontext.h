@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 
 namespace hv {
 	namespace v2 {
@@ -25,8 +26,16 @@ namespace hv {
 			virtual ~icontext() { }
 
 			// Event Handler
-			virtual void onProcessComplete(int nodeType, std::size_t composite_uid, std::vector<std::size_t> output_uid) = 0;
+			virtual void onProcessComplete(int nodeType, std::size_t composite_uid) = 0;
 			virtual void onConstChanged(std::size_t constUID) = 0;
+
+
+			virtual void registerProcessCompleteEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) =0;
+			virtual void registerConstChangedEvent(std::function<void(std::size_t constUID)> eventHandler) = 0;
+
+			virtual void resetProcessCompleteEvent() = 0;
+			virtual void resetConstChangedEvent() = 0;
+
 
 
 			// Addon manipulation

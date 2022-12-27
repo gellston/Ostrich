@@ -12,14 +12,18 @@ namespace Ostrich.ViewModel
     public class ViewModelLocator
     {
 
-
+        #region Constructor
         public ViewModelLocator()
         {
 
 
 
         }
+        #endregion
 
+
+
+        #region Public Property
 
         public ObservableObject MainWindowViewModel
         {
@@ -37,5 +41,6 @@ namespace Ostrich.ViewModel
         {
             get => App.Current.Services.GetService<MessageViewModel>();
         }
+        #endregion
     }
 }

@@ -37,8 +37,16 @@ namespace hv {
 			OSTRICH_COMMON_API virtual ~context() override;
 
 
-			OSTRICH_COMMON_API void onProcessComplete(int nodeType, std::size_t composite_uid, std::vector<std::size_t> output_uid);
+			OSTRICH_COMMON_API void onProcessComplete(int nodeType, std::size_t composite_uid);
 			OSTRICH_COMMON_API void onConstChanged(std::size_t constUID);
+
+
+			OSTRICH_COMMON_API void registerProcessCompleteEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler);
+			OSTRICH_COMMON_API void registerConstChangedEvent(std::function<void(std::size_t constUID)> eventHandler);
+
+			OSTRICH_COMMON_API void resetProcessCompleteEvent();
+			OSTRICH_COMMON_API void resetConstChangedEvent();
+
 
 			//Node manipulation
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::icompositeNode> search(std::size_t uid) override;

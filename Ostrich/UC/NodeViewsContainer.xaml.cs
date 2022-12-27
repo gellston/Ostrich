@@ -21,10 +21,14 @@ namespace UC
     /// </summary>
     public partial class NodeViewsContainer : UserControl
     {
+
+
+        #region Constructor
         public NodeViewsContainer()
         {
             InitializeComponent();
         }
+        #endregion
 
         #region DependencyObjects
         public static readonly DependencyProperty NodeViewModelCollectionProperty = DependencyProperty.Register("NodeViewModelCollection", typeof(ObservableCollection<ViewModel.NodeViewModel>), typeof(NodeViewsContainer));

@@ -20,7 +20,31 @@ namespace HV {
 		private:
 			HV::V2::mananged_shared_ptr<hv::v2::icontext> _instance;
 
+
+			void NativeProcessCompleteEvent(int nodeType, std::size_t composite_uid);
+			void NativeConstChangedEvent(std::size_t constUID);
+
+
+			System::Runtime::InteropServices::GCHandle ProcessCompleteEventGCHandle;
+			System::Runtime::InteropServices::GCHandle ConstChangedEventGCHandle;
+
+
+
+
 		public:
+
+
+
+			virtual event HV::V2::IContext::OnProcessCompleteHandler^ OnProcessComplete;
+			virtual event HV::V2::IContext::OnConstChangedHandler^ OnConstChanged;
+
+
+			virtual void RegisterProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
+			virtual void RegisterConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler);
+
+			virtual void ResetProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
+			virtual void ResetConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler);
+
 
 			Context(System::IntPtr _pointer, bool is_smart_pointer);
 			~Context();
@@ -31,6 +55,10 @@ namespace HV {
 			virtual property System::IntPtr Handle {
 				System::IntPtr get();
 			}
+
+
+
+
 
 			virtual void Loadlibrary();
 			virtual void Unloadlibrary();

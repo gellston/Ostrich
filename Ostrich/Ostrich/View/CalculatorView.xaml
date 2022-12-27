@@ -68,7 +68,27 @@
                     <dxb:BarButtonItem Content="선택된 경로 삭제"
                                        LargeGlyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_RemoveCircled.svg'}"
                                        Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_RemoveCircled.svg'}"
-                                       Command="{Binding DeleteSelectedNodesCommand}">
+                                       Command="{Binding DeleteSelectedPathsCommand}">
+
+                    </dxb:BarButtonItem>
+                </dxr:RibbonPageGroup>
+                <dxr:RibbonPageGroup Caption="디버깅">
+                    <dxb:BarButtonItem Content="실행"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/XAF/Action_Debug_Start.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/XAF/Action_Debug_Start.svg'}"
+                                       Command="{Binding RunScriptCommand}">
+
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Content="연속 실행"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/XAF/Action_ResumeRecording.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/XAF/Action_ResumeRecording.svg'}"
+                                       Command="{Binding ContinusRunScriptCommand}">
+
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Content="연속 실행 중지"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/XAF/Action_Debug_Stop.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/XAF/Action_Debug_Stop.svg'}"
+                                       Command="{Binding StopRunScriptCommand}">
 
                     </dxb:BarButtonItem>
                 </dxr:RibbonPageGroup>

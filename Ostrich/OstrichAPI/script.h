@@ -19,6 +19,14 @@ namespace hv {
 			OSTRICH_COMMON_API script();
 			OSTRICH_COMMON_API ~script();
 
+
+			OSTRICH_COMMON_API void registerProcessCompleteEvent(std::string context_name, std::function<void(int nodeType, std::size_t composite_uid)> eventHandler);
+			OSTRICH_COMMON_API void registerConstChangedEvent(std::string context_name, std::function<void(std::size_t constUID)> eventHandler);
+
+			OSTRICH_COMMON_API void resetProcessCompleteEvent(std::string context_name);
+			OSTRICH_COMMON_API void resetConstChangedEvent(std::string context_name);
+
+
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::icompositeNode> search(std::string context_name, std::size_t uid);
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::icompositeNode> search(std::string context_name, std::string name);
 			template<typename T> std::shared_ptr<T> search(std::string context_name, std::string name) {
@@ -78,6 +86,8 @@ namespace hv {
 			OSTRICH_COMMON_API void run(std::string context_name, int objectType, std::string name);
 			OSTRICH_COMMON_API void run(std::string context_name);
 
+
+			OSTRICH_COMMON_API std::shared_ptr<hv::v2::icontext> context(std::string name);
 			OSTRICH_COMMON_API void createContext(std::string name);
 			OSTRICH_COMMON_API void renameContext(std::string sourceName, std::string targetName);
 			OSTRICH_COMMON_API void removeContext(std::string name);

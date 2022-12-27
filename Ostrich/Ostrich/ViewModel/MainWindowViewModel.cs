@@ -100,9 +100,7 @@ namespace Ostrich.ViewModel
         }
 
         #endregion
-
-
-
+ 
         #region Command
 
         public ICommand PopUpCloseCommand

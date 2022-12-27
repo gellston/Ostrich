@@ -21,10 +21,18 @@ namespace UC
     /// </summary>
     public partial class FlowContextView : UserControl
     {
+
+
+        #region Constructor
         public FlowContextView()
         {
             InitializeComponent();
         }
+        #endregion
+
+
+
+        #region Dependency Property
 
 
         public static readonly DependencyProperty ContextViewModelCollectionProperty = DependencyProperty.Register("ContextViewModelCollection", typeof(ObservableCollection<ViewModel.ContextViewModel>), typeof(FlowContextView));
@@ -102,7 +110,7 @@ namespace UC
                 SetValue(NodeConnectRequestCommandProperty, value);
             }
         }
-
+        #endregion
 
 
     }
