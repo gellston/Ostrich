@@ -30,7 +30,9 @@ namespace Model.Property
                 {
                     Data = value,
                     Changed = false,
-                    ObjectType = this.ObjectType
+                    ObjectType = this.ObjectType,
+                    Uid = this.Uid,
+                    ContextName = this.ContextName
                 };
 
 
@@ -51,13 +53,35 @@ namespace Model.Property
             }
         }
 
+
+        public override void Update(object data)
+        {
+
+            try
+            {
+                this.SetProperty(ref _Data, (double)data);
+                this.RaisePropertyChanged("Data");
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+
+        }
+
+
         public override object Clone()
         {
             return new ConstNumberModel(){
-                Data = this.Data
+                ObjectType = this.ObjectType,
+                ContextName = this.ContextName,
+                ModelChangingCommand = this.ModelChangingCommand,
+                Uid = this.Uid,
+                Data = this.Data,
             };
 
         }
+
         #endregion
 
     }

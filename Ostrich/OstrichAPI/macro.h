@@ -64,7 +64,7 @@ objectName->isConnected(this->isConnected());\
 objectName->sourceName(this->sourceName());\
 objectName->sourceUID(this->sourceUID());\
 objectName->index(this->index());\
-
+objectName->multipleSourceNode(this->multipleSourceNode());
 
 #define END_CONST_NODE_CLONE_PATTERN(objectName)\
 return objectName;\

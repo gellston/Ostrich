@@ -17,7 +17,7 @@ namespace Model
 
 
 
-        static public BasePropertyModel Create(int objectType, ICommand modelChangedCommand)
+        static public BasePropertyModel Create(string contextName, int objectType, ulong objectUid, ICommand modelChangedCommand)
         {
             try
             {
@@ -28,7 +28,9 @@ namespace Model
                         return new ConstNumberModel()
                         {
                             ObjectType = objectType,
-                            ModelChangingCommand = modelChangedCommand
+                            Uid = objectUid,
+                            ModelChangingCommand = modelChangedCommand,
+                            ContextName = contextName,
                         };
                         break;
 
@@ -37,7 +39,9 @@ namespace Model
                         return new BasePropertyModel()
                         {
                             ObjectType = objectType,
-                            ModelChangingCommand = modelChangedCommand
+                            Uid = objectUid,
+                            ModelChangingCommand = modelChangedCommand,
+                            ContextName = contextName,
                         };
                         break;
                 }
@@ -47,7 +51,9 @@ namespace Model
                 return new BasePropertyModel()
                 {
                     ObjectType = objectType,
-                    ModelChangingCommand = modelChangedCommand
+                    Uid = objectUid,
+                    ModelChangingCommand = modelChangedCommand,
+                    ContextName = contextName,
                 };
             }
         }

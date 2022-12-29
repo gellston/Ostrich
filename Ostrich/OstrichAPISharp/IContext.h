@@ -5,6 +5,7 @@
 
 #include "IHandle.h"
 #include "IAddon.h"
+#include "IConstNode.h"
 
 using namespace System;
 
@@ -30,24 +31,29 @@ namespace HV {
 			//Event Callback
 			delegate void OnProcessCompleteEventCallback(int nodeType, std::size_t composite_uid);
 			delegate void OnConstChangedEventCallback(std::size_t constUID);
+			delegate void OnProcessStartEventCallback(int nodeType, std::size_t composite_uid);
 
 
 			//Event Handler
 			delegate void OnProcessCompleteHandler(System::Object^ sender, int nodeType, std::size_t compositeUID);
 			delegate void OnConstChangedHandler(System::Object^ sender, std::size_t constUID);
+			delegate void OnProcessStartHandler(System::Object^ sender, int nodeType, std::size_t compositeUID);
 
 
 
 			event OnProcessCompleteHandler^ OnProcessComplete;
 			event OnConstChangedHandler^ OnConstChanged;
+			event OnProcessStartHandler^ OnProcessStart;
 
 
 
 			virtual void RegisterProcessCompleteEvent(OnProcessCompleteHandler^ eventHandler);
 			virtual void RegisterConstChangedEvent(OnConstChangedHandler^ eventHandler);
+			virtual void RegisterProcessStartEvent(OnProcessStartHandler^ eventHandler);
 
 			virtual void ResetProcessCompleteEvent(OnProcessCompleteHandler^ eventHandler);
 			virtual void ResetConstChangedEvent(OnConstChangedHandler^ eventHandler);
+			virtual void ResetProcessStartEvent(OnProcessStartHandler^ eventHandler);
 
 
 
@@ -61,6 +67,12 @@ namespace HV {
 			virtual property System::Collections::Generic::List<IAddon^>^ Addons {
 				System::Collections::Generic::List<IAddon^>^ get();
 			}
+			
+			virtual property int ExecutionDelay {
+				int get();
+				void set(int);
+			}
+
 
 
 			virtual void Load(System::String^ path);
@@ -96,11 +108,10 @@ namespace HV {
 
 
 			virtual HV::V2::ICompositeNode^ AddNode(System::String^ name, int objectType);
-			
 			virtual void RemoveNode(std::size_t uid);
 			virtual void RemoveNode(HV::V2::ICompositeNode^ node);
 			virtual void RemoveNode(System::String^ name);
-
+			virtual HV::V2::IConstNode^ ConstNode(std::size_t uid);
 
 		};
 	}

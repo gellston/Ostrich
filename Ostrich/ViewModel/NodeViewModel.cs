@@ -11,6 +11,7 @@ namespace ViewModel
         #region Private Property
         private bool _IsSelected = false;
         private bool _IsEvent = false;
+        private bool _IsExecuting = false;
         private double _X = 0;
         private double _Y = 0;
         private string _Name = "";
@@ -45,6 +46,12 @@ namespace ViewModel
         {
             get => _IsSelected;
             set => SetProperty(ref _IsSelected, value);
+        }
+
+        public bool IsExecuting
+        {
+            get => _IsExecuting;
+            set => SetProperty(ref _IsExecuting, value);
         }
 
         public double X

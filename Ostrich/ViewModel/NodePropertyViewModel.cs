@@ -223,7 +223,7 @@ namespace ViewModel
                 Name = this.Name,
                 ObjectType = this.ObjectType,
                 Uid = this.Uid,
-                PropertyModel = this.PropertyModel
+                PropertyModel = (BasePropertyModel)this.PropertyModel.Clone()
             };
 
             return property;

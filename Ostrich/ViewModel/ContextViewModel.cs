@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Model.EventParameter;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace ViewModel
 {
@@ -34,6 +36,17 @@ namespace ViewModel
         
 
         }
+
+        #endregion
+
+
+
+
+        #region Command
+
+
+        public ICommand ConstNodeChangedCommand { get; set; } = null;
+
 
         #endregion
 
@@ -107,16 +120,7 @@ namespace ViewModel
         }
 
 
-        public void OnProcessCompleteHandler(System.Object sender, int nodeType, ulong compositeUID)
-        {
 
-            System.Diagnostics.Debug.WriteLine("Process Event Handler node Type = " + nodeType + " compositeUID = " + compositeUID);
-        }
-
-        public void OnConstChangedHandler(System.Object sender, ulong constUID)
-        {
-            System.Diagnostics.Debug.WriteLine("Const Chagned Handler node Type = "  + constUID);
-        }
 
         #endregion
 
@@ -124,6 +128,73 @@ namespace ViewModel
 
         #region Function
 
+        public void OnProcessCompleteHandler(System.Object sender, int nodeType, ulong compositeUID)
+        {
+
+            foreach (var node in this.NodeViewModelCollection)
+            {
+                if (node.Uid == compositeUID)
+                    node.IsExecuting = false;
+            }
+        }
+
+        public void OnConstChangedHandler(System.Object sender, ulong constUID)
+        {
+
+            foreach (var node in this.NodeViewModelCollection)
+            {
+                foreach (var output in node.OutputCollection)
+                {
+                    if (output.Uid == constUID)
+                    {
+                        var arg = new ModelChangedArg()
+                        {
+                            ContextName = this.Name,
+                            Data = null,
+                            Changed = false,
+                            ObjectType = output.ObjectType,
+                            Uid = output.Uid,
+                        };
+
+                        this.ConstNodeChangedCommand.Execute(arg);
+                    }
+                }
+            }
+        }
+
+        public void OnProcessStartHandler(System.Object sender, int nodeType, ulong compositeUID)
+        {
+            foreach (var node in this.NodeViewModelCollection)
+            {
+                if (node.Uid == compositeUID)
+                    node.IsExecuting = true;
+            }
+        }
+
+
+        public void ClearExecutionStatus()
+        {
+            foreach(var node in this.NodeViewModelCollection)
+            {
+                node.IsExecuting = false;
+            }
+        }
+        public void ContextName(string name)
+        {
+            this.Name = name;
+            foreach(var node in this.NodeViewModelCollection)
+            {
+                foreach(var input in node.InputCollection)
+                {
+                    input.PropertyModel.ContextName = name;
+                }
+
+                foreach(var output in node.OutputCollection)
+                {
+                    output.PropertyModel.ContextName = name;
+                }
+            }
+        }
 
         public void UnRegisterPath(List<NodePathViewModel> paths)
         {
@@ -176,7 +247,7 @@ namespace ViewModel
                             outputProperty.ObjectType == nodePath.SourceObjectType &&
                             outputProperty.Name == nodePath.SourcePropertyName)
                         {
-                            outputProperty.RegisterTargetPathViewModel(nodePath);
+                            outputProperty.RegisterSourcePathViewModel(nodePath);
                         }
                     }
                 }
@@ -204,8 +275,13 @@ namespace ViewModel
                 NodePathViewModelCollection = nodePathViewModelCollection,
                 NodeViewModelCollection = nodeViewModelCollection,
                 NodeInfoViewModelCollection = nodeInfoViewModelCollection,
-                AddonViewModelCollection = addonViewModelCollection
+                AddonViewModelCollection = addonViewModelCollection,
+
+
+                ConstNodeChangedCommand = this.ConstNodeChangedCommand,
             };
+
+            context.ContextName(this.Name);
 
             return context;
         }

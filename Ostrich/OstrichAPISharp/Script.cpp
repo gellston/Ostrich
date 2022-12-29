@@ -1,14 +1,13 @@
 
 #include <msclr/marshal_cppstd.h>
 
-
-
 //C++/CLI Header
 #include "Script.h"
 #include "CommonException.h"
 #include "CompositeNode.h"
 #include "Addon.h"
 #include "Context.h"
+#include "ConstNode.h"
 
 //C++ Header
 #include <commonException.h>
@@ -46,8 +45,9 @@ HV::V2::Script::!Script() {
 	for each (auto keyPair in this->_managedContext)
 	{
 		HV::V2::IContext^ context = keyPair.Value;
-		context->~IContext();
+		delete context;
 	}
+	this->_managedContext->Clear();
 	this->_instance.~mananged_shared_ptr();
 }
 
@@ -71,6 +71,25 @@ void HV::V2::Script::RegisterProcessCompleteEvent(System::String^ context_name, 
 		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
 	}
 
+}
+
+void HV::V2::Script::RegisterProcessStartEvent(System::String^ context_name, HV::V2::IContext::OnProcessStartHandler^ eventHandler) {
+	try {
+		if (this->_managedContext->ContainsKey(context_name) == false) {
+			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
+			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
+			this->_managedContext->Add(context_name, managedContext);
+		}
+
+		this->_managedContext[context_name]->RegisterProcessStartEvent(eventHandler);
+
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
 }
 
 
@@ -103,6 +122,10 @@ void HV::V2::Script::ResetProcessCompleteEvent(System::String^ context_name, HV:
 		}
 
 		this->_managedContext[context_name]->ResetProcessCompleteEvent(eventHandler);
+		this->_managedContext->Remove(context_name);
+		auto context = this->_managedContext[context_name];
+		delete context;
+
 
 	}
 	catch (hv::v2::oexception e) {
@@ -122,6 +145,34 @@ void HV::V2::Script::ResetConstChangedEvent(System::String^ context_name, HV::V2
 		}
 
 		this->_managedContext[context_name]->ResetConstChangedEvent(eventHandler);
+		this->_managedContext->Remove(context_name);
+		auto context = this->_managedContext[context_name];
+		delete context;
+
+
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::Script::ResetProcessStartEvent(System::String^ context_name, HV::V2::IContext::OnProcessStartHandler^ eventHandler) {
+	try {
+		if (this->_managedContext->ContainsKey(context_name) == false) {
+			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
+			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
+			this->_managedContext->Add(context_name, managedContext);
+		}
+
+		this->_managedContext[context_name]->ResetProcessStartEvent(eventHandler);
+		this->_managedContext->Remove(context_name);
+		auto context = this->_managedContext[context_name];
+		delete context;
+
+
 
 	}
 	catch (hv::v2::oexception e) {
@@ -312,6 +363,31 @@ HV::V2::ICompositeNode^ HV::V2::Script::AddNode(System::String^ context_name, Sy
 	}
 }
 
+int HV::V2::Script::ExecutionDelay::get() {
+	try {
+		return this->_instance->executionDelay();
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::Script::ExecutionDelay::set(int ms) {
+	try {
+		this->_instance->executionDelay(ms);
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+
 void HV::V2::Script::RemoveNode(System::String^ context_name, std::size_t uid) {
 	try {
 		this->_instance->removeNode(msclr::interop::marshal_as<std::string>(context_name), uid);
@@ -342,6 +418,22 @@ void HV::V2::Script::RemoveNode(System::String^ context_name, System::String^ na
 	try {
 		this->_instance->removeNode(msclr::interop::marshal_as<std::string>(context_name),
 									msclr::interop::marshal_as<std::string>(name));
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+HV::V2::IConstNode^ HV::V2::Script::ConstNode(System::String^ context_name, std::size_t uid) {
+	try {
+		auto nativeConstNode = this->_instance->constNode(msclr::interop::marshal_as<std::string>(context_name),
+													      uid);
+
+		auto managedConstNode = gcnew HV::V2::ConstNode(System::IntPtr(&nativeConstNode), true);
+		return managedConstNode;
 	}
 	catch (hv::v2::oexception e) {
 		throw gcnew HV::V2::OException(gcnew System::String(e.what()));

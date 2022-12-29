@@ -68,6 +68,7 @@ namespace hv {
 			OSTRICH_COMMON_API void removeNode(std::string context_name, std::size_t uid);
 			OSTRICH_COMMON_API void removeNode(std::string context_name, std::shared_ptr<hv::v2::icompositeNode> node);
 			OSTRICH_COMMON_API void removeNode(std::string context_name, std::string name);
+			OSTRICH_COMMON_API std::shared_ptr<hv::v2::iconstNode> constNode(std::string context_name, std::size_t uid);
 
 			OSTRICH_COMMON_API void verification(std::string context_name);
 			OSTRICH_COMMON_API void clear(std::string context_name);
@@ -76,6 +77,8 @@ namespace hv {
 			OSTRICH_COMMON_API void loadLibrary();
 			OSTRICH_COMMON_API void unloadLibrary();
 			OSTRICH_COMMON_API void setAddonPath(std::string path);
+			OSTRICH_COMMON_API void executionDelay(int ms);
+			OSTRICH_COMMON_API int executionDelay();
 			OSTRICH_COMMON_API std::vector<hv::v2::addon_info> addonInfo(std::string context_name);
 			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iaddon>> addons(std::string context_name);
 

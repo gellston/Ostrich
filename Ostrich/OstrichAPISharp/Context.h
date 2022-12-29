@@ -23,10 +23,12 @@ namespace HV {
 
 			void NativeProcessCompleteEvent(int nodeType, std::size_t composite_uid);
 			void NativeConstChangedEvent(std::size_t constUID);
+			void NativeProcessStartEvent(int nodeType, std::size_t composite_uid);
 
 
 			System::Runtime::InteropServices::GCHandle ProcessCompleteEventGCHandle;
 			System::Runtime::InteropServices::GCHandle ConstChangedEventGCHandle;
+			System::Runtime::InteropServices::GCHandle ProcessStartEventGCHandle;
 
 
 
@@ -37,13 +39,17 @@ namespace HV {
 
 			virtual event HV::V2::IContext::OnProcessCompleteHandler^ OnProcessComplete;
 			virtual event HV::V2::IContext::OnConstChangedHandler^ OnConstChanged;
+			virtual event HV::V2::IContext::OnProcessStartHandler^ OnProcessStart;
 
 
 			virtual void RegisterProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
 			virtual void RegisterConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler);
+			virtual void RegisterProcessStartEvent(HV::V2::IContext::OnProcessStartHandler^ eventHandler);
 
 			virtual void ResetProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
 			virtual void ResetConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler);
+			virtual void ResetProcessStartEvent(HV::V2::IContext::OnProcessStartHandler^ eventHandler);
+
 
 
 			Context(System::IntPtr _pointer, bool is_smart_pointer);
@@ -68,6 +74,11 @@ namespace HV {
 			}
 			virtual property System::Collections::Generic::List<IAddon^>^ Addons {
 				System::Collections::Generic::List<IAddon^>^ get();
+			}
+
+			virtual property int ExecutionDelay {
+				int get();
+				void set(int);
 			}
 
 
@@ -104,10 +115,10 @@ namespace HV {
 
 
 			virtual HV::V2::ICompositeNode^ AddNode(System::String^ name, int objectType);
-
 			virtual void RemoveNode(std::size_t uid);
 			virtual void RemoveNode(HV::V2::ICompositeNode^ node);
 			virtual void RemoveNode(System::String^ name);
+			virtual HV::V2::IConstNode^ ConstNode(std::size_t uid);
 
 
 		};

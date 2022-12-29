@@ -16,8 +16,12 @@ namespace hv {
 			std::map<std::string, std::shared_ptr<hv::v2::icontext>> _contextes;
 			std::string _addon_path;
 
+
+			int _executionDelay;
+
 			impl_script() {
 				this->_addon_path = "";
+				this->_executionDelay = 0;
 
 			}
 
@@ -381,6 +385,25 @@ void hv::v2::script::removeNode(std::string context_name, std::string name) {
 	}
 }
 
+std::shared_ptr<hv::v2::iconstNode> hv::v2::script::constNode(std::string context_name, std::size_t uid) {
+	try {
+		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
+		}
+
+		return this->_instance->_contextes[context_name]->constNode(uid);
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+
 void hv::v2::script::verification(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
@@ -491,6 +514,19 @@ void hv::v2::script::setAddonPath(std::string path) {
 	}
 
 	this->_instance->_addon_path = path;
+}
+
+
+void hv::v2::script::executionDelay(int ms) {
+	this->_instance->_executionDelay = ms;
+
+	for (auto& context : this->_instance->_contextes) {
+		context.second->executionDelay(this->_instance->_executionDelay);
+	}
+}
+
+int hv::v2::script::executionDelay() {
+	return this->_instance->_executionDelay;
 }
 
 std::vector<hv::v2::addon_info> hv::v2::script::addonInfo(std::string context_name) {

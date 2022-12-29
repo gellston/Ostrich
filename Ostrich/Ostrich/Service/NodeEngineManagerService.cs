@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DevExpress.Diagram.Core.Shapes;
 using DevExpress.Mvvm.Native;
 using DevExpress.Utils.Extensions;
 using DevExpress.Xpf.Printing.PreviewControl;
 using HV.V2;
 using Model;
 using Model.EventParameter;
+using Ostrich.Model;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing.Text;
@@ -14,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ViewModel;
+using static DevExpress.Xpo.Helpers.AssociatedCollectionCriteriaHelper;
 
 namespace Ostrich.Service
 {
@@ -23,7 +27,10 @@ namespace Ostrich.Service
         #region PrivateProperty
         private HV.V2.Script _NodeEngineModel = null;
         private ObservableCollection<ContextViewModel> _ContextViewModelCollection = new ObservableCollection<ContextViewModel>();
-        private ObservableCollection<Addon> _AddonCollection = new ObservableCollection<Addon>();
+        private ObservableCollection<Ostrich.Model.Addon> _AddonCollection = new ObservableCollection<Ostrich.Model.Addon>();
+        private ConcurrentQueue<Model.ConstNodeModel> _ConstNodeModelUpdateCollection = new ConcurrentQueue<Model.ConstNodeModel>();
+        private object _lockUpdate = new object();
+
         #endregion
 
         public NodeEngineManagerService()
@@ -45,14 +52,57 @@ namespace Ostrich.Service
             get => _ContextViewModelCollection;
         }
 
-        public ObservableCollection<Addon> AddonCollection
+        public ObservableCollection<Ostrich.Model.Addon> AddonCollection
         {
             get => _AddonCollection;
         }
         #endregion
 
 
+        
         #region Public Property
+
+        
+
+
+        public void OnRendering()
+        {
+            if(this._NodeEngineModel != null && this._ConstNodeModelUpdateCollection != null)
+            {
+
+                if (this._ConstNodeModelUpdateCollection.Count > 0)
+                {
+                    var count = this._ConstNodeModelUpdateCollection.Count;
+                    for (var index = 0; index < count; index++){
+
+                        try
+                        {
+                            Model.ConstNodeModel model = new Model.ConstNodeModel();
+                            if (this._ConstNodeModelUpdateCollection.TryDequeue(out model))
+                            {
+                                var context = this.ContextViewModelCollection.First(context => context.Name == model.ContextName);
+                                foreach (var node in context.NodeViewModelCollection)
+                                {
+                                    foreach (var output in node.OutputCollection)
+                                    {
+                                        if (output.Uid == model.Uid)
+                                        {
+                                            output.PropertyModel.Update(model.Data);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine(ex.ToString());
+                        }
+                    }
+                }
+            }
+        }
+
+
         public HV.V2.Script NodeEngineModel()
         {
             return this._NodeEngineModel;
@@ -60,14 +110,12 @@ namespace Ostrich.Service
 
 
 
-        public void Run(string contextName)
+        public async Task Run(string contextName, int delay)
         {
             try
             {
                 var context = this.ContextViewModelCollection.First(context => context.Name == contextName);
-
                 var selectedNode = context.NodeViewModelCollection.Where(node => node.IsSelected == true).ToList();
-
 
                 if(selectedNode.Count == 0)
                 {
@@ -81,7 +129,24 @@ namespace Ostrich.Service
 
                 }
 
-                this._NodeEngineModel.Run(contextName, selectedNode[0].Uid);
+                try
+                {
+
+                    context.ClearExecutionStatus();
+                    await Task.Run(async () =>
+                    {
+
+                        this._NodeEngineModel.ExecutionDelay = delay;
+                        this._NodeEngineModel.Run(contextName, selectedNode[0].Uid);
+                    });
+
+                }
+                catch(Exception ex)
+                {
+                    throw ex;
+                }
+
+
 
             }
             catch (Exception ex)
@@ -212,7 +277,7 @@ namespace Ostrich.Service
                     
                     using (var node = this._NodeEngineModel.AddNode(contextName, DateTime.Now.ToString("yyyy MM dd HH:mm:ss:fff"), objectType))
                     {
-                        var name = context.NodeInfoViewModelCollection.FirstOrDefault(info => info.ObjectType == objectType).NodeName;
+                        var name = context.NodeInfoViewModelCollection.First(info => info.ObjectType == objectType).NodeName;
                         NodeViewModel nodeViewModel = new NodeViewModel()
                         {
                             Name = name,
@@ -232,7 +297,7 @@ namespace Ostrich.Service
                                 Name = input.Name,
                                 ObjectType = input.Type,
                                 IsMultiple = input.IsMultiple,
-                                PropertyModel = PropertyModelConstructor.Create(input.Type, this.ModelChangingCommand),
+                                PropertyModel = PropertyModelConstructor.Create(contextName, input.Type, input.Uid, this.ModelChangingCommand),
                                 IsOutput = false,
                                 ParentNodeViewModel = nodeViewModel,
                                 Uid = input.Uid,
@@ -247,7 +312,7 @@ namespace Ostrich.Service
                                 Name = output.Name,
                                 ObjectType = output.Type,
                                 IsMultiple = output.IsMultiple,
-                                PropertyModel = PropertyModelConstructor.Create(output.Type, this.ModelChangingCommand),
+                                PropertyModel = PropertyModelConstructor.Create(contextName, output.Type, output.Uid, this.ModelChangingCommand),
                                 IsOutput = true,
                                 ParentNodeViewModel = nodeViewModel,
                                 Uid = output.Uid,
@@ -271,9 +336,18 @@ namespace Ostrich.Service
             {
 
                 this._NodeEngineModel.CopyContext(sourceContextName, targetContextName);
+                var nativeContext = this._NodeEngineModel.Context(targetContextName);
+
                 var sourceContext = this.ContextViewModelCollection.First(context => context.Name == sourceContextName);
                 var targetContext = (ContextViewModel)sourceContext.Clone();
-                targetContext.Name = targetContextName;
+                targetContext.ContextName(targetContextName);
+
+
+
+                this._NodeEngineModel.RegisterProcessStartEvent(targetContextName, targetContext.OnProcessStartHandler);
+                this._NodeEngineModel.RegisterProcessCompleteEvent(targetContextName, targetContext.OnProcessCompleteHandler);
+                this._NodeEngineModel.RegisterConstChangedEvent(targetContextName, targetContext.OnConstChangedHandler);
+
 
                 this.ContextViewModelCollection.Add(targetContext);
 
@@ -294,7 +368,7 @@ namespace Ostrich.Service
 
                 this._NodeEngineModel.RenameContext(sourceContextName, targetContextName);
                 var context = this.ContextViewModelCollection.First(context => context.Name == sourceContextName);
-                context.Name = targetContextName;
+                context.ContextName(targetContextName);
 
             }
             catch(Exception ex)
@@ -309,9 +383,17 @@ namespace Ostrich.Service
         {
             try
             {
+                var nativeContext = this._NodeEngineModel.Context(name);
+
+                var context = this.ContextViewModelCollection.First(context => context.Name == name);
+
+                this._NodeEngineModel.ResetProcessCompleteEvent(name, context.OnProcessCompleteHandler);
+                this._NodeEngineModel.ResetConstChangedEvent(name, context.OnConstChangedHandler);
+                this._NodeEngineModel.ResetProcessStartEvent(name, context.OnProcessStartHandler);
+
+
 
                 this._NodeEngineModel.RemoveContext(name);
-                var context = this.ContextViewModelCollection.First(context => context.Name == name);
                 this.ContextViewModelCollection.Remove(context);
 
 
@@ -331,17 +413,14 @@ namespace Ostrich.Service
                 this._NodeEngineModel.CreateContext(name);
 
 
-
                 var context = new ContextViewModel()
                 {
-                    Name = name
+                    ConstNodeChangedCommand = this.ConstNodeChangedCommand
                 };
 
-
-                var managedContext = this._NodeEngineModel.Context(name);
-
-                managedContext.RegisterProcessCompleteEvent(context.OnProcessCompleteHandler);
-                managedContext.RegisterConstChangedEvent(context.OnConstChangedHandler);
+                this._NodeEngineModel.RegisterProcessCompleteEvent(name, context.OnProcessCompleteHandler);
+                this._NodeEngineModel.RegisterProcessStartEvent(name, context.OnProcessStartHandler);
+                this._NodeEngineModel.RegisterConstChangedEvent(name, context.OnConstChangedHandler);
 
 
                 this.ContextViewModelCollection.Add(context);
@@ -379,7 +458,10 @@ namespace Ostrich.Service
                     }
                     addon.Dispose();
                 }
-            }catch(Exception ex)
+
+                context.ContextName(name);
+            }
+            catch(Exception ex)
             {
 
                 throw ex;
@@ -400,11 +482,63 @@ namespace Ostrich.Service
                 try
                 {
                     // ModelChagned Code Here
-                    System.Diagnostics.Debug.WriteLine("Mdoel chagned Test !!! =  " + arg.Data.ToString());
+                    using (var constNode = this._NodeEngineModel.ConstNode(arg.ContextName, arg.Uid))
+                    {
+                        PropertyModelUpdater.Update(constNode.Type, arg, constNode.Handle);
+                    }
+
+
                     arg.Changed = true;
+                        
                 }catch(Exception e)
                 {
+                    arg.Changed = false;
 
+                    System.Diagnostics.Debug.WriteLine(e.Message);
+
+                }
+            });
+        }
+
+        public ICommand ConstNodeChangedCommand
+        {
+            get => new RelayCommand<ModelChangedArg>((arg) =>
+            {
+
+                lock (_lockUpdate)
+                {
+                    try
+                    {
+
+                        using (var constNode = this._NodeEngineModel.ConstNode(arg.ContextName, arg.Uid))
+                        {
+
+                            var context = this.ContextViewModelCollection.First(context => context.Name == arg.ContextName);
+                            foreach (var node in context.NodeViewModelCollection)
+                            {
+                                foreach (var output in node.OutputCollection)
+                                {
+                                    if (output.Uid == arg.Uid)
+                                    {
+                                        var constNodeModel = new Model.ConstNodeModel()
+                                        {
+                                            ContextName = arg.ContextName,
+                                            ObjectType = arg.ObjectType,
+                                            Uid = arg.Uid,
+                                            Data = PropertyModelExtracter.Extract(output.ObjectType, constNode.Handle)
+                                        };
+                                        this._ConstNodeModelUpdateCollection.Enqueue(constNodeModel);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        arg.Changed = false;
+
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                    }
                 }
             });
         }

@@ -26,9 +26,12 @@ namespace HV {
 
 			virtual void RegisterProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
 			virtual void RegisterConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler);
+			virtual void RegisterProcessStartEvent(System::String^ context_name, HV::V2::IContext::OnProcessStartHandler^ eventHandler);
 
 			virtual void ResetProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
 			virtual void ResetConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler);
+			virtual void ResetProcessStartEvent(System::String^ context_name, HV::V2::IContext::OnProcessStartHandler^ eventHandler);
+
 
 
 			virtual HV::V2::ICompositeNode^ Search(System::String^ context_name, std::size_t uid);
@@ -53,6 +56,7 @@ namespace HV {
 			virtual void RemoveNode(System::String^ context_name, std::size_t uid);
 			virtual void RemoveNode(System::String^ context_name, HV::V2::ICompositeNode^ node);
 			virtual void RemoveNode(System::String^ context_name, System::String^ name);
+			virtual HV::V2::IConstNode^ ConstNode(System::String^ context_name, std::size_t uid);
 
 
 			virtual void Verification(System::String^ context_name);
@@ -67,6 +71,10 @@ namespace HV {
 			virtual System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ AddonInfo(System::String^ context_name);
 			virtual System::Collections::Generic::List<IAddon^>^ Addons(System::String^ context_name);
 
+			virtual property int ExecutionDelay {
+				int get();
+				void set(int);
+			}
 
 
 			virtual void Load(System::String^ context_name, System::String^ path);

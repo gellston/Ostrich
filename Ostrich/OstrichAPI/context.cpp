@@ -47,18 +47,18 @@ namespace hv {
 
 
 			int _depth;
-
+			int _executionDelay = 0;
 
 			//Event Handler poiner
-
 			std::function<void(int nodeType, std::size_t composite_uid)> _processCompleteEvent;
 			std::function<void(std::size_t constUID)> _constChangedEvent;
+			std::function<void(int nodeType, std::size_t composite_uid)> _processStartEvent;
 			
 
 			impl_context() {
 
 				_depth = 0;
-		
+				_executionDelay = 0;
 			}
 
 
@@ -102,18 +102,34 @@ hv::v2::context::~context() {
 
 void hv::v2::context::onProcessComplete(int nodeType, std::size_t composite_uid) {
 
-	std::cout << "type : " << nodeType << ", uid : " << composite_uid << std::endl;
+	try {
+		this->_instance->_processCompleteEvent(nodeType, composite_uid);
+	}
+	catch (std::exception e) {
 
-	this->_instance->_processCompleteEvent(nodeType, composite_uid);
+	}
 
 }
+
+
+void hv::v2::context::onProcessStart(int nodeType, std::size_t composite_uid) {
+	try {
+		this->_instance->_processStartEvent(nodeType, composite_uid);
+	}
+	catch (std::exception e) {
+
+	}
+}
+
+
+
 
 void hv::v2::context::onConstChanged(std::size_t constUID) {
 
-	std::cout << "const uid : " << constUID << std::endl;
-
 	this->_instance->_constChangedEvent(constUID);
 }
+
+
 
 void hv::v2::context::registerProcessCompleteEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) {
 	this->_instance->_processCompleteEvent = eventHandler;
@@ -122,20 +138,26 @@ void hv::v2::context::registerConstChangedEvent(std::function<void(std::size_t c
 	this->_instance->_constChangedEvent = eventHandler;
 }
 
+void hv::v2::context::registerProcessStartEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) {
+	this->_instance->_processStartEvent = eventHandler;
+}
+
 void hv::v2::context::resetConstChangedEvent() {
 
 	this->_instance->_constChangedEvent=[&](std::size_t constUID){
-		std::cout << "constChanged Event!!" << std::endl;
-		std::cout << "event handler check : " << constUID << std::endl;
-		std::cout << "constChanged Event!!" << std::endl;
+
 	};
 }
 
 void hv::v2::context::resetProcessCompleteEvent() {
 	this->_instance->_processCompleteEvent = [&](int nodeType, std::size_t composite_uid) {
-		std::cout << "ProcessCompleteEvent!!" << std::endl;
-		std::cout << "event handler check : " << nodeType << ", " << composite_uid << std::endl;
-		std::cout << "ProcessCompleteEvent!!" << std::endl;
+
+	};
+}
+
+void hv::v2::context::resetProcessStartEvent() {
+	this->_instance->_processStartEvent = [&](int nodeType, std::size_t composite_uid) {
+
 	};
 }
 
@@ -570,6 +592,23 @@ void hv::v2::context::disconnect(std::shared_ptr<hv::v2::icompositeNode> targetN
 		throw e;
 	}
 
+}
+
+
+std::shared_ptr<hv::v2::iconstNode> hv::v2::context::constNode(std::size_t uid) {
+	try {
+		if (this->_instance->_const_node_loook_up_table.find(uid) == this->_instance->_const_node_loook_up_table.end()) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Can't find const node");
+			throw hv::v2::oexception(message);
+		}
+
+
+		return this->_instance->_const_node_loook_up_table[uid];
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
 }
 
 
@@ -1267,6 +1306,17 @@ void hv::v2::context::run() {
 	}
 }
 
+void hv::v2::context::executionDelay(int ms) {
+	this->_instance->_executionDelay = ms;
+}
+
+int hv::v2::context::executionDelay() {
+	return this->_instance->_executionDelay;
+
+}
+
+
+
 std::shared_ptr<hv::v2::icontext> hv::v2::context::clone() {
 
 	auto _context = std::make_shared<hv::v2::context>();
@@ -1275,16 +1325,17 @@ std::shared_ptr<hv::v2::icontext> hv::v2::context::clone() {
 
 		_context->setAddonPath(this->_instance->_libraryPath);
 		_context->loadLibrary();
-
+		_context->executionDelay(this->_instance->_executionDelay);
 
 		for (auto& node : this->_instance->_composite_node_look_up_table) {
-			auto cloneNode = node.second->clone(this);
+			auto cloneNode = node.second->clone(_context.get());
 			auto cloneInput = cloneNode->inputs();
 			auto cloneOutput = cloneNode->outputs();
 
-			this->registerConstNodeGroup(cloneInput, 9999);
-			this->registerConstNodeGroup(cloneOutput, 9999);
+			_context->registerConstNodeGroup(cloneInput, 9999);
+			_context->registerConstNodeGroup(cloneOutput, 9999);
 			_context->_instance->_composite_node_look_up_table[cloneNode->uid()] = cloneNode;
+			
 		}
 
 	}

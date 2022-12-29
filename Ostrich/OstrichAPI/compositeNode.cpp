@@ -8,7 +8,8 @@
 
 #include <unordered_map>
 #include <algorithm>
-
+#include <chrono>
+#include <thread>
 
 namespace hv {
 	namespace v2 {
@@ -151,10 +152,19 @@ hv::v2::resultType hv::v2::compositeNode::call() {
 
 	START_ERROR_HANDLE();
 
+	this->_instance->_context->onProcessStart(this->type(), this->uid());
+	std::this_thread::sleep_for(std::chrono::milliseconds(this->_instance->_context->executionDelay()));
 	auto result = this->process();
 
+	//Const Node output updating
+	for (auto & constNode : this->_instance->_outputNodes) {
+		this->_instance->_context->onConstChanged(constNode.second->uid());
+	}
 
 	this->_instance->_context->onProcessComplete(this->type(), this->uid());
+	
+	
+
 
 	return result;
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__);

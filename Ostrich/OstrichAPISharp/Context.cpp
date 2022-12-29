@@ -9,6 +9,7 @@
 #include "CommonException.h"
 #include "CompositeNode.h"
 #include "Addon.h"
+#include "ConstNode.h"
 
 
 //C++ Header
@@ -23,37 +24,37 @@ HV::V2::Context::Context(System::IntPtr _pointer, bool is_smart_pointer) {
 		this->_instance = *pointer;
 
 
-		//Native Function pointer connection
-		//Process Complete Event
-		auto managedProcessCompleteEventCallback = gcnew HV::V2::IContext::OnProcessCompleteEventCallback(this, &HV::V2::Context::NativeProcessCompleteEvent);
-		this->ProcessCompleteEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedProcessCompleteEventCallback);
-		System::IntPtr nativeProcessCompleteEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedProcessCompleteEventCallback);
-		this->_instance->registerProcessCompleteEvent((void (*)(int, std::size_t))nativeProcessCompleteEventCallback.ToPointer());
-
-		//Const Changed Event
-		auto managedConstChangedEventCallback = gcnew HV::V2::IContext::OnConstChangedEventCallback(this, &HV::V2::Context::NativeConstChangedEvent);
-		this->ConstChangedEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedConstChangedEventCallback);
-		System::IntPtr nativeConstChangedEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedConstChangedEventCallback);
-		this->_instance->registerConstChangedEvent((void (*)(std::size_t)) nativeConstChangedEventCallback.ToPointer());
 
 	}
 	else {
 		hv::v2::icontext* pointer = (hv::v2::icontext*)_pointer.ToPointer();
 		this->_instance = pointer;
 
-		//Native Function pointer connection
-		//Process Complete Event
-		auto managedProcessCompleteEventCallback = gcnew HV::V2::IContext::OnProcessCompleteEventCallback(this, &HV::V2::Context::NativeProcessCompleteEvent);
-		this->ProcessCompleteEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedProcessCompleteEventCallback);
-		System::IntPtr nativeProcessCompleteEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedProcessCompleteEventCallback);
-		this->_instance->registerProcessCompleteEvent((void (*)(int, std::size_t))nativeProcessCompleteEventCallback.ToPointer());
 
-		//Const Changed Event
-		auto managedConstChangedEventCallback = gcnew HV::V2::IContext::OnConstChangedEventCallback(this, &HV::V2::Context::NativeConstChangedEvent);
-		this->ConstChangedEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedConstChangedEventCallback);
-		System::IntPtr nativeConstChangedEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedConstChangedEventCallback);
-		this->_instance->registerConstChangedEvent((void (*)(std::size_t)) nativeConstChangedEventCallback.ToPointer());
 	}
+
+
+	//Native Function pointer connection
+	//Process Complete Event
+	auto managedProcessCompleteEventCallback = gcnew HV::V2::IContext::OnProcessCompleteEventCallback(this, &HV::V2::Context::NativeProcessCompleteEvent);
+	this->ProcessCompleteEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedProcessCompleteEventCallback);
+	System::IntPtr nativeProcessCompleteEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedProcessCompleteEventCallback);
+	this->_instance->registerProcessCompleteEvent((void (*)(int, std::size_t))nativeProcessCompleteEventCallback.ToPointer());
+
+	//Const Changed Event
+	auto managedConstChangedEventCallback = gcnew HV::V2::IContext::OnConstChangedEventCallback(this, &HV::V2::Context::NativeConstChangedEvent);
+	this->ConstChangedEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedConstChangedEventCallback);
+	System::IntPtr nativeConstChangedEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedConstChangedEventCallback);
+	this->_instance->registerConstChangedEvent((void (*)(std::size_t)) nativeConstChangedEventCallback.ToPointer());
+
+
+	//Process Start Event
+	auto managedProcessStartEventCallback = gcnew HV::V2::IContext::OnProcessStartEventCallback(this, &HV::V2::Context::NativeProcessStartEvent);
+	this->ProcessStartEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedProcessStartEventCallback);
+	System::IntPtr nativeProcessStartEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedProcessStartEventCallback);
+	this->_instance->registerProcessStartEvent((void (*)(int, std::size_t))nativeProcessStartEventCallback.ToPointer());
+
+
 }
 
 
@@ -72,6 +73,9 @@ HV::V2::Context::!Context() {
 		this->ConstChangedEventGCHandle.Free();
 	}
 
+	if (this->ProcessStartEventGCHandle.IsAllocated) {
+		this->ProcessStartEventGCHandle.Free();
+	}
 
 
 	this->_instance.~mananged_shared_ptr();
@@ -89,6 +93,10 @@ void HV::V2::Context::NativeConstChangedEvent(std::size_t constUID) {
 }
 
 
+void HV::V2::Context::NativeProcessStartEvent(int nodeType, std::size_t composite_uid) {
+	this->OnProcessStart(this, nodeType, composite_uid);
+}
+
 
 
 void HV::V2::Context::RegisterProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
@@ -99,12 +107,20 @@ void HV::V2::Context::RegisterConstChangedEvent(HV::V2::IContext::OnConstChanged
 	this->OnConstChanged -= eventHandler;
 	this->OnConstChanged += eventHandler;
 }
+void HV::V2::Context::RegisterProcessStartEvent(HV::V2::IContext::OnProcessStartHandler^ eventHandler) {
+	this->OnProcessStart -= eventHandler;
+	this->OnProcessStart += eventHandler;
+
+}
 
 void HV::V2::Context::ResetProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
 	this->OnProcessComplete -= eventHandler;
 }
 void HV::V2::Context::ResetConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler) {
 	this->OnConstChanged -= eventHandler;
+}
+void HV::V2::Context::ResetProcessStartEvent(HV::V2::IContext::OnProcessStartHandler^ eventHandler) {
+	this->OnProcessStart -= eventHandler;
 }
 
 
@@ -150,6 +166,30 @@ void HV::V2::Context::SetAddonPath(System::String^ path) {
 	}
 }
 
+
+int HV::V2::Context::ExecutionDelay::get() {
+	try {
+		return this->_instance->executionDelay();
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::Context::ExecutionDelay::set(int ms) {
+	try {
+		this->_instance->executionDelay(ms);
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
 
 // 여기서 부터 작업
 
@@ -498,6 +538,22 @@ void HV::V2::Context::RemoveNode(HV::V2::ICompositeNode^ node) {
 void HV::V2::Context::RemoveNode(System::String^ name) {
 	try {
 		this->_instance->removeNode(msclr::interop::marshal_as<std::string>(name));
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+HV::V2::IConstNode^ HV::V2::Context::ConstNode(std::size_t uid) {
+	try {
+		auto constNode = this->_instance->constNode(uid);
+
+		auto managedConstNode = gcnew HV::V2::ConstNode(System::IntPtr(&constNode), true);
+
+		return managedConstNode;
 	}
 	catch (hv::v2::oexception e) {
 		throw gcnew HV::V2::OException(gcnew System::String(e.what()));

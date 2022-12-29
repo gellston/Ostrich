@@ -17,6 +17,10 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Background="White">
+
+    <UserControl.Resources>
+        <dx:BoolInverseConverter x:Key="BoolInverseConverter"></dx:BoolInverseConverter>
+    </UserControl.Resources>
     <DockPanel>
         <dxr:RibbonControl DockPanel.Dock="Top"
                            RibbonStyle="Office2019"
@@ -36,25 +40,29 @@
                     <dxb:BarButtonItem Content="컨텍스트 생성"
                                        LargeGlyph="{dx:DXImage 'SvgImages/Actions/New.svg'}"
                                        Glyph="{dx:DXImage 'SvgImages/Actions/New.svg'}"
-                                       Command="{Binding CreateContextCommand}">
+                                       Command="{Binding CreateContextCommand}"
+                                       IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
                         
                     </dxb:BarButtonItem>
                     <dxb:BarButtonItem Content="컨텍스트 복사"
                                        LargeGlyph="{dx:DXImage 'SvgImages/Edit/Copy.svg'}"
                                        Glyph="{dx:DXImage 'SvgImages/Edit/Copy.svg'}"
-                                       Command="{Binding CopyContextCommand}">
+                                       Command="{Binding CopyContextCommand}"
+                                       IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
 
                     </dxb:BarButtonItem>
                     <dxb:BarButtonItem Content="컨텍스트 삭제"
                                        LargeGlyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Trash.svg'}"
                                        Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_Trash.svg'}"
-                                       Command="{Binding RemoveContextCommand}">
+                                       Command="{Binding RemoveContextCommand}"
+                                       IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
 
                     </dxb:BarButtonItem>
                     <dxb:BarButtonItem Content="컨텍스트 이름 변경"
                                        LargeGlyph="{dx:DXImage 'SvgImages/Dashboards/RenameDataSource.svg'}"
                                        Glyph="{dx:DXImage 'SvgImages/Dashboards/RenameDataSource.svg'}"
-                                       Command="{Binding RenameContextCommand}">
+                                       Command="{Binding RenameContextCommand}"
+                                       IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
 
                     </dxb:BarButtonItem>
                 </dxr:RibbonPageGroup>
@@ -62,13 +70,15 @@
                     <dxb:BarButtonItem Content="선택된 노드 삭제"
                                        LargeGlyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_RemoveCircled.svg'}"
                                        Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_RemoveCircled.svg'}"
-                                       Command="{Binding DeleteSelectedNodesCommand}">
+                                       Command="{Binding DeleteSelectedNodesCommand}"
+                                       IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
 
                     </dxb:BarButtonItem>
                     <dxb:BarButtonItem Content="선택된 경로 삭제"
                                        LargeGlyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_RemoveCircled.svg'}"
                                        Glyph="{dx:DXImage 'SvgImages/Icon Builder/Actions_RemoveCircled.svg'}"
-                                       Command="{Binding DeleteSelectedPathsCommand}">
+                                       Command="{Binding DeleteSelectedPathsCommand}"
+                                       IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
 
                     </dxb:BarButtonItem>
                 </dxr:RibbonPageGroup>
@@ -76,10 +86,24 @@
                     <dxb:BarButtonItem Content="실행"
                                        LargeGlyph="{dx:DXImage 'SvgImages/XAF/Action_Debug_Start.svg'}"
                                        Glyph="{dx:DXImage 'SvgImages/XAF/Action_Debug_Start.svg'}"
-                                       Command="{Binding RunScriptCommand}">
+                                       Command="{Binding RunScriptCommand}"
+                                       IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
 
                     </dxb:BarButtonItem>
-                    <dxb:BarButtonItem Content="연속 실행"
+                    
+                    <dxb:BarEditItem EditValue="{Binding ExecutionDelay, Mode=TwoWay}"
+                                     Glyph="{dx:DXImage 'SvgImages/Spreadsheet/Time.svg'}"
+                                     LargeGlyph="{dx:DXImage 'SvgImages/Spreadsheet/Time.svg'}"
+                                     EditWidth="50"
+                                     BarItemDisplayMode="ContentAndGlyph"
+                                     ToolTip="실행 딜레이"
+                                     IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
+                        <dxb:BarEditItem.EditSettings>
+                            <dxe:TextEditSettings></dxe:TextEditSettings>
+                        </dxb:BarEditItem.EditSettings>
+                    </dxb:BarEditItem>
+
+                    <!--<dxb:BarButtonItem Content="연속 실행"
                                        LargeGlyph="{dx:DXImage 'SvgImages/XAF/Action_ResumeRecording.svg'}"
                                        Glyph="{dx:DXImage 'SvgImages/XAF/Action_ResumeRecording.svg'}"
                                        Command="{Binding ContinusRunScriptCommand}">
@@ -90,7 +114,7 @@
                                        Glyph="{dx:DXImage 'SvgImages/XAF/Action_Debug_Stop.svg'}"
                                        Command="{Binding StopRunScriptCommand}">
 
-                    </dxb:BarButtonItem>
+                    </dxb:BarButtonItem>-->
                 </dxr:RibbonPageGroup>
             </dxr:RibbonPage>
         </dxr:RibbonControl>

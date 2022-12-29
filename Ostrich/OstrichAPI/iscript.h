@@ -67,6 +67,8 @@ namespace hv {
 			virtual void removeNode(std::string context_name, std::size_t uid) = 0;
 			virtual void removeNode(std::string context_name, std::shared_ptr<hv::v2::icompositeNode> node) = 0;
 			virtual void removeNode(std::string context_name, std::string name) = 0;
+			virtual std::shared_ptr<hv::v2::iconstNode> constNode(std::string context_name, std::size_t uid) = 0;
+
 
 			virtual void verification(std::string context_name) = 0;
 			virtual void clear(std::string context_name) = 0;
@@ -75,6 +77,8 @@ namespace hv {
 			virtual void loadLibrary() = 0;
 			virtual void unloadLibrary() = 0;
 			virtual void setAddonPath(std::string path) = 0;
+			virtual void executionDelay(int ms) = 0;
+			virtual int executionDelay() = 0;
 			virtual std::vector<hv::v2::addon_info> addonInfo(std::string context_name) = 0;
 			virtual std::vector<std::shared_ptr<hv::v2::iaddon>> addons(std::string context_name) = 0;
 

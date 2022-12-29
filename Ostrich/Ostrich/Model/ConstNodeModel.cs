@@ -4,20 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model.EventParameter
+namespace Ostrich.Model
 {
-    public class ModelChangedArg : EventArgs
+    public class ConstNodeModel
     {
 
+        public ConstNodeModel() { }
 
-        public ulong Uid { get; set; } = 0;
-        public int ObjectType { get; set; } = 0;
-
-        public bool Changed { get; set; } = false;
 
         public string ContextName { get; set; } = "";
 
+        public int ObjectType { get; set; } = 0;
+
+
+        public ulong Uid { get; set; } = 0;
 
         public object Data { get; set; } = null;
+
+
+
     }
 }

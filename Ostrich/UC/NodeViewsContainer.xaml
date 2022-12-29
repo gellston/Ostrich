@@ -21,12 +21,16 @@
         <ItemsControl.Resources>
             <DataTemplate DataType="{x:Type vm:NodeViewModel}">
                 <view:NodeView IsSelected="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                               IsExecuting="{Binding IsExecuting, UpdateSourceTrigger=PropertyChanged}"
                                IsHitTestVisible="True"
                                Background="Transparent"
                                Foreground="Transparent">
                     <view:NodeView.Style>
                         <Style TargetType="{x:Type view:NodeView}">
                             <Style.Triggers>
+                                <Trigger Property="IsExecuting" Value="True">
+                                    <Setter Property="BorderSelectionColor" Value="Green"></Setter>
+                                </Trigger>
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="BorderSelectionColor" Value="Orange"></Setter>
                                 </Trigger>

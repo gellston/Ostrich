@@ -26,6 +26,9 @@ namespace Model.Property
         #region Private Property
         private ICommand _ModelChangingCommand = null;
         private int _ObjectType = 0;
+        private ulong _Uid = 0;
+        private string _ContextName = "";
+        
         #endregion
 
 
@@ -45,6 +48,13 @@ namespace Model.Property
         }
 
 
+        public virtual void Update(object data)
+        {
+
+
+
+        }
+
         public ICommand ModelChangingCommand { 
             get => _ModelChangingCommand; 
             set => _ModelChangingCommand = value;
@@ -53,10 +63,25 @@ namespace Model.Property
 
 
         #region Public Property
+
+        
+
+        public string ContextName
+        {
+            get => _ContextName;
+            set => SetProperty(ref _ContextName, value);
+        }
+
         public int ObjectType
         {
             get => _ObjectType;
             set => SetProperty(ref _ObjectType, value);
+        }
+
+        public ulong Uid
+        {
+            get => _Uid;
+            set => SetProperty(ref _Uid, value);
         }
         #endregion
 
@@ -71,7 +96,14 @@ namespace Model.Property
 
         public virtual object Clone()
         {
-            return new BasePropertyModel();
+            return new BasePropertyModel()
+            {
+                ObjectType = this.ObjectType,
+                Uid = this.Uid,
+                ModelChangingCommand = this.ModelChangingCommand,
+                ContextName = this.ContextName,
+                
+            };
         }
         #endregion
     }

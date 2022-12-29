@@ -24,6 +24,8 @@ namespace UC
     {
         #region Private Property
         private bool loaded = false;
+        private double _ActualHeight = -1;
+        private double _ActualWidth = -1;
         #endregion
 
 
@@ -44,12 +46,14 @@ namespace UC
             try
             {
 
-                if(loaded == false && this.PART_Node_Spot.ActualHeight > 0 && this.PART_Node_Spot.ActualWidth > 0)
+                if (this.ActualHeight != this._ActualHeight && this.ActualWidth != this._ActualWidth)
                 {
                     var property = this.DataContext as NodePropertyViewModel;
                     property.ParentNodeViewModel.RaisePropertyChanged("X");
                     property.ParentNodeViewModel.RaisePropertyChanged("Y");
-                    loaded = true;
+
+                    this._ActualHeight = this.ActualHeight;
+                    this._ActualWidth = this.ActualWidth;
                 }
 
             }

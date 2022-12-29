@@ -65,9 +65,8 @@ hv::v2::resultType hv::v2::compositeForNode::process() {
 		auto _max_iternation = count->data();
 		for (double _index = 0; _index < _max_iternation; _index += 1.0) {
 			try {
-				std::cout << "for loop counting : " << _index << std::endl;
+
 				index->data(_index);
-	
 				this->updateConst(index->uid());
 				
 				auto result = loop->call();

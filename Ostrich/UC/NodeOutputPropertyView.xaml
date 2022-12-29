@@ -72,7 +72,7 @@
                     <Grid></Grid>
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type model:ConstNumberModel}">
-                    <TextBox Text="{Binding Data, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBox Text="{Binding Data, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                              Cursor="Arrow"
                              CaretBrush="Transparent"
                              VerticalAlignment="Center"

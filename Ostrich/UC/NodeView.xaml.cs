@@ -37,6 +37,15 @@ namespace UC
             get => (bool)GetValue(IsSelectedProperty);
         }
 
+        public static readonly DependencyProperty IsExecutingProperty = DependencyProperty.Register("IsExecuting", typeof(bool), typeof(NodeView), new PropertyMetadata(false));
+        public bool IsExecuting
+        {
+            set => SetValue(IsExecutingProperty, value);
+            get => (bool)GetValue(IsExecutingProperty);
+        }
+
+
+
         public static readonly DependencyProperty HasConnectionProperty = DependencyProperty.Register("HasConnection", typeof(bool), typeof(NodeView), new PropertyMetadata(false));
         public bool HasConnection
         {

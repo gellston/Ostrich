@@ -7,4 +7,8 @@
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PrimitiveNodeExtension\PrimitiveNodeExtension.vcxproj" />
+  </ItemGroup>
+
 </Project>

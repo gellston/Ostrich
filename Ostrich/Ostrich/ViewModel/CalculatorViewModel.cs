@@ -26,6 +26,9 @@ namespace Ostrich.ViewModel
         private readonly NodeEngineManagerService nodeEngineService;
         private ObservableCollection<ContextViewModel> _ContextViewModelCollection = null;
         private ContextViewModel _SelectedContextViewModel = null;
+        private int _ExecutionDelay = 0;
+        private bool _IsExecuting = false;
+
         #endregion
 
 
@@ -51,6 +54,20 @@ namespace Ostrich.ViewModel
 
 
         #region Public Property
+
+
+        public int ExecutionDelay
+        {
+            get => _ExecutionDelay;
+            set => SetProperty(ref _ExecutionDelay, value);
+        }
+
+        public bool IsExecuting
+        {
+            get => _IsExecuting;
+            set => SetProperty(ref _IsExecuting, value);
+        }
+
         public ObservableCollection<ContextViewModel> ContextViewModelCollection
         {
             get => _ContextViewModelCollection;
@@ -81,6 +98,12 @@ namespace Ostrich.ViewModel
 
                 try
                 {
+
+
+                    if (this.IsExecuting == true) return;
+
+
+
                     var contextName = arg.ContextName;
                     var sourceNodeUID = arg.SourceNodeUID;
                     var sourcePropertyName = arg.SourcePropertyName;
@@ -104,21 +127,23 @@ namespace Ostrich.ViewModel
         }
 
 
-        public ICommand RunScriptCommand
+        public IAsyncRelayCommand RunScriptCommand
         {
-            get => new RelayCommand(() =>
+            get => new AsyncRelayCommand(async () =>
             {
 
                 try
                 {
                     System.Diagnostics.Debug.WriteLine("Start");
-                    this.nodeEngineService.Run(this.SelectedContextViewModel.Name);
+                    this.IsExecuting = true;
+                    await this.nodeEngineService.Run(this.SelectedContextViewModel.Name, this.ExecutionDelay);
                     System.Diagnostics.Debug.WriteLine("End");
-
+                    this.IsExecuting = false;
                 }
                 catch(Exception e)
                 {
                     System.Diagnostics.Debug.WriteLine(e.Message);
+                    this.IsExecuting=false;
                 }
 
             });
@@ -220,6 +245,9 @@ namespace Ostrich.ViewModel
             {
                 try
                 {
+
+                    if (this.IsExecuting == true) return;
+
 
                     object data = args.Data.GetData(typeof(RecordDragDropData));
 

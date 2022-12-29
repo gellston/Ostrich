@@ -1,4 +1,6 @@
 ﻿using DevExpress.Xpf.Core;
+using Microsoft.Extensions.DependencyInjection;
+using Ostrich.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +25,30 @@ namespace Ostrich.View
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void view_Loaded(object sender, RoutedEventArgs e)
+        {
+            CompositionTarget.Rendering += CompositionTarget_Rendering; ;
+            Window.GetWindow(this).Closing += (sender, e) =>
+            {
+                CompositionTarget.Rendering -= CompositionTarget_Rendering;
+            };
+
+        }
+
+        private void CompositionTarget_Rendering(object sender, EventArgs e)
+        {
+
+            try
+            {
+                App.Current.Services.GetService<NodeEngineManagerService>().OnRendering();
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+
         }
     }
 }
