@@ -6,14 +6,17 @@ using DevExpress.Xpf.Printing.PreviewControl;
 using HV.V2;
 using Model;
 using Model.EventParameter;
+using Newtonsoft.Json;
 using Ostrich.Model;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing.Text;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ViewModel;
@@ -62,6 +65,95 @@ namespace Ostrich.Service
         
         #region Public Property
 
+        public void LoadContextFromFile(string filePath)
+        {
+            try
+            {
+    
+                var jsonContent = File.ReadAllText(filePath);
+                var diagramContext = JsonConvert.DeserializeObject<VisionDiagramFile>(jsonContent);
+                var contextName = diagramContext.Name;
+                var nativeContext = diagramContext.NativeContext;
+                var nodeViewModelCollection = diagramContext.Nodes;
+                var pathViewModelCollection = diagramContext.Paths;
+
+                this._NodeEngineModel.CreateContext(contextName);
+                this._NodeEngineModel.DeSerialization(contextName, nativeContext);
+
+                var context = this.FindContext(contextName);
+                context.NodeViewModelCollection = new ObservableCollection<NodeViewModel>(nodeViewModelCollection);
+                context.NodePathViewModelCollection = new ObservableCollection<NodePathViewModel>(pathViewModelCollection);
+                context.NativeContext = nativeContext;
+
+
+                foreach(var nodeViewModel in nodeViewModelCollection )
+                {
+
+
+                    foreach(var input in nodeViewModel.InputCollection)
+                    {
+                        input.ParentNodeViewModel = nodeViewModel;
+                        input.PropertyModel = PropertyModelConstructor.Create(contextName, input.ObjectType, input.Uid, this.ModelChangingCommand);
+
+                        foreach(var path in pathViewModelCollection )
+                        {
+                            if(input.Uid == path.TargetPropertyUID && input.ObjectType == path.TargetObjectType)
+                            {
+                                input.RegisterTargetPathViewModel(path);
+                            }
+                        }
+                    }
+
+                    foreach(var output in nodeViewModel.OutputCollection)
+                    {
+                        output.ParentNodeViewModel = nodeViewModel;
+                        output.PropertyModel = PropertyModelConstructor.Create(contextName, output.ObjectType, output.Uid, this.ModelChangingCommand);
+
+                        foreach (var path in pathViewModelCollection)
+                        {
+                            if (output.Uid == path.SourcePropertyUID && output.ObjectType == path.SourceObjectType)
+                            {
+                                output.RegisterSourcePathViewModel(path);
+                            }
+                        }
+                    }
+
+                }
+
+                this.ContextViewModelCollection.Add(context);
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+        }
+
+
+        public void SaveContextAsFile(string filePath, ContextViewModel context)
+        {
+            try {
+                var file = new VisionDiagramFile()
+                {
+                    Name = context.Name,
+                    NativeContext = context.NativeContext,
+                    Paths = context.NodePathViewModelCollection.ToList(),
+                    Nodes = context.NodeViewModelCollection.ToList(),
+                };
+
+
+                var jsonContent = JsonConvert.SerializeObject(file, Formatting.Indented);
+                File.WriteAllText(filePath, jsonContent);
+            
+            }catch(Exception ex)
+            {
+
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+            }
+        }
         
 
 
@@ -181,8 +273,11 @@ namespace Ostrich.Service
             {
    
                 this._NodeEngineModel.Connect(contextName, sourceUID, sourcePropertyName, targetUID, targetPropertyName);
+                var context = this.ContextViewModelCollection.First(context => context.Name == contextName);
+                context.NativeContext = this._NodeEngineModel.Serialization(contextName);
 
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
                 throw ex;
             }
@@ -277,6 +372,8 @@ namespace Ostrich.Service
                     
                     using (var node = this._NodeEngineModel.AddNode(contextName, DateTime.Now.ToString("yyyy MM dd HH:mm:ss:fff"), objectType))
                     {
+                        context.NativeContext = this._NodeEngineModel.Serialization(contextName);
+
                         var name = context.NodeInfoViewModelCollection.First(info => info.ObjectType == objectType).NodeName;
                         NodeViewModel nodeViewModel = new NodeViewModel()
                         {
@@ -369,6 +466,8 @@ namespace Ostrich.Service
                 this._NodeEngineModel.RenameContext(sourceContextName, targetContextName);
                 var context = this.ContextViewModelCollection.First(context => context.Name == sourceContextName);
                 context.ContextName(targetContextName);
+                context.NativeContext = this._NodeEngineModel.Serialization(targetContextName);
+
 
             }
             catch(Exception ex)
@@ -387,9 +486,9 @@ namespace Ostrich.Service
 
                 var context = this.ContextViewModelCollection.First(context => context.Name == name);
 
-                this._NodeEngineModel.ResetProcessCompleteEvent(name, context.OnProcessCompleteHandler);
-                this._NodeEngineModel.ResetConstChangedEvent(name, context.OnConstChangedHandler);
-                this._NodeEngineModel.ResetProcessStartEvent(name, context.OnProcessStartHandler);
+                this._NodeEngineModel.ResetProcessCompleteEvent(name);
+                this._NodeEngineModel.ResetConstChangedEvent(name);
+                this._NodeEngineModel.ResetProcessStartEvent(name);
 
 
 
@@ -400,6 +499,72 @@ namespace Ostrich.Service
             }catch(Exception ex)
             {
                 throw ex;
+            }
+        }
+
+        public ContextViewModel FindContext(string name)
+        {
+            try
+            {
+
+
+                this._NodeEngineModel.Context(name);
+
+
+                var context = new ContextViewModel()
+                {
+                    ConstNodeChangedCommand = this.ConstNodeChangedCommand
+                };
+
+                this._NodeEngineModel.RegisterProcessCompleteEvent(name, context.OnProcessCompleteHandler);
+                this._NodeEngineModel.RegisterProcessStartEvent(name, context.OnProcessStartHandler);
+                this._NodeEngineModel.RegisterConstChangedEvent(name, context.OnConstChangedHandler);
+
+                var addonInfo = this._NodeEngineModel.AddonInfo(name);
+                foreach (var info in addonInfo)
+                {
+                    var addonName = info.Item1; // Name
+                    var addonVersion = info.Item2;
+
+                    var addonViewModel = new AddonViewModel()
+                    {
+                        Name = addonName,
+                        Version = addonVersion
+                    };
+
+                    context.AddonViewModelCollection.Add(addonViewModel);
+                }
+
+
+                var addons = this._NodeEngineModel.Addons(name);
+                foreach (var addon in addons)
+                {
+                    var infomation = addon.Information;
+                    foreach (var info in infomation)
+                    {
+                        if (info.Category == "Constant") continue;
+                        var nodeInfoViewModel = new NodeInfoViewModel()
+                        {
+                            Category = info.Category,
+                            Name = info.Name,
+                            ObjectType = info.Type,
+                            NodeName = info.NodeName
+                        };
+                        context.NodeInfoViewModelCollection.Add(nodeInfoViewModel);
+                    }
+                    addon.Dispose();
+                }
+
+                context.ContextName(name);
+                context.NativeContext = this._NodeEngineModel.Serialization(name);
+
+                return context;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+
             }
         }
 
@@ -460,6 +625,7 @@ namespace Ostrich.Service
                 }
 
                 context.ContextName(name);
+                context.NativeContext = this._NodeEngineModel.Serialization(name);
             }
             catch(Exception ex)
             {

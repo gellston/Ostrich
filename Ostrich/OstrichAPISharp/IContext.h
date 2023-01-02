@@ -51,9 +51,9 @@ namespace HV {
 			virtual void RegisterConstChangedEvent(OnConstChangedHandler^ eventHandler);
 			virtual void RegisterProcessStartEvent(OnProcessStartHandler^ eventHandler);
 
-			virtual void ResetProcessCompleteEvent(OnProcessCompleteHandler^ eventHandler);
-			virtual void ResetConstChangedEvent(OnConstChangedHandler^ eventHandler);
-			virtual void ResetProcessStartEvent(OnProcessStartHandler^ eventHandler);
+			virtual void ResetProcessCompleteEvent();
+			virtual void ResetConstChangedEvent();
+			virtual void ResetProcessStartEvent();
 
 
 

@@ -18,6 +18,7 @@ namespace HV {
 
 			System::Collections::Generic::Dictionary<System::String^, HV::V2::IContext^>^ _managedContext;
 
+
 		public:
 
 			Script();
@@ -28,9 +29,9 @@ namespace HV {
 			virtual void RegisterConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler);
 			virtual void RegisterProcessStartEvent(System::String^ context_name, HV::V2::IContext::OnProcessStartHandler^ eventHandler);
 
-			virtual void ResetProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
-			virtual void ResetConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler);
-			virtual void ResetProcessStartEvent(System::String^ context_name, HV::V2::IContext::OnProcessStartHandler^ eventHandler);
+			virtual void ResetProcessCompleteEvent(System::String^ context_name);
+			virtual void ResetConstChangedEvent(System::String^ context_name);
+			virtual void ResetProcessStartEvent(System::String^ context_name);
 
 
 

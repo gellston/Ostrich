@@ -33,6 +33,10 @@ HV::V2::Context::Context(System::IntPtr _pointer, bool is_smart_pointer) {
 
 	}
 
+	this->managedConstChangedHandler = nullptr;
+	this->managedProcessCompleteHandler = nullptr;
+	this->managedProcessStartHandler = nullptr;
+
 
 	//Native Function pointer connection
 	//Process Complete Event
@@ -78,6 +82,25 @@ HV::V2::Context::!Context() {
 	}
 
 
+	if (this->managedConstChangedHandler != nullptr) {
+		this->OnConstChanged -= this->managedConstChangedHandler;
+		this->managedConstChangedHandler = nullptr;
+	}
+
+
+	if (this->managedProcessStartHandler != nullptr) {
+		this->OnProcessStart -= this->managedProcessStartHandler;
+		this->managedProcessStartHandler = nullptr;
+	}
+
+
+	if (this->managedProcessCompleteHandler != nullptr) {
+		this->OnProcessComplete -= this->managedProcessCompleteHandler;
+		this->managedProcessCompleteHandler = nullptr;
+	}
+
+
+
 	this->_instance.~mananged_shared_ptr();
 }
 
@@ -113,14 +136,25 @@ void HV::V2::Context::RegisterProcessStartEvent(HV::V2::IContext::OnProcessStart
 
 }
 
-void HV::V2::Context::ResetProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
-	this->OnProcessComplete -= eventHandler;
+void HV::V2::Context::ResetProcessCompleteEvent() {
+	if (this->managedProcessCompleteHandler != nullptr) {
+		this->OnProcessComplete -= this->managedProcessCompleteHandler;
+		this->managedProcessCompleteHandler = nullptr;
+	}
+
 }
-void HV::V2::Context::ResetConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler) {
-	this->OnConstChanged -= eventHandler;
+void HV::V2::Context::ResetConstChangedEvent() {
+	if (this->managedConstChangedHandler != nullptr) {
+		this->OnConstChanged -= this->managedConstChangedHandler;
+		this->managedConstChangedHandler = nullptr;
+	}
 }
-void HV::V2::Context::ResetProcessStartEvent(HV::V2::IContext::OnProcessStartHandler^ eventHandler) {
-	this->OnProcessStart -= eventHandler;
+void HV::V2::Context::ResetProcessStartEvent() {
+	if (this->managedProcessStartHandler != nullptr) {
+		this->OnProcessStart -= this->managedProcessStartHandler;
+		this->managedProcessStartHandler = nullptr;
+	}
+
 }
 
 

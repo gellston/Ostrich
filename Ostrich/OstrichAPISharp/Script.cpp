@@ -45,8 +45,13 @@ HV::V2::Script::!Script() {
 	for each (auto keyPair in this->_managedContext)
 	{
 		HV::V2::IContext^ context = keyPair.Value;
+		context->ResetConstChangedEvent();
+		context->ResetProcessStartEvent();
+		context->ResetProcessCompleteEvent();
+
 		delete context;
 	}
+
 	this->_managedContext->Clear();
 	this->_instance.~mananged_shared_ptr();
 }
@@ -113,19 +118,10 @@ void HV::V2::Script::RegisterConstChangedEvent(System::String^ context_name, HV:
 }
 
 
-void HV::V2::Script::ResetProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
+void HV::V2::Script::ResetProcessCompleteEvent(System::String^ context_name) {
 	try {
-		if (this->_managedContext->ContainsKey(context_name) == false) {
-			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
-			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
-			this->_managedContext->Add(context_name, managedContext);
-		}
 
-		this->_managedContext[context_name]->ResetProcessCompleteEvent(eventHandler);
-		this->_managedContext->Remove(context_name);
-		auto context = this->_managedContext[context_name];
-		delete context;
-
+		this->_managedContext[context_name]->ResetProcessCompleteEvent();
 
 	}
 	catch (hv::v2::oexception e) {
@@ -136,19 +132,10 @@ void HV::V2::Script::ResetProcessCompleteEvent(System::String^ context_name, HV:
 	}
 }
 
-void HV::V2::Script::ResetConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler) {
+void HV::V2::Script::ResetConstChangedEvent(System::String^ context_name) {
 	try {
-		if (this->_managedContext->ContainsKey(context_name) == false) {
-			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
-			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
-			this->_managedContext->Add(context_name, managedContext);
-		}
 
-		this->_managedContext[context_name]->ResetConstChangedEvent(eventHandler);
-		this->_managedContext->Remove(context_name);
-		auto context = this->_managedContext[context_name];
-		delete context;
-
+		this->_managedContext[context_name]->ResetConstChangedEvent();
 
 	}
 	catch (hv::v2::oexception e) {
@@ -159,20 +146,10 @@ void HV::V2::Script::ResetConstChangedEvent(System::String^ context_name, HV::V2
 	}
 }
 
-void HV::V2::Script::ResetProcessStartEvent(System::String^ context_name, HV::V2::IContext::OnProcessStartHandler^ eventHandler) {
+void HV::V2::Script::ResetProcessStartEvent(System::String^ context_name) {
 	try {
-		if (this->_managedContext->ContainsKey(context_name) == false) {
-			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
-			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
-			this->_managedContext->Add(context_name, managedContext);
-		}
 
-		this->_managedContext[context_name]->ResetProcessStartEvent(eventHandler);
-		this->_managedContext->Remove(context_name);
-		auto context = this->_managedContext[context_name];
-		delete context;
-
-
+		this->_managedContext[context_name]->ResetProcessStartEvent();
 
 	}
 	catch (hv::v2::oexception e) {
@@ -719,8 +696,14 @@ void HV::V2::Script::CreateContext(System::String^ context_name) {
 
 void HV::V2::Script::RenameContext(System::String^ sourceName, System::String^ targetName) {
 	try {
+
 		this->_instance->renameContext(msclr::interop::marshal_as<std::string>(sourceName),
 									   msclr::interop::marshal_as<std::string>(targetName));
+
+		auto context = this->_managedContext[sourceName];
+		this->_managedContext->Remove(sourceName);
+		this->_managedContext->Add(targetName, context);
+
 	}
 	catch (hv::v2::oexception e) {
 		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
@@ -732,6 +715,10 @@ void HV::V2::Script::RenameContext(System::String^ sourceName, System::String^ t
 
 void HV::V2::Script::RemoveContext(System::String^ name) {
 	try {
+		if (this->_managedContext->ContainsKey(name) == true) {
+			this->_managedContext[name]->~IContext();
+			this->_managedContext->Remove(name);
+		}
 		this->_instance->removeContext(msclr::interop::marshal_as<std::string>(name));
 	}
 	catch (hv::v2::oexception e) {

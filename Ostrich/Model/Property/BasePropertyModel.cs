@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Security.Cryptography.Xml;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -55,6 +57,8 @@ namespace Model.Property
 
         }
 
+        [JsonIgnore]
+        [IgnoreDataMember]
         public ICommand ModelChangingCommand { 
             get => _ModelChangingCommand; 
             set => _ModelChangingCommand = value;

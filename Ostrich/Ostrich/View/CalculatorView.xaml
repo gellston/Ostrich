@@ -36,6 +36,22 @@
  
 
             <dxr:RibbonPage Caption="홈">
+                <dxr:RibbonPageGroup Caption="파일">
+                    <dxb:BarButtonItem Content="스크립트 열기"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/Actions/Open.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/Actions/Open.svg'}"
+                                       Command="{Binding OpenContextFromFileCommand}"
+                                       IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
+
+                    </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Content="스크립트 저장"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/XAF/Action_SaveScript.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/XAF/Action_SaveScript.svg'}"
+                                       Command="{Binding SaveContextAsFileCommand}"
+                                       IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
+
+                    </dxb:BarButtonItem>
+                </dxr:RibbonPageGroup>
                 <dxr:RibbonPageGroup Caption="컨텍스트">
                     <dxb:BarButtonItem Content="컨텍스트 생성"
                                        LargeGlyph="{dx:DXImage 'SvgImages/Actions/New.svg'}"
@@ -266,7 +282,7 @@
                   
                 </dxdo:LayoutGroup>
                 
-                <dxdo:LayoutGroup Orientation="Horizontal"
+                <!--<dxdo:LayoutGroup Orientation="Horizontal"
                                   AllowClose="False"
                                   ItemHeight="150">
                     <dxdo:LayoutPanel ItemWidth="*"
@@ -277,7 +293,7 @@
                         
                     </dxdo:LayoutPanel>
 
-                </dxdo:LayoutGroup>
+                </dxdo:LayoutGroup>-->
             </dxdo:LayoutGroup>
 
 

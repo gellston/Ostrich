@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Dialogs;
 using DevExpress.Xpf.Grid.DragDrop;
 using Microsoft.Extensions.DependencyInjection;
 using Ostrich.Message;
@@ -88,7 +89,53 @@ namespace Ostrich.ViewModel
 
         #region Command
 
+        public ICommand OpenContextFromFileCommand
+        {
+            get => new RelayCommand(() =>
+            {
+                try
+                {
+                    DXOpenFileDialog dialog = new DXOpenFileDialog();
+                    dialog.Filter = "Vision Diagram File|*.vdf";
 
+
+                    if (dialog.ShowDialog() == false)
+                        throw new Exception("File is not selected");
+
+                    this.nodeEngineService.LoadContextFromFile(dialog.FileName);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            });
+        }
+
+
+
+        public ICommand SaveContextAsFileCommand
+        {
+            get => new RelayCommand(() =>
+            {
+                try
+                {
+
+                    DXSaveFileDialog dialog = new DXSaveFileDialog();
+                    dialog.Filter = "Vision Diagram File|*.vdf";
+
+
+                    if (dialog.ShowDialog() == false)
+                        throw new Exception("File is not selected");
+
+                    this.nodeEngineService.SaveContextAsFile(dialog.FileName, this.SelectedContextViewModel);
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+            });
+        }
 
 
         public ICommand NodeConnectRequestCommand

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -40,7 +42,7 @@ namespace ViewModel
 
 
         #region Consturctor
-        public NodePathViewModel() { 
+        public NodePathViewModel() {
 
         }
 
@@ -54,12 +56,17 @@ namespace ViewModel
             set => SetProperty(ref _IsExecution, value);
         }
 
+
+        [JsonIgnore]
+        [IgnoreDataMember]
         public bool IsSelected
         {
             get => _IsSelected;
             set => SetProperty(ref _IsSelected, value);
         }
 
+        [JsonIgnore]
+        [IgnoreDataMember]
         public string Curve
         {
             get => _Curve;

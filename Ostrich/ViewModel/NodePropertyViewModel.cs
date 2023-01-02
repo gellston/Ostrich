@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ViewModel
@@ -14,6 +16,7 @@ namespace ViewModel
         private bool _IsOutput = false;
         private string _Name = "";
         private ulong _Uid = 0;
+        private ulong _ParentNodeUid = 0;
         private bool _IsPressed = false;
         private int _ObjectType = -1;
         private bool _IsMultiple = false;
@@ -89,6 +92,12 @@ namespace ViewModel
             set => SetProperty(ref _IsMultiple, value);
         }
 
+        public ulong ParentNodeUID
+        {
+            get => _ParentNodeUid;
+            set => SetProperty(ref _ParentNodeUid, value);
+        }
+
 
         public ulong Uid
         {
@@ -103,6 +112,12 @@ namespace ViewModel
             set => SetProperty(ref _ObjectType, value);
         }
 
+
+
+
+
+        [JsonIgnore]
+        [IgnoreDataMember]
         public NodeViewModel ParentNodeViewModel
         {
             get => _ParentNodeViewModel;
@@ -223,6 +238,7 @@ namespace ViewModel
                 Name = this.Name,
                 ObjectType = this.ObjectType,
                 Uid = this.Uid,
+                ParentNodeUID = this.ParentNodeUID,
                 PropertyModel = (BasePropertyModel)this.PropertyModel.Clone()
             };
 

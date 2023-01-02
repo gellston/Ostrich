@@ -31,6 +31,9 @@ namespace HV {
 			System::Runtime::InteropServices::GCHandle ProcessStartEventGCHandle;
 
 
+			HV::V2::IContext::OnProcessCompleteHandler^ managedProcessCompleteHandler;
+			HV::V2::IContext::OnConstChangedHandler^ managedConstChangedHandler;
+			HV::V2::IContext::OnProcessStartHandler^ managedProcessStartHandler;
 
 
 		public:
@@ -46,9 +49,9 @@ namespace HV {
 			virtual void RegisterConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler);
 			virtual void RegisterProcessStartEvent(HV::V2::IContext::OnProcessStartHandler^ eventHandler);
 
-			virtual void ResetProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
-			virtual void ResetConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler);
-			virtual void ResetProcessStartEvent(HV::V2::IContext::OnProcessStartHandler^ eventHandler);
+			virtual void ResetProcessCompleteEvent();
+			virtual void ResetConstChangedEvent();
+			virtual void ResetProcessStartEvent();
 
 
 
