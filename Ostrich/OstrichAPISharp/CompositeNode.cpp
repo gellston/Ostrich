@@ -324,9 +324,9 @@ HV::V2::ResultType HV::V2::CompositeNode::Process() {
 	}
 }
 
-void HV::V2::CompositeNode::UpdateConst(std::size_t uid) {
+void HV::V2::CompositeNode::UpdateConst(int nodeType, std::size_t uid) {
 	try {
-		this->_instance->updateConst(uid);
+		this->_instance->updateConst(nodeType, uid);
 	}
 	catch (hv::v2::oexception e) {
 		throw gcnew HV::V2::OException(gcnew System::String(e.what()));

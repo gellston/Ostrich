@@ -51,7 +51,7 @@ namespace hv {
 
 			//Event Handler poiner
 			std::function<void(int nodeType, std::size_t composite_uid)> _processCompleteEvent;
-			std::function<void(std::size_t constUID)> _constChangedEvent;
+			std::function<void(int nodeType, std::size_t constUID)> _constChangedEvent;
 			std::function<void(int nodeType, std::size_t composite_uid)> _processStartEvent;
 			
 
@@ -124,9 +124,9 @@ void hv::v2::context::onProcessStart(int nodeType, std::size_t composite_uid) {
 
 
 
-void hv::v2::context::onConstChanged(std::size_t constUID) {
+void hv::v2::context::onConstChanged(int nodeType, std::size_t constUID) {
 
-	this->_instance->_constChangedEvent(constUID);
+	this->_instance->_constChangedEvent(nodeType, constUID);
 }
 
 
@@ -134,7 +134,7 @@ void hv::v2::context::onConstChanged(std::size_t constUID) {
 void hv::v2::context::registerProcessCompleteEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) {
 	this->_instance->_processCompleteEvent = eventHandler;
 }
-void hv::v2::context::registerConstChangedEvent(std::function<void(std::size_t constUID)> eventHandler) {
+void hv::v2::context::registerConstChangedEvent(std::function<void(int nodeType, std::size_t constUID)> eventHandler) {
 	this->_instance->_constChangedEvent = eventHandler;
 }
 
@@ -144,7 +144,7 @@ void hv::v2::context::registerProcessStartEvent(std::function<void(int nodeType,
 
 void hv::v2::context::resetConstChangedEvent() {
 
-	this->_instance->_constChangedEvent=[&](std::size_t constUID){
+	this->_instance->_constChangedEvent=[&](int nodeType, std::size_t constUID){
 
 	};
 }
@@ -161,6 +161,12 @@ void hv::v2::context::resetProcessStartEvent() {
 	};
 }
 
+
+void hv::v2::context::updateAllConstNode() {
+	for (auto& node : this->_instance->_const_node_loook_up_table) {
+		this->_instance->_constChangedEvent(node.second->type(), node.second->uid());
+	}
+}
 
 
 std::shared_ptr<hv::v2::icompositeNode> hv::v2::context::search(std::size_t uid) {
@@ -832,7 +838,8 @@ std::string hv::v2::context::serialization() {
 					{"sourceName", input->sourceName()},
 					{"sourceUID", input->sourceUID()},
 					{"index", input->index()},
-					{"multipleSourceNode", input->multipleSourceNode()}
+					{"multipleSourceNode", input->multipleSourceNode()},
+					{"data", input->serialization()}
 				};
 				composite_node["inputs"].push_back(input_json);
 			}
@@ -901,6 +908,7 @@ void hv::v2::context::deserialization(std::string value) {
 				auto sourceName = input["sourceName"].get<std::string>();
 				auto sourceUID = input["sourceUID"].get<std::size_t>();
 				auto index = input["index"].get<int>();
+				auto data = input["data"].get<std::string>();
 				auto multipleSourceNode = input["multipleSourceNode"].get<std::vector<std::tuple<std::size_t, std::string>>>();
 
 
@@ -916,6 +924,7 @@ void hv::v2::context::deserialization(std::string value) {
 				createdConstNode->index(index);
 				createdConstNode->isMultiple(isMultiple);
 				createdConstNode->multipleSourceNode(multipleSourceNode);
+				createdConstNode->deserialization(data);
 				inputs.push_back(createdConstNode);
 			}
 			createdNode->replaceInputs(inputs);

@@ -137,3 +137,12 @@ std::size_t hv::v2::constNode::uid() {
 void hv::v2::constNode::uid(std::size_t value) {
 	hv::v2::node::uid(value);
 }
+
+
+void hv::v2::constNode::deserialization(std::string value) {
+
+}
+
+std::string hv::v2::constNode::serialization() {
+	return "";
+}

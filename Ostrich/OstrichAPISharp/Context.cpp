@@ -49,7 +49,7 @@ HV::V2::Context::Context(System::IntPtr _pointer, bool is_smart_pointer) {
 	auto managedConstChangedEventCallback = gcnew HV::V2::IContext::OnConstChangedEventCallback(this, &HV::V2::Context::NativeConstChangedEvent);
 	this->ConstChangedEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedConstChangedEventCallback);
 	System::IntPtr nativeConstChangedEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedConstChangedEventCallback);
-	this->_instance->registerConstChangedEvent((void (*)(std::size_t)) nativeConstChangedEventCallback.ToPointer());
+	this->_instance->registerConstChangedEvent((void (*)(int, std::size_t)) nativeConstChangedEventCallback.ToPointer());
 
 
 	//Process Start Event
@@ -111,8 +111,8 @@ void HV::V2::Context::NativeProcessCompleteEvent(int nodeType, std::size_t compo
 	this->OnProcessComplete(this, nodeType, composite_uid);
 
 }
-void HV::V2::Context::NativeConstChangedEvent(std::size_t constUID) {
-	this->OnConstChanged(this, constUID);
+void HV::V2::Context::NativeConstChangedEvent(int nodeType, std::size_t constUID) {
+	this->OnConstChanged(this, nodeType, constUID);
 }
 
 
@@ -125,14 +125,20 @@ void HV::V2::Context::NativeProcessStartEvent(int nodeType, std::size_t composit
 void HV::V2::Context::RegisterProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
 	this->OnProcessComplete -= eventHandler;
 	this->OnProcessComplete += eventHandler;
+
+	this->managedProcessCompleteHandler = eventHandler;
 }
 void HV::V2::Context::RegisterConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler) {
 	this->OnConstChanged -= eventHandler;
 	this->OnConstChanged += eventHandler;
+
+	this->managedConstChangedHandler = eventHandler;
 }
 void HV::V2::Context::RegisterProcessStartEvent(HV::V2::IContext::OnProcessStartHandler^ eventHandler) {
 	this->OnProcessStart -= eventHandler;
 	this->OnProcessStart += eventHandler;
+
+	this->managedProcessStartHandler = eventHandler;
 
 }
 
@@ -155,6 +161,18 @@ void HV::V2::Context::ResetProcessStartEvent() {
 		this->managedProcessStartHandler = nullptr;
 	}
 
+}
+
+void HV::V2::Context::UpdateAllConstNode() {
+	try {
+		this->_instance->updateAllConstNode();
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
 }
 
 

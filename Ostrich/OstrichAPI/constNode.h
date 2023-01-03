@@ -59,6 +59,9 @@ namespace hv {
 			OSTRICH_COMMON_API void uid(std::size_t value) override;
 
 
+			OSTRICH_COMMON_API virtual void deserialization(std::string value) override;
+			OSTRICH_COMMON_API virtual std::string serialization() override;
+
 
 		};
 	}

@@ -61,7 +61,7 @@ namespace Model.Property
         [IgnoreDataMember]
         public ICommand ModelChangingCommand { 
             get => _ModelChangingCommand; 
-            set => _ModelChangingCommand = value;
+            set => SetProperty(ref _ModelChangingCommand, value);
         }
         #endregion
 

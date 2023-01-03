@@ -31,19 +31,22 @@ namespace hv {
 			// Event Handler
 			virtual void onProcessComplete(int nodeType, std::size_t composite_uid) = 0;
 			virtual void onProcessStart(int nodeType, std::size_t composite_uid) = 0;
-			virtual void onConstChanged(std::size_t constUID) = 0;
+			virtual void onConstChanged(int nodeType, std::size_t constUID) = 0;
 			
 
 
 			virtual void registerProcessCompleteEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) =0;
 			virtual void registerProcessStartEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) = 0;
-			virtual void registerConstChangedEvent(std::function<void(std::size_t constUID)> eventHandler) = 0;
+			virtual void registerConstChangedEvent(std::function<void(int nodeType, std::size_t constUID)> eventHandler) = 0;
 
 
 
 			virtual void resetProcessCompleteEvent() = 0;
 			virtual void resetProcessStartEvent() = 0;
 			virtual void resetConstChangedEvent() = 0;
+
+
+			virtual void updateAllConstNode() = 0;
 
 
 

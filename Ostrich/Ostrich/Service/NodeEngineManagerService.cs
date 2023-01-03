@@ -120,6 +120,8 @@ namespace Ostrich.Service
 
                 }
 
+                this._NodeEngineModel.UpdateAllConstNode(contextName);
+
                 this.ContextViewModelCollection.Add(context);
 
 
@@ -139,7 +141,7 @@ namespace Ostrich.Service
                 var file = new VisionDiagramFile()
                 {
                     Name = context.Name,
-                    NativeContext = context.NativeContext,
+                    NativeContext = this._NodeEngineModel.Serialization(context.Name),
                     Paths = context.NodePathViewModelCollection.ToList(),
                     Nodes = context.NodeViewModelCollection.ToList(),
                 };
@@ -180,6 +182,14 @@ namespace Ostrich.Service
                                         if (output.Uid == model.Uid)
                                         {
                                             output.PropertyModel.Update(model.Data);
+                                        }
+                                    }
+
+                                    foreach (var input in node.InputCollection)
+                                    {
+                                        if (input.Uid == model.Uid)
+                                        {
+                                            input.PropertyModel.Update(model.Data);
                                         }
                                     }
                                 }
@@ -274,7 +284,7 @@ namespace Ostrich.Service
    
                 this._NodeEngineModel.Connect(contextName, sourceUID, sourcePropertyName, targetUID, targetPropertyName);
                 var context = this.ContextViewModelCollection.First(context => context.Name == contextName);
-                context.NativeContext = this._NodeEngineModel.Serialization(contextName);
+                //context.NativeContext = this._NodeEngineModel.Serialization(contextName);
 
             }
             catch(Exception ex)
@@ -372,7 +382,7 @@ namespace Ostrich.Service
                     
                     using (var node = this._NodeEngineModel.AddNode(contextName, DateTime.Now.ToString("yyyy MM dd HH:mm:ss:fff"), objectType))
                     {
-                        context.NativeContext = this._NodeEngineModel.Serialization(contextName);
+                        //context.NativeContext = this._NodeEngineModel.Serialization(contextName);
 
                         var name = context.NodeInfoViewModelCollection.First(info => info.ObjectType == objectType).NodeName;
                         NodeViewModel nodeViewModel = new NodeViewModel()
@@ -466,7 +476,7 @@ namespace Ostrich.Service
                 this._NodeEngineModel.RenameContext(sourceContextName, targetContextName);
                 var context = this.ContextViewModelCollection.First(context => context.Name == sourceContextName);
                 context.ContextName(targetContextName);
-                context.NativeContext = this._NodeEngineModel.Serialization(targetContextName);
+                //context.NativeContext = this._NodeEngineModel.Serialization(targetContextName);
 
 
             }
@@ -556,7 +566,7 @@ namespace Ostrich.Service
                 }
 
                 context.ContextName(name);
-                context.NativeContext = this._NodeEngineModel.Serialization(name);
+                //context.NativeContext = this._NodeEngineModel.Serialization(name);
 
                 return context;
             }
@@ -625,7 +635,7 @@ namespace Ostrich.Service
                 }
 
                 context.ContextName(name);
-                context.NativeContext = this._NodeEngineModel.Serialization(name);
+                //context.NativeContext = this._NodeEngineModel.Serialization(name);
             }
             catch(Exception ex)
             {
@@ -678,25 +688,14 @@ namespace Ostrich.Service
 
                         using (var constNode = this._NodeEngineModel.ConstNode(arg.ContextName, arg.Uid))
                         {
-
-                            var context = this.ContextViewModelCollection.First(context => context.Name == arg.ContextName);
-                            foreach (var node in context.NodeViewModelCollection)
+                            var constNodeModel = new Model.ConstNodeModel()
                             {
-                                foreach (var output in node.OutputCollection)
-                                {
-                                    if (output.Uid == arg.Uid)
-                                    {
-                                        var constNodeModel = new Model.ConstNodeModel()
-                                        {
-                                            ContextName = arg.ContextName,
-                                            ObjectType = arg.ObjectType,
-                                            Uid = arg.Uid,
-                                            Data = PropertyModelExtracter.Extract(output.ObjectType, constNode.Handle)
-                                        };
-                                        this._ConstNodeModelUpdateCollection.Enqueue(constNodeModel);
-                                    }
-                                }
-                            }
+                                ContextName = arg.ContextName,
+                                ObjectType = arg.ObjectType,
+                                Uid = arg.Uid,
+                                Data = PropertyModelExtracter.Extract(arg.ObjectType, constNode.Handle)
+                            };
+                            this._ConstNodeModelUpdateCollection.Enqueue(constNodeModel);
                         }
                     }
                     catch (Exception ex)

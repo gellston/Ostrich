@@ -138,28 +138,19 @@ namespace ViewModel
             }
         }
 
-        public void OnConstChangedHandler(System.Object sender, ulong constUID)
+        public void OnConstChangedHandler(System.Object sender, int nodeType, ulong constUID)
         {
 
-            foreach (var node in this.NodeViewModelCollection)
+            var arg = new ModelChangedArg()
             {
-                foreach (var output in node.OutputCollection)
-                {
-                    if (output.Uid == constUID)
-                    {
-                        var arg = new ModelChangedArg()
-                        {
-                            ContextName = this.Name,
-                            Data = null,
-                            Changed = false,
-                            ObjectType = output.ObjectType,
-                            Uid = output.Uid,
-                        };
+                ContextName = this.Name,
+                Data = null,
+                Changed = false,
+                ObjectType = nodeType,
+                Uid = constUID,
+            };
 
-                        this.ConstNodeChangedCommand.Execute(arg);
-                    }
-                }
-            }
+            this.ConstNodeChangedCommand.Execute(arg);
         }
 
         public void OnProcessStartHandler(System.Object sender, int nodeType, ulong compositeUID)

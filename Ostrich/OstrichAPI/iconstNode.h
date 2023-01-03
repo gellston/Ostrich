@@ -32,6 +32,10 @@ namespace hv {
 			virtual void sourceName(std::string value) = 0;
 
 
+			virtual void deserialization(std::string value) = 0;
+			virtual std::string serialization() = 0;
+
+
 
 			virtual void registerMultipleSourceNode(std::size_t uid, std::string name) = 0;
 			virtual void clearMultipleSourceNode() = 0;

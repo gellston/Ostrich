@@ -160,6 +160,27 @@ void HV::V2::Script::ResetProcessStartEvent(System::String^ context_name) {
 	}
 }
 
+void HV::V2::Script::UpdateAllConstNode(System::String^ context_name) {
+
+	try {
+
+		if (this->_managedContext->ContainsKey(context_name) == false) {
+			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
+			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
+			this->_managedContext->Add(context_name, managedContext);
+		}
+
+		this->_managedContext[context_name]->UpdateAllConstNode();
+
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
 
 
 

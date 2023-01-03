@@ -33,6 +33,7 @@ namespace HV {
 			virtual void ResetConstChangedEvent(System::String^ context_name);
 			virtual void ResetProcessStartEvent(System::String^ context_name);
 
+			virtual void UpdateAllConstNode(System::String^ context_name);
 
 
 			virtual HV::V2::ICompositeNode^ Search(System::String^ context_name, std::size_t uid);

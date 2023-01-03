@@ -22,7 +22,7 @@ namespace HV {
 
 
 			void NativeProcessCompleteEvent(int nodeType, std::size_t composite_uid);
-			void NativeConstChangedEvent(std::size_t constUID);
+			void NativeConstChangedEvent(int nodeType, std::size_t constUID);
 			void NativeProcessStartEvent(int nodeType, std::size_t composite_uid);
 
 
@@ -53,6 +53,7 @@ namespace HV {
 			virtual void ResetConstChangedEvent();
 			virtual void ResetProcessStartEvent();
 
+			virtual void UpdateAllConstNode();
 
 
 			Context(System::IntPtr _pointer, bool is_smart_pointer);

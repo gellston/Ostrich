@@ -46,3 +46,11 @@ void hv::v2::constNumberNode::data(double value) {
 }
 
 
+std::string hv::v2::constNumberNode::serialization() {
+
+	return std::to_string(this->_instance->_value);
+}
+
+void hv::v2::constNumberNode::deserialization(std::string value) {
+	this->_instance->_value = std::stod(value);
+}

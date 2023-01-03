@@ -51,7 +51,7 @@ namespace hv {
 			virtual std::vector<std::size_t> outputConstUID() = 0;
 
 			virtual hv::v2::resultType process() = 0;
-			virtual void updateConst(std::size_t uid) = 0;
+			virtual void updateConst(int nodeType, std::size_t uid) = 0;
 
 			virtual std::shared_ptr<hv::v2::icompositeNode> clone(hv::v2::ihandle * context) = 0;
 

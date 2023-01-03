@@ -158,7 +158,7 @@ hv::v2::resultType hv::v2::compositeNode::call() {
 
 	//Const Node output updating
 	for (auto & constNode : this->_instance->_outputNodes) {
-		this->_instance->_context->onConstChanged(constNode.second->uid());
+		this->_instance->_context->onConstChanged(constNode.second->type(), constNode.second->uid());
 	}
 
 	this->_instance->_context->onProcessComplete(this->type(), this->uid());
@@ -170,7 +170,7 @@ hv::v2::resultType hv::v2::compositeNode::call() {
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__);
 }
 
-void hv::v2::compositeNode::updateConst(std::size_t uid) {
+void hv::v2::compositeNode::updateConst(int nodeType, std::size_t uid) {
 
 	if (this->_instance->_context == nullptr) {
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null context exception");
@@ -178,7 +178,8 @@ void hv::v2::compositeNode::updateConst(std::size_t uid) {
 	}
 
 	START_ERROR_HANDLE();
-	this->_instance->_context->onConstChanged(uid);
+	this->_instance->_context->onConstChanged(nodeType, uid);
+
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__);
 }
 
@@ -283,7 +284,7 @@ void hv::v2::compositeNode::replaceInputs(std::vector<std::shared_ptr<hv::v2::ic
 	this->_instance->_inputNodes.rehash(0);
 
 	for (auto& input : inputs) {
-		this->_instance->_inputNodes[input->name()] = input->clone();
+		this->_instance->_inputNodes[input->name()] = input;
 	}
 }
 
@@ -298,7 +299,7 @@ void hv::v2::compositeNode::replaceOuputs(std::vector<std::shared_ptr<hv::v2::ic
 	this->_instance->_outputNodes.rehash(0);
 
 	for (auto& output : outputs) {
-		this->_instance->_outputNodes[output->name()] = output->clone();
+		this->_instance->_outputNodes[output->name()] = output;
 	}
 }
 

@@ -66,7 +66,7 @@ void hv::v2::script::registerProcessCompleteEvent(std::string context_name, std:
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::registerConstChangedEvent(std::string context_name, std::function<void(std::size_t constUID)> eventHandler) {
+void hv::v2::script::registerConstChangedEvent(std::string context_name, std::function<void(int nodeType, std::size_t constUID)> eventHandler) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -85,6 +85,48 @@ void hv::v2::script::registerConstChangedEvent(std::string context_name, std::fu
 		throw hv::v2::oexception(message);
 	}
 }
+
+void hv::v2::script::registerProcessStartEvent(std::string context_name, std::function<void(int nodeType, std::size_t constUID)> eventHandler) {
+	try {
+		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
+		}
+
+		this->_instance->_contextes[context_name]->registerProcessStartEvent(eventHandler);
+
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+
+
+void hv::v2::script::resetProcessStartEvent(std::string context_name) {
+	try {
+		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
+		}
+
+		this->_instance->_contextes[context_name]->resetProcessStartEvent();
+
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+
 
 void hv::v2::script::resetProcessCompleteEvent(std::string context_name) {
 	try {
@@ -113,6 +155,26 @@ void hv::v2::script::resetConstChangedEvent(std::string context_name) {
 		}
 
 		this->_instance->_contextes[context_name]->resetConstChangedEvent();
+
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+
+void hv::v2::script::updateAllConstNode(std::string context_name) {
+	try {
+		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
+		}
+
+		this->_instance->_contextes[context_name]->updateAllConstNode();
 
 	}
 	catch (hv::v2::oexception e) {

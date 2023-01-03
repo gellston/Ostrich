@@ -77,7 +77,7 @@ namespace HV {
 
 
 			virtual HV::V2::ResultType Process();
-			virtual void UpdateConst(std::size_t uid);
+			virtual void UpdateConst(int nodeType, std::size_t uid);
 
 			
 			virtual HV::V2::ICompositeNode^ Clone(HV::V2::IHandle^ contextHandle);

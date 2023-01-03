@@ -24,6 +24,9 @@ namespace hv {
 			
 			void init() override;
 
+			std::string serialization();
+			void deserialization(std::string value);
+
 
 			START_CONST_NODE_CLONE_PATTERN(constNumberNode, object)
 				object->data(this->data());

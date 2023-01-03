@@ -67,7 +67,7 @@ hv::v2::resultType hv::v2::compositeForNode::process() {
 			try {
 
 				index->data(_index);
-				this->updateConst(index->uid());
+				this->updateConst(index->type(), index->uid());
 				
 				auto result = loop->call();
 				switch (result)

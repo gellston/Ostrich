@@ -30,13 +30,13 @@ namespace HV {
 
 			//Event Callback
 			delegate void OnProcessCompleteEventCallback(int nodeType, std::size_t composite_uid);
-			delegate void OnConstChangedEventCallback(std::size_t constUID);
+			delegate void OnConstChangedEventCallback(int nodeType, std::size_t constUID);
 			delegate void OnProcessStartEventCallback(int nodeType, std::size_t composite_uid);
 
 
 			//Event Handler
 			delegate void OnProcessCompleteHandler(System::Object^ sender, int nodeType, std::size_t compositeUID);
-			delegate void OnConstChangedHandler(System::Object^ sender, std::size_t constUID);
+			delegate void OnConstChangedHandler(System::Object^ sender, int nodeType, std::size_t constUID);
 			delegate void OnProcessStartHandler(System::Object^ sender, int nodeType, std::size_t compositeUID);
 
 
@@ -44,6 +44,10 @@ namespace HV {
 			event OnProcessCompleteHandler^ OnProcessComplete;
 			event OnConstChangedHandler^ OnConstChanged;
 			event OnProcessStartHandler^ OnProcessStart;
+
+
+			virtual void UpdateAllConstNode();
+
 
 
 
