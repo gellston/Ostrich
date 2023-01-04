@@ -93,7 +93,7 @@ namespace hv {
 			virtual void run(std::string context_name, std::size_t uid) = 0;
 			virtual void run(std::string context_name, int objectType, std::string name) = 0;
 			virtual void run(std::string context_name) = 0;
-
+			virtual void stop(std::string context_name) = 0;
 
 			virtual std::shared_ptr<hv::v2::icontext> context(std::string name) = 0;
 			virtual void createContext(std::string name) = 0;

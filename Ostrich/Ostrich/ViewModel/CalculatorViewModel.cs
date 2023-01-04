@@ -27,7 +27,7 @@ namespace Ostrich.ViewModel
         private readonly NodeEngineManagerService nodeEngineService;
         private ObservableCollection<ContextViewModel> _ContextViewModelCollection = null;
         private ContextViewModel _SelectedContextViewModel = null;
-        private int _ExecutionDelay = 0;
+        private int _ExecutionDelay = 10;
         private bool _IsExecuting = false;
 
         #endregion
@@ -170,6 +170,21 @@ namespace Ostrich.ViewModel
 
                 }
 
+            });
+        }
+
+        public ICommand StopScriptCommand
+        {
+            get => new RelayCommand(() =>
+            {
+                try
+                {
+                    this.nodeEngineService.Stop(this.SelectedContextViewModel.Name);
+
+                }catch(Exception e)
+                {
+                    System.Diagnostics.Debug.WriteLine(e.ToString());
+                }
             });
         }
 

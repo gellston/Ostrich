@@ -5,11 +5,13 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
-    <ApplicationIcon>Ico\icon_vision_studio_green__WUT_icon.ico</ApplicationIcon>
+    <ApplicationIcon>Icon\icon_vision_studio_green__WUT_icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Ico\icon_vision_studio_green__WUT_icon.ico" />
+    <Content Include="Icon\icon_vision_studio_green__WUT_icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

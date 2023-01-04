@@ -79,7 +79,7 @@ namespace HV {
 			virtual void Run(System::String^ context_name, std::size_t uid);
 			virtual void Run(System::String^ context_name, int objectType, System::String^ name);
 			virtual void Run(System::String^ context_name);
-
+			virtual void Stop(System::String^ context_name);
 
 			virtual System::String^ Serialization(System::String^ context_name);
 			virtual void DeSerialization(System::String^ context_name, System::String^ value);

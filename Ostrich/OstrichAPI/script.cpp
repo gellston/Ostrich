@@ -737,6 +737,26 @@ void hv::v2::script::run(std::string context_name) {
 	}
 }
 
+void hv::v2::script::stop(std::string context_name) {
+	try {
+		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
+			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
+			throw hv::v2::oexception(message);
+		}
+
+		this->_instance->_contextes[context_name]->stop();
+
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+
 
 
 std::shared_ptr<hv::v2::icontext> hv::v2::script::context(std::string name) {

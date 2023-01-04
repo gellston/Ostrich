@@ -140,9 +140,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="compositeAddNumberNode.cpp" />
+    <ClCompile Include="compositeDivideNumberNode.cpp" />
     <ClCompile Include="compositeEndNode.cpp" />
     <ClCompile Include="compositeForNode.cpp" />
+    <ClCompile Include="compositeMultiplyNumber.cpp" />
     <ClCompile Include="compositeStartNode.cpp" />
+    <ClCompile Include="compositeSubstractNumberNode.cpp" />
     <ClCompile Include="compositeSumNumberNode.cpp" />
     <ClCompile Include="constNumberNode.cpp" />
     <ClCompile Include="PrimitiveNode.cpp" />
@@ -150,9 +153,12 @@
     <ClCompile Include="compositeSleepNode.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="compositeDivideNumberNode.h" />
     <ClInclude Include="compositeEndNode.h" />
+    <ClInclude Include="compositeMultiplyNumberNode.h" />
     <ClInclude Include="compositeSleepNode.h" />
     <ClInclude Include="compositeStartNode.h" />
+    <ClInclude Include="compositeSubstractNumberNode.h" />
     <ClInclude Include="compositeSumNumberNode.h" />
     <ClInclude Include="constNumberNode.h" />
     <ClInclude Include="compositeNumberNode.h" />

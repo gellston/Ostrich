@@ -383,6 +383,18 @@ void HV::V2::Context::Run() {
 	}
 }
 
+void HV::V2::Context::Stop() {
+	try {
+		this->_instance->stop();
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
 
 System::String^ HV::V2::Context::Serialization() {
 	try {

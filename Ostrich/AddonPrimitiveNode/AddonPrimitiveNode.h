@@ -12,6 +12,9 @@
 #include <compositeSleepNode.h>
 #include <compositeAddNumberNode.h>
 #include <compositeSumNumberNode.h>
+#include <compositeSubstractNumberNode.h>
+#include <compositeMultiplyNumberNode.h>
+#include <compositeDivideNumberNode.h>
 
 OSTRICH_MODULE()
 OSTRICH_SANITY_CHECK()
@@ -30,6 +33,10 @@ OSTRICH_ADDON_INIT(context) {
 		_addon->addComposite<hv::v2::compositeSleepNode>(50005, "Function", "Sleep");
 		_addon->addComposite<hv::v2::compositeAddNumberNode>(50006, "Function", "AddNumber");
 		_addon->addComposite<hv::v2::compositeSumNumberNode>(50007, "Function", "SumNumber");
+		_addon->addComposite<hv::v2::compositeSubstractNumberNode>(50008, "Function", "SubNumber");
+		_addon->addComposite<hv::v2::compositeMultiplyNumberNode>(50009, "Function", "MulNumber");
+		_addon->addComposite<hv::v2::compositeDivideNumberNode>(50010, "Function", "DivNumber");
+
 
 		context->registerAddon(_addon, 9999);
 

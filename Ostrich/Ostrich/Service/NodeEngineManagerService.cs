@@ -43,7 +43,14 @@ namespace Ostrich.Service
 
             // Addon 경로 설정
             var currentPath = System.AppDomain.CurrentDomain.BaseDirectory;
-            this._NodeEngineModel.SetAddonPath(currentPath);
+            var addonPath = currentPath + "Addon\\";
+
+            if (!Directory.Exists(addonPath))
+            {
+                Directory.CreateDirectory(addonPath);
+            }
+
+            this._NodeEngineModel.SetAddonPath(addonPath);
 
 
         }
@@ -211,6 +218,20 @@ namespace Ostrich.Service
         }
 
 
+        public void Stop(string contextName)
+        {
+            try
+            {
+                this._NodeEngineModel.Stop(contextName);
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
 
         public async Task Run(string contextName, int delay)
         {

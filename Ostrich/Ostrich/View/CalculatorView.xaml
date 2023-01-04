@@ -106,6 +106,13 @@
                                        IsEnabled="{Binding IsExecuting, Converter={StaticResource BoolInverseConverter}}">
 
                     </dxb:BarButtonItem>
+                    <dxb:BarButtonItem Content="중지"
+                                       LargeGlyph="{dx:DXImage 'SvgImages/Arrows/Stop.svg'}"
+                                       Glyph="{dx:DXImage 'SvgImages/Arrows/Stop.svg'}"
+                                       Command="{Binding StopScriptCommand}"
+                                       IsEnabled="{Binding IsExecuting}">
+
+                    </dxb:BarButtonItem>
                     
                     <dxb:BarEditItem EditValue="{Binding ExecutionDelay, Mode=TwoWay}"
                                      Glyph="{dx:DXImage 'SvgImages/Spreadsheet/Time.svg'}"

@@ -647,6 +647,17 @@ void HV::V2::Script::Run(System::String^ context_name) {
 	}
 }
 
+void HV::V2::Script::Stop(System::String^ context_name) {
+	try {
+		this->_instance->stop(msclr::interop::marshal_as<std::string>(context_name));
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
 
 
 System::String^ HV::V2::Script::Serialization(System::String^ context_name) {

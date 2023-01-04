@@ -3,7 +3,7 @@
 #include "macro.h"
 #include "commonException.h"
 #include "icontext.h"
-
+#include "raii.h"
 
 
 #include <unordered_map>
@@ -152,7 +152,17 @@ hv::v2::resultType hv::v2::compositeNode::call() {
 
 	START_ERROR_HANDLE();
 
+	//Process start check
 	this->_instance->_context->onProcessStart(this->type(), this->uid());
+
+	//Process complte check with raii
+	hv::v2::raii raii([&]() {
+		this->_instance->_context->onProcessComplete(this->type(), this->uid());
+	});
+
+	if (this->_instance->_context->isStop(9999) == true)
+		return hv::v2::resultType::exit;
+
 	std::this_thread::sleep_for(std::chrono::milliseconds(this->_instance->_context->executionDelay()));
 	auto result = this->process();
 
@@ -160,11 +170,6 @@ hv::v2::resultType hv::v2::compositeNode::call() {
 	for (auto & constNode : this->_instance->_outputNodes) {
 		this->_instance->_context->onConstChanged(constNode.second->type(), constNode.second->uid());
 	}
-
-	this->_instance->_context->onProcessComplete(this->type(), this->uid());
-	
-	
-
 
 	return result;
 	END_ERROR_HANDLE(__FUNCTION__, __LINE__);

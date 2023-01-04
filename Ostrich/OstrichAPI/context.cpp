@@ -53,12 +53,17 @@ namespace hv {
 			std::function<void(int nodeType, std::size_t composite_uid)> _processCompleteEvent;
 			std::function<void(int nodeType, std::size_t constUID)> _constChangedEvent;
 			std::function<void(int nodeType, std::size_t composite_uid)> _processStartEvent;
+
+
+			volatile bool _isStop = false;
 			
 
 			impl_context() {
 
 				_depth = 0;
 				_executionDelay = 0;
+
+				_isStop = false;
 			}
 
 
@@ -1221,6 +1226,7 @@ void hv::v2::context::initNodes() {
 void hv::v2::context::run(std::size_t uid) {
 
 	try {
+		this->_instance->_isStop = false;
 		this->initNodes();
 	}
 	catch (hv::v2::oexception e) {
@@ -1255,6 +1261,7 @@ void hv::v2::context::run(std::size_t uid) {
 void hv::v2::context::run(int objectType, std::string name) {
 
 	try {
+		this->_instance->_isStop = false;
 		this->initNodes();
 	}
 	catch (hv::v2::oexception e) {
@@ -1288,6 +1295,7 @@ void hv::v2::context::run(int objectType, std::string name) {
 void hv::v2::context::run() {
 
 	try {
+		this->_instance->_isStop = false;
 		this->initNodes();
 	}
 	catch (hv::v2::oexception e) {
@@ -1616,4 +1624,19 @@ void hv::v2::context::removeConstNodeGroup(std::vector<std::shared_ptr<hv::v2::i
 	for (auto& node : group) {
 		this->_instance->_const_node_loook_up_table.erase(node->uid());
 	}
+}
+
+
+void hv::v2::context::stop() {
+	this->_instance->_isStop = true;
+}
+
+bool hv::v2::context::isStop(int special_lock_key) {
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+
+	return this->_instance->_isStop;
 }

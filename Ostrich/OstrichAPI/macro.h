@@ -39,8 +39,8 @@ try {\
 	object->uid(this->uid());\
 	object->depth(this->depth());\
 	object->isFreezed(this->isFreezed());\
-	object->replaceInputs(this->inputs());\
-	object->replaceOuputs(this->outputs());\
+	object->replaceInputs(this->inputClone());\
+	object->replaceOuputs(this->outputClone());\
 	return object;\
 }\
 catch (hv::v2::oexception e) {\

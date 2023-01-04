@@ -123,7 +123,7 @@ namespace hv {
 			OSTRICH_COMMON_API void executionDelay(int ms) override;
 			OSTRICH_COMMON_API int executionDelay() override;
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::icontext> clone() override;
-
+			OSTRICH_COMMON_API void stop() override;
 
 
 
@@ -139,6 +139,7 @@ namespace hv {
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::irunable> findExecution(std::size_t uid, std::string name, int depth, int special_lock_key) override;
 			OSTRICH_COMMON_API void registerConstNodeGroup(std::vector<std::shared_ptr<hv::v2::iconstNode>> group, int special_lock_key) override;
 			OSTRICH_COMMON_API void removeConstNodeGroup(std::vector<std::shared_ptr<hv::v2::iconstNode>> group, int special_lock_key) override;
+			OSTRICH_COMMON_API bool isStop(int special_lock_key) override;
 
 
 		};

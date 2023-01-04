@@ -69,8 +69,10 @@ namespace hv {
 			virtual void run() = 0;
 			virtual void executionDelay(int ms) = 0;
 			virtual int executionDelay() = 0;
-			
 			virtual int maxDepth() = 0;
+
+			virtual void stop() = 0;
+
 
 			virtual std::string serialization() = 0;
 			virtual void deserialization(std::string value) = 0;
@@ -104,6 +106,7 @@ namespace hv {
 
 
 			// Node Special Lock
+			virtual bool isStop(int special_lock_key) = 0;
 			virtual void registerAddon(std::shared_ptr<hv::v2::iaddon> addon, int special_lock_key) =0;
 			virtual std::shared_ptr<hv::v2::iconstNode> create(std::string name, int objectType, int special_lock_key) = 0;
 			virtual std::shared_ptr<hv::v2::iconstNode> find(std::size_t uid, std::string name, int depth, int special_lock_key) = 0;

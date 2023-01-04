@@ -92,6 +92,8 @@ namespace hv {
 			OSTRICH_COMMON_API void run(std::string context_name, std::size_t uid);
 			OSTRICH_COMMON_API void run(std::string context_name, int objectType, std::string name);
 			OSTRICH_COMMON_API void run(std::string context_name);
+			OSTRICH_COMMON_API void stop(std::string context_name);
+
 
 
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::icontext> context(std::string name);
