@@ -41,4 +41,7 @@ rmdir %CURPATH%\Ostrich\View\obj /S /Q
 rmdir %CURPATH%\Ostrich\ViewModel\bin /S /Q
 rmdir %CURPATH%\Ostrich\ViewModel\obj /S /Q
 
+rmdir %CURPATH%\Ostrich\.vs /S /Q
+rmdir %CURPATH%\Ostrich\x64 /S /Q
+
 endlocal
