@@ -45,6 +45,12 @@ del /S %BUILD_OUTPUT_PATH%\*.pdb
 del /S %BUILD_OUTPUT_PATH%\*.lib
 del /S %BUILD_OUTPUT_PATH%\*.exp
 
+:cd C:\Program Files (x86)\Inno Setup 6
 
+"C:\Program Files (x86)\Inno Setup 6\iscc.exe" %SETUP_PATH%\OstrichPackage.iss
+
+
+:아웃풋 경로 삭제
+rmdir %BUILD_OUTPUT_PATH% /S /Q
 
 endlocal

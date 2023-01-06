@@ -29,6 +29,7 @@ SolidCompression=yes
 ChangesAssociations=yes
 ChangesEnvironment=yes
 UsePreviousAppDir=no
+SignTool=codesign
 
 
 [Dirs]
@@ -42,10 +43,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "output\Ostrich.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "output\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-Source: "output\Icon\icon_vision_studio_green__WUT_icon.ico"; DestDir: "{app}"
+Source: "output\Ostrich.exe"; DestDir: "{app}"; Flags: ignoreversion signonce;
+Source: "output\Icon\icon_vision_studio_green__WUT_icon.ico"; DestDir: "{app}";
+Source: "output\*.dll"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs signonce; Permissions: everyone-full
+Source: "output\*"; Excludes: "output\Ostrich.exe,output\*.dll"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;Permissions: everyone-full
+
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
