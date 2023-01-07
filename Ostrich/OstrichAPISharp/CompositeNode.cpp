@@ -47,6 +47,21 @@ int HV::V2::CompositeNode::Depth::get() {
 
 }
 
+
+bool HV::V2::CompositeNode::HasError::get() {
+	try {
+
+		return this->_instance->hasError();
+	}
+	catch (hv::v2::oexception e) {
+
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
 bool HV::V2::CompositeNode::IsConnected::get() {
 	try {
 		return this->_instance->isConnected();

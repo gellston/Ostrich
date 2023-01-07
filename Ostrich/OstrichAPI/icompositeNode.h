@@ -25,6 +25,9 @@ namespace hv {
 			virtual int depth() = 0;
 			virtual void depth(int value) = 0;
 
+			virtual bool hasError() = 0;
+			virtual void hasError(bool error) = 0;
+
 			virtual bool isConnected() = 0;
 			virtual bool checkSourceUID(std::size_t uid) = 0;
 

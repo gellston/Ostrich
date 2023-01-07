@@ -41,6 +41,7 @@ try {\
 	object->isFreezed(this->isFreezed());\
 	object->replaceInputs(this->inputClone());\
 	object->replaceOuputs(this->outputClone());\
+	object->hasError(this->hasError());\
 	return object;\
 }\
 catch (hv::v2::oexception e) {\
@@ -65,6 +66,10 @@ objectName->sourceName(this->sourceName());\
 objectName->sourceUID(this->sourceUID());\
 objectName->index(this->index());\
 objectName->multipleSourceNode(this->multipleSourceNode());
+
+
+
+
 
 #define END_CONST_NODE_CLONE_PATTERN(objectName)\
 return objectName;\

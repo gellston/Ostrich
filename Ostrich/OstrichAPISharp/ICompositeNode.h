@@ -22,6 +22,10 @@ namespace HV {
 				int get();
 			}
 
+			virtual property bool HasError {
+				bool get();
+			}
+
 			virtual property bool IsConnected {
 				bool get();
 			}

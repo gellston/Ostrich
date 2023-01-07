@@ -24,16 +24,19 @@ namespace HV {
 			void NativeProcessCompleteEvent(int nodeType, std::size_t composite_uid);
 			void NativeConstChangedEvent(int nodeType, std::size_t constUID);
 			void NativeProcessStartEvent(int nodeType, std::size_t composite_uid);
+			void NativeErrorEvent(int nodeType, std::size_t composite_uid, System::String^ message);
 
 
 			System::Runtime::InteropServices::GCHandle ProcessCompleteEventGCHandle;
 			System::Runtime::InteropServices::GCHandle ConstChangedEventGCHandle;
 			System::Runtime::InteropServices::GCHandle ProcessStartEventGCHandle;
+			System::Runtime::InteropServices::GCHandle ErrorEventGCHandle;
 
 
 			HV::V2::IContext::OnProcessCompleteHandler^ managedProcessCompleteHandler;
 			HV::V2::IContext::OnConstChangedHandler^ managedConstChangedHandler;
 			HV::V2::IContext::OnProcessStartHandler^ managedProcessStartHandler;
+			HV::V2::IContext::OnErrorHandler^ managedErrorHandler;
 
 
 		public:
@@ -43,15 +46,19 @@ namespace HV {
 			virtual event HV::V2::IContext::OnProcessCompleteHandler^ OnProcessComplete;
 			virtual event HV::V2::IContext::OnConstChangedHandler^ OnConstChanged;
 			virtual event HV::V2::IContext::OnProcessStartHandler^ OnProcessStart;
+			virtual event HV::V2::IContext::OnErrorHandler^ OnError;
 
 
 			virtual void RegisterProcessCompleteEvent(HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
 			virtual void RegisterConstChangedEvent(HV::V2::IContext::OnConstChangedHandler^ eventHandler);
 			virtual void RegisterProcessStartEvent(HV::V2::IContext::OnProcessStartHandler^ eventHandler);
+			virtual void RegisterErrorEvent(HV::V2::IContext::OnErrorHandler^ eventHandler);
 
 			virtual void ResetProcessCompleteEvent();
 			virtual void ResetConstChangedEvent();
 			virtual void ResetProcessStartEvent();
+			virtual void ResetErrorEvent();
+
 
 			virtual void UpdateAllConstNode();
 

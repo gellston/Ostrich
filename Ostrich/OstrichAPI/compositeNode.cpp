@@ -20,6 +20,7 @@ namespace hv {
 			std::size_t _uid;
 			bool _isFreezed;
 			bool _isEventNode;
+			bool _hasError;
 
 
 			std::unordered_map<std::string, std::shared_ptr<hv::v2::iconstNode>> _inputNodes;
@@ -38,6 +39,8 @@ namespace hv {
 				this->_isFreezed = false;
 				this->_isEventNode = false;
 				this->_context = nullptr;
+
+				this->_hasError = false;
 			}
 
 
@@ -117,6 +120,14 @@ void hv::v2::compositeNode::depth(int value) {
 
 }
 
+bool hv::v2::compositeNode::hasError() {
+	return this->_instance->_hasError;
+}
+
+void hv::v2::compositeNode::hasError(bool error) {
+	this->_instance->_hasError = error;
+}
+
 bool hv::v2::compositeNode::isConnected() {
 	for (auto node : this->_instance->_inputNodes) {
 		if (node.second->isConnected() == true)
@@ -145,34 +156,43 @@ bool hv::v2::compositeNode::isConditionalNode() {
 hv::v2::resultType hv::v2::compositeNode::call() {
 
 	if (this->_instance->_context == nullptr) {
+		this->hasError(true);
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null context exception");
+		this->_instance->_context->onError(this->type(), this->uid(), message);
 		throw hv::v2::oexception(message);
 	}
 
+	try {
 
-	START_ERROR_HANDLE();
+		this->hasError(false);
 
-	//Process start check
-	this->_instance->_context->onProcessStart(this->type(), this->uid());
+		//Process start check
+		this->_instance->_context->onProcessStart(this->type(), this->uid());
 
-	//Process complte check with raii
-	hv::v2::raii raii([&]() {
-		this->_instance->_context->onProcessComplete(this->type(), this->uid());
-	});
+		//Process complte check with raii
+		hv::v2::raii raii([&]() {
+			this->_instance->_context->onProcessComplete(this->type(), this->uid());
+		});
 
-	if (this->_instance->_context->isStop(9999) == true)
-		return hv::v2::resultType::exit;
+		if (this->_instance->_context->isStop(9999) == true)
+			return hv::v2::resultType::exit;
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(this->_instance->_context->executionDelay()));
-	auto result = this->process();
+		std::this_thread::sleep_for(std::chrono::milliseconds(this->_instance->_context->executionDelay()));
+		auto result = this->process();
 
-	//Const Node output updating
-	for (auto & constNode : this->_instance->_outputNodes) {
-		this->_instance->_context->onConstChanged(constNode.second->type(), constNode.second->uid());
+		//Const Node output updating
+		for (auto & constNode : this->_instance->_outputNodes) {
+			this->_instance->_context->onConstChanged(constNode.second->type(), constNode.second->uid());
+		}
+
+		return result;
 	}
-
-	return result;
-	END_ERROR_HANDLE(__FUNCTION__, __LINE__);
+	catch (hv::v2::oexception e) {
+		this->hasError(true);
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		this->_instance->_context->onError(this->type(), this->uid(), message);
+		throw hv::v2::oexception(message);
+	}
 }
 
 void hv::v2::compositeNode::updateConst(int nodeType, std::size_t uid) {

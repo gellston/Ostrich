@@ -32,18 +32,24 @@ namespace HV {
 			delegate void OnProcessCompleteEventCallback(int nodeType, std::size_t composite_uid);
 			delegate void OnConstChangedEventCallback(int nodeType, std::size_t constUID);
 			delegate void OnProcessStartEventCallback(int nodeType, std::size_t composite_uid);
+			delegate void OnErrorEventCallback(int nodeType, std::size_t composite_uid, System::String^ message);
+
 
 
 			//Event Handler
 			delegate void OnProcessCompleteHandler(System::Object^ sender, int nodeType, std::size_t compositeUID);
 			delegate void OnConstChangedHandler(System::Object^ sender, int nodeType, std::size_t constUID);
 			delegate void OnProcessStartHandler(System::Object^ sender, int nodeType, std::size_t compositeUID);
+			delegate void OnErrorHandler(System::Object^ sender, int nodeType, std::size_t compositeUID, System::String^ message);
+
 
 
 
 			event OnProcessCompleteHandler^ OnProcessComplete;
 			event OnConstChangedHandler^ OnConstChanged;
 			event OnProcessStartHandler^ OnProcessStart;
+			event OnErrorHandler^ OnError;
+
 
 
 			virtual void UpdateAllConstNode();
@@ -54,10 +60,13 @@ namespace HV {
 			virtual void RegisterProcessCompleteEvent(OnProcessCompleteHandler^ eventHandler);
 			virtual void RegisterConstChangedEvent(OnConstChangedHandler^ eventHandler);
 			virtual void RegisterProcessStartEvent(OnProcessStartHandler^ eventHandler);
+			virtual void RegisterErrorEvent(OnErrorHandler^ eventHandler);
 
 			virtual void ResetProcessCompleteEvent();
 			virtual void ResetConstChangedEvent();
 			virtual void ResetProcessStartEvent();
+			virtual void ResetErrorEvent();
+
 
 
 

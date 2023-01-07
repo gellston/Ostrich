@@ -12,6 +12,7 @@ namespace ViewModel
         private bool _IsSelected = false;
         private bool _IsEvent = false;
         private bool _IsExecuting = false;
+        private bool _HasError = false;
         private double _X = 0;
         private double _Y = 0;
         private string _Name = "";
@@ -29,6 +30,12 @@ namespace ViewModel
 
 
         #region Public Property
+
+        public bool HasError
+        {
+            get => _HasError;
+            set => SetProperty(ref _HasError, value);
+        }
 
         public ulong Uid
         {

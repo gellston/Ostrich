@@ -53,6 +53,7 @@ namespace hv {
 			std::function<void(int nodeType, std::size_t composite_uid)> _processCompleteEvent;
 			std::function<void(int nodeType, std::size_t constUID)> _constChangedEvent;
 			std::function<void(int nodeType, std::size_t composite_uid)> _processStartEvent;
+			std::function<void(int nodeType, std::size_t composite_uid, std::string message)> _errorEvent;
 
 
 			volatile bool _isStop = false;
@@ -83,6 +84,8 @@ hv::v2::context::context() {
 
 	this->resetConstChangedEvent();
 	this->resetProcessCompleteEvent();
+	this->resetProcessStartEvent();
+	this->resetErrorEvent();
 
 }
 
@@ -94,6 +97,8 @@ hv::v2::context::~context() {
 
 		this->resetConstChangedEvent();
 		this->resetProcessCompleteEvent();
+		this->resetProcessStartEvent();
+		this->resetErrorEvent();
 
 
 		this->unloadLibrary();
@@ -135,6 +140,10 @@ void hv::v2::context::onConstChanged(int nodeType, std::size_t constUID) {
 }
 
 
+void hv::v2::context::onError(int nodeType, std::size_t composite_uid, std::string message) {
+	this->_instance->_errorEvent(nodeType, composite_uid, message);
+}
+
 
 void hv::v2::context::registerProcessCompleteEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) {
 	this->_instance->_processCompleteEvent = eventHandler;
@@ -146,6 +155,11 @@ void hv::v2::context::registerConstChangedEvent(std::function<void(int nodeType,
 void hv::v2::context::registerProcessStartEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) {
 	this->_instance->_processStartEvent = eventHandler;
 }
+
+void hv::v2::context::registerErrorEvent(std::function<void(int nodeType, std::size_t composite_uid, std::string message)> eventHandler) {
+	this->_instance->_errorEvent = eventHandler;
+}
+
 
 void hv::v2::context::resetConstChangedEvent() {
 
@@ -166,6 +180,11 @@ void hv::v2::context::resetProcessStartEvent() {
 	};
 }
 
+void hv::v2::context::resetErrorEvent() {
+	this->_instance->_errorEvent = [&](int nodeType, std::size_t composite_uid, std::string message) {
+
+	};
+}
 
 void hv::v2::context::updateAllConstNode() {
 	for (auto& node : this->_instance->_const_node_loook_up_table) {

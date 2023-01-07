@@ -36,6 +36,7 @@ HV::V2::Context::Context(System::IntPtr _pointer, bool is_smart_pointer) {
 	this->managedConstChangedHandler = nullptr;
 	this->managedProcessCompleteHandler = nullptr;
 	this->managedProcessStartHandler = nullptr;
+	this->managedErrorHandler = nullptr;
 
 
 	//Native Function pointer connection
@@ -57,6 +58,14 @@ HV::V2::Context::Context(System::IntPtr _pointer, bool is_smart_pointer) {
 	this->ProcessStartEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedProcessStartEventCallback);
 	System::IntPtr nativeProcessStartEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedProcessStartEventCallback);
 	this->_instance->registerProcessStartEvent((void (*)(int, std::size_t))nativeProcessStartEventCallback.ToPointer());
+
+
+
+	//Error Event
+	auto managedErrorEventCallback = gcnew HV::V2::IContext::OnErrorEventCallback(this, &HV::V2::Context::NativeErrorEvent);
+	this->ErrorEventGCHandle = System::Runtime::InteropServices::GCHandle::Alloc(managedErrorEventCallback);
+	System::IntPtr nativeErrorEventCallback = System::Runtime::InteropServices::Marshal::GetFunctionPointerForDelegate(managedErrorEventCallback);
+	this->_instance->registerErrorEvent((void(*)(int, std::size_t, std::string)) nativeErrorEventCallback.ToPointer());
 
 
 }
@@ -81,6 +90,10 @@ HV::V2::Context::!Context() {
 		this->ProcessStartEventGCHandle.Free();
 	}
 
+	if (this->ErrorEventGCHandle.IsAllocated) {
+		this->ErrorEventGCHandle.Free();
+	}
+
 
 	if (this->managedConstChangedHandler != nullptr) {
 		this->OnConstChanged -= this->managedConstChangedHandler;
@@ -97,6 +110,11 @@ HV::V2::Context::!Context() {
 	if (this->managedProcessCompleteHandler != nullptr) {
 		this->OnProcessComplete -= this->managedProcessCompleteHandler;
 		this->managedProcessCompleteHandler = nullptr;
+	}
+
+	if (this->managedErrorHandler != nullptr) {
+		this->OnError -= this->managedErrorHandler;
+		this->managedErrorHandler = nullptr;
 	}
 
 
@@ -118,6 +136,11 @@ void HV::V2::Context::NativeConstChangedEvent(int nodeType, std::size_t constUID
 
 void HV::V2::Context::NativeProcessStartEvent(int nodeType, std::size_t composite_uid) {
 	this->OnProcessStart(this, nodeType, composite_uid);
+}
+
+void HV::V2::Context::NativeErrorEvent(int nodeType, std::size_t compositeUid, System::String^ message) {
+	this->OnError(this, nodeType, compositeUid, message);
+
 }
 
 
@@ -142,6 +165,15 @@ void HV::V2::Context::RegisterProcessStartEvent(HV::V2::IContext::OnProcessStart
 
 }
 
+
+void HV::V2::Context::RegisterErrorEvent(HV::V2::IContext::OnErrorHandler^ eventHandler) {
+	this->OnError -= eventHandler;
+	this->OnError += eventHandler;
+
+	this->managedErrorHandler = eventHandler;
+}
+
+
 void HV::V2::Context::ResetProcessCompleteEvent() {
 	if (this->managedProcessCompleteHandler != nullptr) {
 		this->OnProcessComplete -= this->managedProcessCompleteHandler;
@@ -161,6 +193,13 @@ void HV::V2::Context::ResetProcessStartEvent() {
 		this->managedProcessStartHandler = nullptr;
 	}
 
+}
+
+void HV::V2::Context::ResetErrorEvent() {
+	if (this->managedErrorHandler != nullptr) {
+		this->OnError -= this->managedErrorHandler;
+		this->managedErrorHandler = nullptr;
+	}
 }
 
 void HV::V2::Context::UpdateAllConstNode() {

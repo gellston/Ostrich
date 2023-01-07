@@ -24,6 +24,9 @@ namespace hv {
 			OSTRICH_COMMON_API int depth() override;
 			OSTRICH_COMMON_API void depth(int value) override;
 
+			OSTRICH_COMMON_API bool hasError() override;
+			OSTRICH_COMMON_API void hasError(bool error) override;
+
 
 			OSTRICH_COMMON_API bool isConnected() override;
 			OSTRICH_COMMON_API bool checkSourceUID(std::size_t uid) override;

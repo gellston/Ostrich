@@ -40,17 +40,18 @@ namespace hv {
 			OSTRICH_COMMON_API void onProcessComplete(int nodeType, std::size_t composite_uid);
 			OSTRICH_COMMON_API void onConstChanged(int nodeType, std::size_t constUID);
 			OSTRICH_COMMON_API void onProcessStart(int nodeType, std::size_t composite_uid);
-
+			OSTRICH_COMMON_API void onError(int nodeType, std::size_t composite_uid, std::string message);
 
 
 			OSTRICH_COMMON_API void registerProcessCompleteEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler);
 			OSTRICH_COMMON_API void registerConstChangedEvent(std::function<void(int nodeType, std::size_t constUID)> eventHandler);
 			OSTRICH_COMMON_API void registerProcessStartEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler);
-
+			OSTRICH_COMMON_API void registerErrorEvent(std::function<void(int nodeType, std::size_t composite_uid, std::string message)> eventHandler);
 
 			OSTRICH_COMMON_API void resetProcessCompleteEvent();
 			OSTRICH_COMMON_API void resetConstChangedEvent();
 			OSTRICH_COMMON_API void resetProcessStartEvent();
+			OSTRICH_COMMON_API void resetErrorEvent();
 
 
 			OSTRICH_COMMON_API void updateAllConstNode();
