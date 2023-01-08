@@ -138,8 +138,10 @@ void HV::V2::Context::NativeProcessStartEvent(int nodeType, std::size_t composit
 	this->OnProcessStart(this, nodeType, composite_uid);
 }
 
-void HV::V2::Context::NativeErrorEvent(int nodeType, std::size_t compositeUid, System::String^ message) {
-	this->OnError(this, nodeType, compositeUid, message);
+void HV::V2::Context::NativeErrorEvent(int nodeType, std::size_t compositeUid, const char* message) {
+	auto managedString = gcnew System::String(message);
+
+	this->OnError(this, nodeType, compositeUid, managedString);
 
 }
 

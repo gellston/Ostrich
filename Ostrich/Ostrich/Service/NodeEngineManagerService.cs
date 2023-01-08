@@ -249,13 +249,14 @@ namespace Ostrich.Service
                 if(selectedNode.Count > 1)
                 {
                     throw new Exception("You should select only one node.");
-
                 }
 
                 try
                 {
 
                     context.ClearExecutionStatus();
+                    context.ClearErrorStatus();
+
                     await Task.Run(async () =>
                     {
 
@@ -475,6 +476,7 @@ namespace Ostrich.Service
                 this._NodeEngineModel.RegisterProcessStartEvent(targetContextName, targetContext.OnProcessStartHandler);
                 this._NodeEngineModel.RegisterProcessCompleteEvent(targetContextName, targetContext.OnProcessCompleteHandler);
                 this._NodeEngineModel.RegisterConstChangedEvent(targetContextName, targetContext.OnConstChangedHandler);
+                this._NodeEngineModel.RegisterErrorEvent(targetContextName, targetContext.OnErrorHandler);
 
 
                 this.ContextViewModelCollection.Add(targetContext);
@@ -520,7 +522,7 @@ namespace Ostrich.Service
                 this._NodeEngineModel.ResetProcessCompleteEvent(name);
                 this._NodeEngineModel.ResetConstChangedEvent(name);
                 this._NodeEngineModel.ResetProcessStartEvent(name);
-
+                this._NodeEngineModel.ResetErrorEvent(name);
 
 
                 this._NodeEngineModel.RemoveContext(name);
@@ -550,6 +552,7 @@ namespace Ostrich.Service
                 this._NodeEngineModel.RegisterProcessCompleteEvent(name, context.OnProcessCompleteHandler);
                 this._NodeEngineModel.RegisterProcessStartEvent(name, context.OnProcessStartHandler);
                 this._NodeEngineModel.RegisterConstChangedEvent(name, context.OnConstChangedHandler);
+                this._NodeEngineModel.RegisterErrorEvent(name, context.OnErrorHandler);
 
                 var addonInfo = this._NodeEngineModel.AddonInfo(name);
                 foreach (var info in addonInfo)
@@ -617,7 +620,7 @@ namespace Ostrich.Service
                 this._NodeEngineModel.RegisterProcessCompleteEvent(name, context.OnProcessCompleteHandler);
                 this._NodeEngineModel.RegisterProcessStartEvent(name, context.OnProcessStartHandler);
                 this._NodeEngineModel.RegisterConstChangedEvent(name, context.OnConstChangedHandler);
-
+                this._NodeEngineModel.RegisterErrorEvent(name, context.OnErrorHandler);
 
                 this.ContextViewModelCollection.Add(context);
                 var addonInfo = this._NodeEngineModel.AddonInfo(name);

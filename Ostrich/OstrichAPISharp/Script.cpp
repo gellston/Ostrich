@@ -118,6 +118,26 @@ void HV::V2::Script::RegisterConstChangedEvent(System::String^ context_name, HV:
 }
 
 
+void HV::V2::Script::RegisterErrorEvent(System::String^ context_name, HV::V2::IContext::OnErrorHandler^ eventHandler) {
+	try {
+		if (this->_managedContext->ContainsKey(context_name) == false) {
+			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
+			auto managedContext = gcnew HV::V2::Context(System::IntPtr(&nativeContext), true);
+			this->_managedContext->Add(context_name, managedContext);
+		}
+
+		this->_managedContext[context_name]->RegisterErrorEvent(eventHandler);
+
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+
 void HV::V2::Script::ResetProcessCompleteEvent(System::String^ context_name) {
 	try {
 
@@ -150,6 +170,20 @@ void HV::V2::Script::ResetProcessStartEvent(System::String^ context_name) {
 	try {
 
 		this->_managedContext[context_name]->ResetProcessStartEvent();
+
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::Script::ResetErrorEvent(System::String^ context_name) {
+	try {
+
+		this->_managedContext[context_name]->ResetErrorEvent();
 
 	}
 	catch (hv::v2::oexception e) {

@@ -4,6 +4,7 @@
 #include "contextStatus.h"
 #include "objectType.h"
 #include "constExecutionNode.h"
+#include "string_cvt.h"
 
 #include <unordered_map>
 #include <Windows.h>
@@ -53,7 +54,7 @@ namespace hv {
 			std::function<void(int nodeType, std::size_t composite_uid)> _processCompleteEvent;
 			std::function<void(int nodeType, std::size_t constUID)> _constChangedEvent;
 			std::function<void(int nodeType, std::size_t composite_uid)> _processStartEvent;
-			std::function<void(int nodeType, std::size_t composite_uid, std::string message)> _errorEvent;
+			std::function<void(int nodeType, std::size_t composite_uid, const char* message)> _errorEvent;
 
 
 			volatile bool _isStop = false;
@@ -140,8 +141,11 @@ void hv::v2::context::onConstChanged(int nodeType, std::size_t constUID) {
 }
 
 
-void hv::v2::context::onError(int nodeType, std::size_t composite_uid, std::string message) {
-	this->_instance->_errorEvent(nodeType, composite_uid, message);
+void hv::v2::context::onError(int nodeType, std::size_t composite_uid, const char* message) {
+
+	auto asciiString = u8string_to_string(message);
+
+	this->_instance->_errorEvent(nodeType, composite_uid, asciiString.c_str());
 }
 
 
@@ -156,7 +160,7 @@ void hv::v2::context::registerProcessStartEvent(std::function<void(int nodeType,
 	this->_instance->_processStartEvent = eventHandler;
 }
 
-void hv::v2::context::registerErrorEvent(std::function<void(int nodeType, std::size_t composite_uid, std::string message)> eventHandler) {
+void hv::v2::context::registerErrorEvent(std::function<void(int nodeType, std::size_t composite_uid, const char* message)> eventHandler) {
 	this->_instance->_errorEvent = eventHandler;
 }
 

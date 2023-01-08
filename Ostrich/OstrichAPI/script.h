@@ -23,10 +23,12 @@ namespace hv {
 			OSTRICH_COMMON_API void registerProcessCompleteEvent(std::string context_name, std::function<void(int nodeType, std::size_t composite_uid)> eventHandler);
 			OSTRICH_COMMON_API void registerConstChangedEvent(std::string context_name, std::function<void(int nodeType, std::size_t constUID)> eventHandler);
 			OSTRICH_COMMON_API void registerProcessStartEvent(std::string context_name, std::function<void(int nodeType, std::size_t composite_uid)> eventHandler);
+			OSTRICH_COMMON_API void registerErrorEvent(std::string context_name, std::function<void(int nodeType, std::size_t compositeUID, const char * message)> eventHandler);
 
 			OSTRICH_COMMON_API void resetProcessCompleteEvent(std::string context_name);
 			OSTRICH_COMMON_API void resetConstChangedEvent(std::string context_name);
 			OSTRICH_COMMON_API void resetProcessStartEvent(std::string context_name);
+			OSTRICH_COMMON_API void resetErrorEvent(std::string context_name);
 
 			OSTRICH_COMMON_API void updateAllConstNode(std::string context_name);
 

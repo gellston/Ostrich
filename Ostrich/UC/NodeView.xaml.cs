@@ -46,6 +46,14 @@ namespace UC
 
 
 
+        public static readonly DependencyProperty HasErrorProperty = DependencyProperty.Register("HasError", typeof(bool), typeof(NodeView), new PropertyMetadata(false));
+        public bool HasError
+        {
+            set => SetValue(HasErrorProperty, value);
+            get => (bool)GetValue(HasErrorProperty);
+        }
+
+
         public static readonly DependencyProperty HasConnectionProperty = DependencyProperty.Register("HasConnection", typeof(bool), typeof(NodeView), new PropertyMetadata(false));
         public bool HasConnection
         {

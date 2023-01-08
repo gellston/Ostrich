@@ -128,6 +128,16 @@ namespace ViewModel
 
         #region Function
 
+        public void OnErrorHandler(System.Object sender, int nodeType, ulong compositeUID, string message)
+        {
+            foreach (var node in this.NodeViewModelCollection)
+            {
+                if (node.Uid == compositeUID)
+                    node.HasError = true;
+            }
+
+        }
+
         public void OnProcessCompleteHandler(System.Object sender, int nodeType, ulong compositeUID)
         {
 
@@ -170,6 +180,16 @@ namespace ViewModel
                 node.IsExecuting = false;
             }
         }
+
+        public void ClearErrorStatus()
+        {
+            foreach(var node in this.NodeViewModelCollection)
+            {
+                node.HasError = false;
+            }
+        }
+
+
         public void ContextName(string name)
         {
             this.Name = name;

@@ -24,7 +24,7 @@ namespace HV {
 			void NativeProcessCompleteEvent(int nodeType, std::size_t composite_uid);
 			void NativeConstChangedEvent(int nodeType, std::size_t constUID);
 			void NativeProcessStartEvent(int nodeType, std::size_t composite_uid);
-			void NativeErrorEvent(int nodeType, std::size_t composite_uid, System::String^ message);
+			void NativeErrorEvent(int nodeType, std::size_t composite_uid, const char * message);
 
 
 			System::Runtime::InteropServices::GCHandle ProcessCompleteEventGCHandle;

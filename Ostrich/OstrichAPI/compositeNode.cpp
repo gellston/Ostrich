@@ -158,7 +158,7 @@ hv::v2::resultType hv::v2::compositeNode::call() {
 	if (this->_instance->_context == nullptr) {
 		this->hasError(true);
 		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Null context exception");
-		this->_instance->_context->onError(this->type(), this->uid(), message);
+		this->_instance->_context->onError(this->type(), this->uid(), message.c_str());
 		throw hv::v2::oexception(message);
 	}
 
@@ -190,7 +190,7 @@ hv::v2::resultType hv::v2::compositeNode::call() {
 	catch (hv::v2::oexception e) {
 		this->hasError(true);
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
-		this->_instance->_context->onError(this->type(), this->uid(), message);
+		this->_instance->_context->onError(this->type(), this->uid(), message.c_str());
 		throw hv::v2::oexception(message);
 	}
 }

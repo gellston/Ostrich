@@ -32,7 +32,7 @@ namespace HV {
 			delegate void OnProcessCompleteEventCallback(int nodeType, std::size_t composite_uid);
 			delegate void OnConstChangedEventCallback(int nodeType, std::size_t constUID);
 			delegate void OnProcessStartEventCallback(int nodeType, std::size_t composite_uid);
-			delegate void OnErrorEventCallback(int nodeType, std::size_t composite_uid, System::String^ message);
+			delegate void OnErrorEventCallback(int nodeType, std::size_t composite_uid, const char* message);
 
 
 

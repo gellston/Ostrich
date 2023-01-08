@@ -32,7 +32,7 @@ namespace hv {
 			virtual void onProcessComplete(int nodeType, std::size_t composite_uid) = 0;
 			virtual void onProcessStart(int nodeType, std::size_t composite_uid) = 0;
 			virtual void onConstChanged(int nodeType, std::size_t constUID) = 0;
-			virtual void onError(int nodeType, std::size_t composite_uid, std::string message) = 0;
+			virtual void onError(int nodeType, std::size_t composite_uid, const char* message) = 0;
 
 			
 
@@ -40,7 +40,7 @@ namespace hv {
 			virtual void registerProcessCompleteEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) =0;
 			virtual void registerProcessStartEvent(std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) = 0;
 			virtual void registerConstChangedEvent(std::function<void(int nodeType, std::size_t constUID)> eventHandler) = 0;
-			virtual void registerErrorEvent(std::function<void(int nodeType, std::size_t composite_uid, std::string message)> eventHandler) = 0;
+			virtual void registerErrorEvent(std::function<void(int nodeType, std::size_t composite_uid, const char * message)> eventHandler) = 0;
 
 
 
