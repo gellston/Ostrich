@@ -145,7 +145,7 @@ void hv::v2::context::onError(int nodeType, std::size_t composite_uid, const cha
 
 	auto asciiString = u8string_to_string(message);
 
-	this->_instance->_errorEvent(nodeType, composite_uid, asciiString.c_str());
+	this->_instance->_errorEvent(nodeType, composite_uid, asciiString.data());
 }
 
 
