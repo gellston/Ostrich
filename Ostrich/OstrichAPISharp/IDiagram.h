@@ -9,7 +9,7 @@
 
 namespace HV {
 	namespace V2 {
-		public interface class IScript : System::IDisposable {
+		public interface class IDiagram : System::IDisposable {
 
 
 

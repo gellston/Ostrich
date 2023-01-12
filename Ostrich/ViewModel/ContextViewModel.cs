@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace ViewModel
@@ -133,7 +134,12 @@ namespace ViewModel
             foreach (var node in this.NodeViewModelCollection)
             {
                 if (node.Uid == compositeUID)
-                    node.HasError = true;
+                {
+                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    {
+                        node.HasError = true;
+                    });
+                }
             }
 
         }
@@ -144,7 +150,12 @@ namespace ViewModel
             foreach (var node in this.NodeViewModelCollection)
             {
                 if (node.Uid == compositeUID)
-                    node.IsExecuting = false;
+                {
+                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    {
+                        node.IsExecuting = true;
+                    });
+                }
             }
         }
 
@@ -168,7 +179,12 @@ namespace ViewModel
             foreach (var node in this.NodeViewModelCollection)
             {
                 if (node.Uid == compositeUID)
-                    node.IsExecuting = true;
+                {
+                    Application.Current.Dispatcher.BeginInvoke(() =>
+                    {
+                        node.IsExecuting = true;
+                    });
+                }
             }
         }
 

@@ -1,3 +1,4 @@
+using Model.Property;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,6 +20,7 @@ namespace ViewModel
         private ulong _Uid = 0;
         private ObservableCollection<NodePropertyViewModel> _InputCollection = new ObservableCollection<NodePropertyViewModel>();
         private ObservableCollection<NodePropertyViewModel> _OutputCollection = new ObservableCollection<NodePropertyViewModel>();
+        private ObservableCollection<BasePropertyModel> _ResultCollection = new ObservableCollection<BasePropertyModel>();
         #endregion
 
 
@@ -94,6 +96,11 @@ namespace ViewModel
             set => SetProperty(ref _OutputCollection, value);
         }
 
+        public ObservableCollection<BasePropertyModel> ResultCollection
+        {
+            get => _ResultCollection;
+            set => SetProperty(ref _ResultCollection, value);
+        }
 
         #endregion
 

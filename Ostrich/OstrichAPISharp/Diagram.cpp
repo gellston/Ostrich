@@ -2,7 +2,7 @@
 #include <msclr/marshal_cppstd.h>
 
 //C++/CLI Header
-#include "Script.h"
+#include "Diagram.h"
 #include "CommonException.h"
 #include "CompositeNode.h"
 #include "Addon.h"
@@ -11,14 +11,14 @@
 
 //C++ Header
 #include <commonException.h>
-#include <script.h>
+#include <diagram.h>
 
 
 
-HV::V2::Script::Script() {
+HV::V2::Diagram::Diagram() {
 	try {
-		auto nativePointer = std::make_shared<hv::v2::script>();
-		auto castedNativePointer = std::dynamic_pointer_cast<hv::v2::iscript>(nativePointer);
+		auto nativePointer = std::make_shared<hv::v2::diagram>();
+		auto castedNativePointer = std::dynamic_pointer_cast<hv::v2::idiagram>(nativePointer);
 		this->_instance = castedNativePointer;
 
 
@@ -34,13 +34,13 @@ HV::V2::Script::Script() {
 
 }
 
-HV::V2::Script::~Script() {
+HV::V2::Diagram::~Diagram() {
 
 
-	this->!Script();
+	this->!Diagram();
 }
 
-HV::V2::Script::!Script() {
+HV::V2::Diagram::!Diagram() {
 
 	for each (auto keyPair in this->_managedContext)
 	{
@@ -58,7 +58,7 @@ HV::V2::Script::!Script() {
 
 
 
-void HV::V2::Script::RegisterProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
+void HV::V2::Diagram::RegisterProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler) {
 	try {
 		if (this->_managedContext->ContainsKey(context_name) == false) {
 			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
@@ -78,7 +78,7 @@ void HV::V2::Script::RegisterProcessCompleteEvent(System::String^ context_name, 
 
 }
 
-void HV::V2::Script::RegisterProcessStartEvent(System::String^ context_name, HV::V2::IContext::OnProcessStartHandler^ eventHandler) {
+void HV::V2::Diagram::RegisterProcessStartEvent(System::String^ context_name, HV::V2::IContext::OnProcessStartHandler^ eventHandler) {
 	try {
 		if (this->_managedContext->ContainsKey(context_name) == false) {
 			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
@@ -98,7 +98,7 @@ void HV::V2::Script::RegisterProcessStartEvent(System::String^ context_name, HV:
 }
 
 
-void HV::V2::Script::RegisterConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler) {
+void HV::V2::Diagram::RegisterConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler) {
 	try {
 		if (this->_managedContext->ContainsKey(context_name) == false) {
 			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
@@ -118,7 +118,7 @@ void HV::V2::Script::RegisterConstChangedEvent(System::String^ context_name, HV:
 }
 
 
-void HV::V2::Script::RegisterErrorEvent(System::String^ context_name, HV::V2::IContext::OnErrorHandler^ eventHandler) {
+void HV::V2::Diagram::RegisterErrorEvent(System::String^ context_name, HV::V2::IContext::OnErrorHandler^ eventHandler) {
 	try {
 		if (this->_managedContext->ContainsKey(context_name) == false) {
 			auto nativeContext = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
@@ -138,7 +138,7 @@ void HV::V2::Script::RegisterErrorEvent(System::String^ context_name, HV::V2::IC
 }
 
 
-void HV::V2::Script::ResetProcessCompleteEvent(System::String^ context_name) {
+void HV::V2::Diagram::ResetProcessCompleteEvent(System::String^ context_name) {
 	try {
 
 		this->_managedContext[context_name]->ResetProcessCompleteEvent();
@@ -152,7 +152,7 @@ void HV::V2::Script::ResetProcessCompleteEvent(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::ResetConstChangedEvent(System::String^ context_name) {
+void HV::V2::Diagram::ResetConstChangedEvent(System::String^ context_name) {
 	try {
 
 		this->_managedContext[context_name]->ResetConstChangedEvent();
@@ -166,7 +166,7 @@ void HV::V2::Script::ResetConstChangedEvent(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::ResetProcessStartEvent(System::String^ context_name) {
+void HV::V2::Diagram::ResetProcessStartEvent(System::String^ context_name) {
 	try {
 
 		this->_managedContext[context_name]->ResetProcessStartEvent();
@@ -180,7 +180,7 @@ void HV::V2::Script::ResetProcessStartEvent(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::ResetErrorEvent(System::String^ context_name) {
+void HV::V2::Diagram::ResetErrorEvent(System::String^ context_name) {
 	try {
 
 		this->_managedContext[context_name]->ResetErrorEvent();
@@ -194,7 +194,7 @@ void HV::V2::Script::ResetErrorEvent(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::UpdateAllConstNode(System::String^ context_name) {
+void HV::V2::Diagram::UpdateAllConstNode(System::String^ context_name) {
 
 	try {
 
@@ -218,7 +218,7 @@ void HV::V2::Script::UpdateAllConstNode(System::String^ context_name) {
 
 
 
-HV::V2::ICompositeNode^ HV::V2::Script::Search(System::String^ context_name, std::size_t uid) {
+HV::V2::ICompositeNode^ HV::V2::Diagram::Search(System::String^ context_name, std::size_t uid) {
 	try {
 		auto node = this->_instance->search(msclr::interop::marshal_as<std::string>(context_name), uid);
 		return gcnew HV::V2::CompositeNode(System::IntPtr(&node), true);
@@ -230,7 +230,7 @@ HV::V2::ICompositeNode^ HV::V2::Script::Search(System::String^ context_name, std
 		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
 	}
 }
-HV::V2::ICompositeNode^ HV::V2::Script::Search(System::String^ context_name, System::String^ name) {
+HV::V2::ICompositeNode^ HV::V2::Diagram::Search(System::String^ context_name, System::String^ name) {
 	try {
 		auto node = this->_instance->search(msclr::interop::marshal_as<std::string>(context_name), 
 											msclr::interop::marshal_as<std::string>(name));
@@ -244,7 +244,7 @@ HV::V2::ICompositeNode^ HV::V2::Script::Search(System::String^ context_name, Sys
 	}
 }
 
-bool HV::V2::Script::CheckConnectability(System::String^ context_name, std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName) {
+bool HV::V2::Diagram::CheckConnectability(System::String^ context_name, std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName) {
 	try {
 		return this->_instance->checkConnectability(msclr::interop::marshal_as<std::string>(context_name),
 													sourceUID,
@@ -263,7 +263,7 @@ bool HV::V2::Script::CheckConnectability(System::String^ context_name, std::size
 
 
 
-void HV::V2::Script::Connect(System::String^ context_name, std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName) {
+void HV::V2::Diagram::Connect(System::String^ context_name, std::size_t sourceUID, System::String^ sourceName, std::size_t targetUID, System::String^ targetName) {
 	try {
 		this->_instance->connect(msclr::interop::marshal_as<std::string>(context_name),
 								 sourceUID,
@@ -280,7 +280,7 @@ void HV::V2::Script::Connect(System::String^ context_name, std::size_t sourceUID
 	}
 }
 
-void HV::V2::Script::Connect(System::String^ context_name, HV::V2::ICompositeNode^ sourceNode, System::String^ sourceName, HV::V2::ICompositeNode^ targetNode, System::String^ targetName) {
+void HV::V2::Diagram::Connect(System::String^ context_name, HV::V2::ICompositeNode^ sourceNode, System::String^ sourceName, HV::V2::ICompositeNode^ targetNode, System::String^ targetName) {
 	try {
 
 		auto nativeSourceNode = *((std::shared_ptr<hv::v2::icompositeNode>*)sourceNode->Handle.ToPointer());
@@ -303,7 +303,7 @@ void HV::V2::Script::Connect(System::String^ context_name, HV::V2::ICompositeNod
 
 
 
-void HV::V2::Script::Disconnect(System::String^ context_name, System::String^ name) {
+void HV::V2::Diagram::Disconnect(System::String^ context_name, System::String^ name) {
 	try {
 
 		this->_instance->disconnect(msclr::interop::marshal_as<std::string>(context_name),
@@ -318,7 +318,7 @@ void HV::V2::Script::Disconnect(System::String^ context_name, System::String^ na
 	}
 }
 
-void HV::V2::Script::Disconnect(System::String^ context_name, std::size_t targetUID, System::String^ targetName) {
+void HV::V2::Diagram::Disconnect(System::String^ context_name, std::size_t targetUID, System::String^ targetName) {
 	try {
 
 		this->_instance->disconnect(msclr::interop::marshal_as<std::string>(context_name),
@@ -336,7 +336,7 @@ void HV::V2::Script::Disconnect(System::String^ context_name, std::size_t target
 
 
 
-void HV::V2::Script::Disconnect(System::String^ context_name, HV::V2::ICompositeNode^ targetNode, System::String^ targetName) {
+void HV::V2::Diagram::Disconnect(System::String^ context_name, HV::V2::ICompositeNode^ targetNode, System::String^ targetName) {
 	try {
 		auto nativeNode = *((std::shared_ptr<hv::v2::icompositeNode>*) targetNode->Handle.ToPointer());
 		this->_instance->disconnect(msclr::interop::marshal_as<std::string>(context_name),
@@ -352,7 +352,7 @@ void HV::V2::Script::Disconnect(System::String^ context_name, HV::V2::IComposite
 	}
 }
 
-void HV::V2::Script::Disconnect(System::String^ context_name, std::size_t targetUID) {
+void HV::V2::Diagram::Disconnect(System::String^ context_name, std::size_t targetUID) {
 	try {
 		this->_instance->disconnect(msclr::interop::marshal_as<std::string>(context_name), targetUID);
 	}
@@ -364,7 +364,7 @@ void HV::V2::Script::Disconnect(System::String^ context_name, std::size_t target
 	}
 }
 
-void HV::V2::Script::Disconnect(System::String^ context_name, HV::V2::ICompositeNode^ targetNode) {
+void HV::V2::Diagram::Disconnect(System::String^ context_name, HV::V2::ICompositeNode^ targetNode) {
 	try {
 		auto nativeNode = *((std::shared_ptr<hv::v2::icompositeNode> *) targetNode->Handle.ToPointer());
 		this->_instance->disconnect(msclr::interop::marshal_as<std::string>(context_name), nativeNode);
@@ -379,7 +379,7 @@ void HV::V2::Script::Disconnect(System::String^ context_name, HV::V2::IComposite
 
 
 
-HV::V2::ICompositeNode^ HV::V2::Script::AddNode(System::String^ context_name, System::String^ name, int objectType) {
+HV::V2::ICompositeNode^ HV::V2::Diagram::AddNode(System::String^ context_name, System::String^ name, int objectType) {
 	try {
 		auto node = this->_instance->addNode(msclr::interop::marshal_as<std::string>(context_name),
 											 msclr::interop::marshal_as<std::string>(name),
@@ -395,7 +395,7 @@ HV::V2::ICompositeNode^ HV::V2::Script::AddNode(System::String^ context_name, Sy
 	}
 }
 
-int HV::V2::Script::ExecutionDelay::get() {
+int HV::V2::Diagram::ExecutionDelay::get() {
 	try {
 		return this->_instance->executionDelay();
 	}
@@ -407,7 +407,7 @@ int HV::V2::Script::ExecutionDelay::get() {
 	}
 }
 
-void HV::V2::Script::ExecutionDelay::set(int ms) {
+void HV::V2::Diagram::ExecutionDelay::set(int ms) {
 	try {
 		this->_instance->executionDelay(ms);
 	}
@@ -420,7 +420,7 @@ void HV::V2::Script::ExecutionDelay::set(int ms) {
 }
 
 
-void HV::V2::Script::RemoveNode(System::String^ context_name, std::size_t uid) {
+void HV::V2::Diagram::RemoveNode(System::String^ context_name, std::size_t uid) {
 	try {
 		this->_instance->removeNode(msclr::interop::marshal_as<std::string>(context_name), uid);
 	}
@@ -432,7 +432,7 @@ void HV::V2::Script::RemoveNode(System::String^ context_name, std::size_t uid) {
 	}
 }
 
-void HV::V2::Script::RemoveNode(System::String^ context_name, HV::V2::ICompositeNode^ node) {
+void HV::V2::Diagram::RemoveNode(System::String^ context_name, HV::V2::ICompositeNode^ node) {
 	try {
 		
 		auto nativeNode = *(std::shared_ptr<hv::v2::icompositeNode>*)node->Handle.ToPointer();
@@ -446,7 +446,7 @@ void HV::V2::Script::RemoveNode(System::String^ context_name, HV::V2::IComposite
 	}
 }
 
-void HV::V2::Script::RemoveNode(System::String^ context_name, System::String^ name) {
+void HV::V2::Diagram::RemoveNode(System::String^ context_name, System::String^ name) {
 	try {
 		this->_instance->removeNode(msclr::interop::marshal_as<std::string>(context_name),
 									msclr::interop::marshal_as<std::string>(name));
@@ -459,7 +459,7 @@ void HV::V2::Script::RemoveNode(System::String^ context_name, System::String^ na
 	}
 }
 
-HV::V2::IConstNode^ HV::V2::Script::ConstNode(System::String^ context_name, std::size_t uid) {
+HV::V2::IConstNode^ HV::V2::Diagram::ConstNode(System::String^ context_name, std::size_t uid) {
 	try {
 		auto nativeConstNode = this->_instance->constNode(msclr::interop::marshal_as<std::string>(context_name),
 													      uid);
@@ -477,7 +477,7 @@ HV::V2::IConstNode^ HV::V2::Script::ConstNode(System::String^ context_name, std:
 
 
 
-void HV::V2::Script::Verification(System::String^ context_name) {
+void HV::V2::Diagram::Verification(System::String^ context_name) {
 	try {
 		this->_instance->verification(msclr::interop::marshal_as<std::string>(context_name));
 	}
@@ -489,7 +489,7 @@ void HV::V2::Script::Verification(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::Clear(System::String^ context_name) {
+void HV::V2::Diagram::Clear(System::String^ context_name) {
 	try {
 		this->_instance->clear(msclr::interop::marshal_as<std::string>(context_name));
 	}
@@ -501,7 +501,7 @@ void HV::V2::Script::Clear(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::Loadlibrary(System::String^ context_name) {
+void HV::V2::Diagram::Loadlibrary(System::String^ context_name) {
 	try {
 		this->_instance->loadLibrary(msclr::interop::marshal_as<std::string>(context_name));
 	}
@@ -513,7 +513,7 @@ void HV::V2::Script::Loadlibrary(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::Unloadlibrary(System::String^ context_name) {
+void HV::V2::Diagram::Unloadlibrary(System::String^ context_name) {
 	try {
 		this->_instance->unloadLibrary(msclr::interop::marshal_as<std::string>(context_name));
 	}
@@ -525,7 +525,7 @@ void HV::V2::Script::Unloadlibrary(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::Loadlibrary() {
+void HV::V2::Diagram::Loadlibrary() {
 	try {
 		this->_instance->loadLibrary();
 	}
@@ -537,7 +537,7 @@ void HV::V2::Script::Loadlibrary() {
 	}
 }
 
-void HV::V2::Script::Unloadlibrary() {
+void HV::V2::Diagram::Unloadlibrary() {
 	try {
 		this->_instance->unloadLibrary();
 	}
@@ -551,7 +551,7 @@ void HV::V2::Script::Unloadlibrary() {
 
 
 
-void HV::V2::Script::SetAddonPath(System::String^ path) {
+void HV::V2::Diagram::SetAddonPath(System::String^ path) {
 	try {
 		this->_instance->setAddonPath(msclr::interop::marshal_as<std::string>(path));
 
@@ -564,7 +564,7 @@ void HV::V2::Script::SetAddonPath(System::String^ path) {
 	}
 }
 
-System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ HV::V2::Script::AddonInfo(System::String^ context_name) {
+System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ HV::V2::Diagram::AddonInfo(System::String^ context_name) {
 	try {
 		System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>^ result = gcnew System::Collections::Generic::List<System::Tuple<System::String^, System::String^>^>();
 		auto nativeResult = this->_instance->addonInfo(msclr::interop::marshal_as<std::string>(context_name));
@@ -585,7 +585,7 @@ System::Collections::Generic::List<System::Tuple<System::String^, System::String
 	}
 }
 
-System::Collections::Generic::List<HV::V2::IAddon^>^ HV::V2::Script::Addons(System::String^ context_name) {
+System::Collections::Generic::List<HV::V2::IAddon^>^ HV::V2::Diagram::Addons(System::String^ context_name) {
 	try {
 		System::Collections::Generic::List<HV::V2::IAddon^>^ result = gcnew System::Collections::Generic::List<HV::V2::IAddon^>();
 		auto nativeResult = this->_instance->addons(msclr::interop::marshal_as<std::string>(context_name));
@@ -605,7 +605,7 @@ System::Collections::Generic::List<HV::V2::IAddon^>^ HV::V2::Script::Addons(Syst
 
 
 
-void HV::V2::Script::Load(System::String^ context_name, System::String^ path) {
+void HV::V2::Diagram::Load(System::String^ context_name, System::String^ path) {
 	try {
 		this->_instance->load(msclr::interop::marshal_as<std::string>(context_name),
 			msclr::interop::marshal_as<std::string>(path));
@@ -618,7 +618,7 @@ void HV::V2::Script::Load(System::String^ context_name, System::String^ path) {
 	}
 }
 
-void HV::V2::Script::Save(System::String^ context_name, System::String^ path) {
+void HV::V2::Diagram::Save(System::String^ context_name, System::String^ path) {
 	try {
 		this->_instance->save(msclr::interop::marshal_as<std::string>(context_name),
 			msclr::interop::marshal_as<std::string>(path));
@@ -631,7 +631,7 @@ void HV::V2::Script::Save(System::String^ context_name, System::String^ path) {
 	}
 }
 
-void HV::V2::Script::InitNodes(System::String^ context_name) {
+void HV::V2::Diagram::InitNodes(System::String^ context_name) {
 	try {
 		this->_instance->initNodes(msclr::interop::marshal_as<std::string>(context_name));
 	}
@@ -643,7 +643,7 @@ void HV::V2::Script::InitNodes(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::Run(System::String^ context_name, std::size_t uid) {
+void HV::V2::Diagram::Run(System::String^ context_name, std::size_t uid) {
 	try {
 		this->_instance->run(msclr::interop::marshal_as<std::string>(context_name), uid);
 	}
@@ -655,7 +655,7 @@ void HV::V2::Script::Run(System::String^ context_name, std::size_t uid) {
 	}
 }
 
-void HV::V2::Script::Run(System::String^ context_name, int objectType, System::String^ name) {
+void HV::V2::Diagram::Run(System::String^ context_name, int objectType, System::String^ name) {
 	try {
 		this->_instance->run(msclr::interop::marshal_as<std::string>(context_name), 
 							 objectType,
@@ -669,7 +669,7 @@ void HV::V2::Script::Run(System::String^ context_name, int objectType, System::S
 	}
 }
 
-void HV::V2::Script::Run(System::String^ context_name) {
+void HV::V2::Diagram::Run(System::String^ context_name) {
 	try {
 		this->_instance->run(msclr::interop::marshal_as<std::string>(context_name));
 	}
@@ -681,7 +681,7 @@ void HV::V2::Script::Run(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::Stop(System::String^ context_name) {
+void HV::V2::Diagram::Stop(System::String^ context_name) {
 	try {
 		this->_instance->stop(msclr::interop::marshal_as<std::string>(context_name));
 	}
@@ -694,7 +694,7 @@ void HV::V2::Script::Stop(System::String^ context_name) {
 }
 
 
-System::String^ HV::V2::Script::Serialization(System::String^ context_name) {
+System::String^ HV::V2::Diagram::Serialization(System::String^ context_name) {
 	try {
 		auto nativeJsonContext = this->_instance->serialization(msclr::interop::marshal_as<std::string>(context_name));
 		return gcnew System::String(nativeJsonContext.c_str());
@@ -707,7 +707,7 @@ System::String^ HV::V2::Script::Serialization(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::DeSerialization(System::String^ context_name, System::String^ value) {
+void HV::V2::Diagram::DeSerialization(System::String^ context_name, System::String^ value) {
 	try {
 		this->_instance->deserialization(msclr::interop::marshal_as<std::string>(context_name),
 			msclr::interop::marshal_as<std::string>(value));
@@ -726,7 +726,7 @@ void HV::V2::Script::DeSerialization(System::String^ context_name, System::Strin
 
 
 
-HV::V2::IContext^ HV::V2::Script::Context(System::String^ context_name) {
+HV::V2::IContext^ HV::V2::Diagram::Context(System::String^ context_name) {
 	try {
 
 		auto context = this->_instance->context(msclr::interop::marshal_as<std::string>(context_name));
@@ -747,7 +747,7 @@ HV::V2::IContext^ HV::V2::Script::Context(System::String^ context_name) {
 
 
 
-void HV::V2::Script::CreateContext(System::String^ context_name) {
+void HV::V2::Diagram::CreateContext(System::String^ context_name) {
 	try {
 		this->_instance->createContext(msclr::interop::marshal_as<std::string>(context_name));
 
@@ -760,7 +760,7 @@ void HV::V2::Script::CreateContext(System::String^ context_name) {
 	}
 }
 
-void HV::V2::Script::RenameContext(System::String^ sourceName, System::String^ targetName) {
+void HV::V2::Diagram::RenameContext(System::String^ sourceName, System::String^ targetName) {
 	try {
 
 		this->_instance->renameContext(msclr::interop::marshal_as<std::string>(sourceName),
@@ -779,7 +779,7 @@ void HV::V2::Script::RenameContext(System::String^ sourceName, System::String^ t
 	}
 }
 
-void HV::V2::Script::RemoveContext(System::String^ name) {
+void HV::V2::Diagram::RemoveContext(System::String^ name) {
 	try {
 		if (this->_managedContext->ContainsKey(name) == true) {
 			this->_managedContext[name]->~IContext();
@@ -795,7 +795,7 @@ void HV::V2::Script::RemoveContext(System::String^ name) {
 	}
 }
 
-void HV::V2::Script::CopyContext(System::String^ sourceName, System::String^ targetName) {
+void HV::V2::Diagram::CopyContext(System::String^ sourceName, System::String^ targetName) {
 	try {
 		this->_instance->copyContext(msclr::interop::marshal_as<std::string>(sourceName),
 									 msclr::interop::marshal_as<std::string>(targetName));

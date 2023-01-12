@@ -199,6 +199,9 @@ namespace Ostrich.ViewModel
       
                     this.IsExecuting = true;
                     System.Diagnostics.Debug.WriteLine("Start");
+                    if (this.ExecutionDelay <= 0)
+                        this.ExecutionDelay = 1;
+
                     await this.nodeEngineService.Run(this.SelectedContextViewModel.Name, this.ExecutionDelay);
                     System.Diagnostics.Debug.WriteLine("End");
                     this.IsExecuting = false;

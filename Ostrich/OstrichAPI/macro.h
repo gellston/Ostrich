@@ -41,6 +41,7 @@ try {\
 	object->isFreezed(this->isFreezed());\
 	object->replaceInputs(this->inputClone());\
 	object->replaceOuputs(this->outputClone());\
+    object->replaceResults(this->resultsClone());\
 	object->hasError(this->hasError());\
 	return object;\
 }\

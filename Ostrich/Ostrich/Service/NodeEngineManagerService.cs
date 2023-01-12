@@ -6,6 +6,7 @@ using DevExpress.Xpf.Printing.PreviewControl;
 using HV.V2;
 using Model;
 using Model.EventParameter;
+using Model.Property;
 using Newtonsoft.Json;
 using Ostrich.Model;
 using System;
@@ -28,7 +29,7 @@ namespace Ostrich.Service
     {
 
         #region PrivateProperty
-        private HV.V2.Script _NodeEngineModel = null;
+        private HV.V2.Diagram _NodeEngineModel = null;
         private ObservableCollection<ContextViewModel> _ContextViewModelCollection = new ObservableCollection<ContextViewModel>();
         private ObservableCollection<Ostrich.Model.Addon> _AddonCollection = new ObservableCollection<Ostrich.Model.Addon>();
         private ConcurrentQueue<Model.ConstNodeModel> _ConstNodeModelUpdateCollection = new ConcurrentQueue<Model.ConstNodeModel>();
@@ -38,7 +39,7 @@ namespace Ostrich.Service
 
         public NodeEngineManagerService()
         {
-            this._NodeEngineModel = new HV.V2.Script();
+            this._NodeEngineModel = new HV.V2.Diagram();
 
 
             // Addon 경로 설정
@@ -125,6 +126,12 @@ namespace Ostrich.Service
                         }
                     }
 
+                    var resultCollection = new ObservableCollection<BasePropertyModel>();
+                    foreach(var result in nodeViewModel.ResultCollection)
+                    {
+                        resultCollection.Add(PropertyModelConstructor.Create(contextName, result.ObjectType, result.Uid, this.ModelChangingCommand));
+                    }
+                    nodeViewModel.ResultCollection = resultCollection;
                 }
 
                 this._NodeEngineModel.UpdateAllConstNode(contextName);
@@ -199,6 +206,14 @@ namespace Ostrich.Service
                                             input.PropertyModel.Update(model.Data);
                                         }
                                     }
+
+                                    foreach(var result in node.ResultCollection)
+                                    {
+                                        if(result.Uid == model.Uid)
+                                        {
+                                            result.Update(model.Data);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -212,7 +227,7 @@ namespace Ostrich.Service
         }
 
 
-        public HV.V2.Script NodeEngineModel()
+        public HV.V2.Diagram NodeEngineModel()
         {
             return this._NodeEngineModel;
         }
@@ -418,6 +433,7 @@ namespace Ostrich.Service
 
                         var inputs = node.Inputs;
                         var outputs = node.Outputs;
+                        var results = node.Results;
 
                         foreach (var input in inputs)
                         {
@@ -447,6 +463,12 @@ namespace Ostrich.Service
                                 Uid = output.Uid,
                             };
                             nodeViewModel.OutputCollection.Add(property);
+                        }
+
+                        foreach(var result in results)
+                        {
+                            var model = PropertyModelConstructor.Create(contextName, result.Type, result.Uid, this.ModelChangingCommand);
+                            nodeViewModel.ResultCollection.Add(model);
                         }
 
                         context.NodeViewModelCollection.Add(nodeViewModel);

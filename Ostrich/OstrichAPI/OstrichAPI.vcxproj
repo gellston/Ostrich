@@ -140,7 +140,7 @@
     <ClCompile Include="nodeInfo.cpp" />
     <ClCompile Include="OstrichAPI.cpp" />
     <ClCompile Include="compositeNode.cpp" />
-    <ClCompile Include="script.cpp" />
+    <ClCompile Include="diagram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="addon.h" />
@@ -165,13 +165,13 @@
     <ClInclude Include="inode.h" />
     <ClInclude Include="icompositeNode.h" />
     <ClInclude Include="irunable.h" />
-    <ClInclude Include="iscript.h" />
+    <ClInclude Include="idiagram.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="nodeInfo.h" />
     <ClInclude Include="raii.h" />
     <ClInclude Include="resultType.h" />
-    <ClInclude Include="script.h" />
+    <ClInclude Include="diagram.h" />
     <ClInclude Include="searchType.h" />
     <ClInclude Include="objectType.h" />
     <ClInclude Include="serialType.h" />

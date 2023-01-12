@@ -1,9 +1,9 @@
 #pragma once
 
-#include <iscript.h>
+#include <idiagram.h>
 
 
-#include "IScript.h"
+#include "IDiagram.h"
 #include "managed_shared_ptr.h"
 
 
@@ -11,19 +11,19 @@
 
 namespace HV {
 	namespace V2 {
-		public ref class Script : public HV::V2::IScript {
+		public ref class Diagram : public HV::V2::IDiagram {
 		private:
 
-			HV::V2::mananged_shared_ptr<hv::v2::iscript> _instance;
+			HV::V2::mananged_shared_ptr<hv::v2::idiagram> _instance;
 
 			System::Collections::Generic::Dictionary<System::String^, HV::V2::IContext^>^ _managedContext;
 
 
 		public:
 
-			Script();
-			!Script();
-			~Script();
+			Diagram();
+			!Diagram();
+			~Diagram();
 
 			virtual void RegisterProcessCompleteEvent(System::String^ context_name, HV::V2::IContext::OnProcessCompleteHandler^ eventHandler);
 			virtual void RegisterConstChangedEvent(System::String^ context_name, HV::V2::IContext::OnConstChangedHandler^ eventHandler);

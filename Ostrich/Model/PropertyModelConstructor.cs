@@ -34,7 +34,15 @@ namespace Model
                         };
                         break;
 
-
+                    case 3:
+                        return new ConstImageNode()
+                        {
+                            ObjectType = objectType,
+                            Uid = objectUid,
+                            ModelChangingCommand = modelChangedCommand,
+                            ContextName = contextName
+                        };
+                        break;
                     default:
                         return new BasePropertyModel()
                         {

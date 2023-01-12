@@ -46,6 +46,8 @@ void hv::v2::constNumberNode::data(double value) {
 }
 
 
+
+
 std::string hv::v2::constNumberNode::serialization() {
 
 	return std::to_string(this->_instance->_value);

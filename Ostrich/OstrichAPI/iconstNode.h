@@ -40,6 +40,7 @@ namespace hv {
 			virtual void registerMultipleSourceNode(std::size_t uid, std::string name) = 0;
 			virtual void clearMultipleSourceNode() = 0;
 			virtual void unRegisterMultipleSourceNode(std::size_t uid, std::string name) = 0;
+			virtual void unRegisterMultipleSourceNode(std::size_t uid) = 0;
 			virtual std::vector<std::tuple<std::size_t, std::string>> multipleSourceNode() = 0;
 			virtual void multipleSourceNode(std::vector<std::tuple<std::size_t, std::string>> nodes) = 0;
 

@@ -110,6 +110,8 @@ namespace hv {
 
 
 
+
+
 			// Node Special Lock
 			virtual bool isStop(int special_lock_key) = 0;
 			virtual void registerAddon(std::shared_ptr<hv::v2::iaddon> addon, int special_lock_key) =0;
@@ -118,6 +120,7 @@ namespace hv {
 			virtual std::shared_ptr<hv::v2::irunable> findExecution(std::size_t uid, std::string name, int depth, int special_lock_key) = 0;
 			virtual void registerConstNodeGroup(std::vector<std::shared_ptr<hv::v2::iconstNode>> group, int special_lock_key) = 0;
 			virtual void removeConstNodeGroup(std::vector<std::shared_ptr<hv::v2::iconstNode>> group, int special_lock_key) = 0;
+			virtual void removeConstNode(std::shared_ptr<hv::v2::iconstNode> node, int special_lock_key) = 0;
 		};
 	}
 }

@@ -18,6 +18,7 @@ namespace Model
 
         static PropertyModelExtracter() {
             _command.Add(2, new ConstNumberNodeExtractCommand());
+            _command.Add(3, new ConstImageNodeExtractCommand());
         }
 
 

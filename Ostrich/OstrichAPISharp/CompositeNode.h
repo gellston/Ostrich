@@ -36,6 +36,10 @@ namespace HV {
 				bool get();
 			}
 
+			virtual property bool IsCustomNode {
+				bool get();
+			}
+
 			virtual bool CheckSourceUID(std::size_t uid);
 
 			virtual property bool IsConditionalNode {
@@ -60,17 +64,27 @@ namespace HV {
 				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
 			}
 
+			virtual property System::Collections::Generic::List<HV::V2::IConstNode^>^ Results {
+				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
+			}
+
 			virtual HV::V2::IConstNode^ Input(System::String^ key);
 			virtual HV::V2::IConstNode^ Output(System::String^ key);
+			virtual HV::V2::IConstNode^ Result(System::String^ key);
 
 
 			virtual void ReplaceInputs(System::Collections::Generic::List<HV::V2::IConstNode^>^ inputs);
 			virtual void ReplaceOutputs(System::Collections::Generic::List<HV::V2::IConstNode^>^ inputs);
+			virtual void ReplaceResults(System::Collections::Generic::List<HV::V2::IConstNode^>^ results);
+
 
 			virtual property System::Collections::Generic::List<HV::V2::IConstNode^>^ InputClone {
 				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
 			}
 			virtual property System::Collections::Generic::List<HV::V2::IConstNode^>^ OutputClone {
+				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
+			}
+			virtual property System::Collections::Generic::List<HV::V2::IConstNode^>^ ResultClone {
 				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
 			}
 
@@ -84,6 +98,15 @@ namespace HV {
 			virtual property System::Collections::Generic::List<std::size_t>^ OutputConstUID {
 				System::Collections::Generic::List<std::size_t>^ get();
 			}
+
+
+			virtual void AddConstNode(System::String^ key, int objectType, HV::V2::SearchType type);
+			virtual void AddConstMultipleNode(System::String^ key, int objectType, HV::V2::SearchType type);
+			virtual void AddConstExecutionNode(System::String^ key, int objectType, HV::V2::SearchType type);
+
+
+			virtual void RemoveConstNode(System::String^ key, HV::V2::SearchType type);
+
 
 
 			virtual HV::V2::ResultType Process();

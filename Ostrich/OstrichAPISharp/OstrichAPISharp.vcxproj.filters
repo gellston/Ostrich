@@ -66,10 +66,13 @@
     <ClInclude Include="Context.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="IScript.h">
+    <ClInclude Include="IDiagram.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Script.h">
+    <ClInclude Include="Diagram.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SearchType.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,7 +101,7 @@
     <ClCompile Include="Context.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Script.cpp">
+    <ClCompile Include="Diagram.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

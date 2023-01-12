@@ -210,6 +210,18 @@ void HV::V2::ConstNode::UnRegisterMultipleSourceNode(std::size_t uid, System::St
 	}
 }
 
+void HV::V2::ConstNode::UnRegisterMultipleSourceNode(std::size_t uid) {
+	try {
+		this->_instance->unRegisterMultipleSourceNode(uid);
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
 System::Collections::Generic::List<System::Tuple<std::size_t, System::String^>^>^ HV::V2::ConstNode::MultipleSourceNode::get() {
 
 

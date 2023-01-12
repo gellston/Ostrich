@@ -110,6 +110,19 @@ void hv::v2::constNode::unRegisterMultipleSourceNode(std::size_t uid, std::strin
 															}));
 }
 
+void hv::v2::constNode::unRegisterMultipleSourceNode(std::size_t uid) {
+	this->_instance->_multiSourceNodes.erase(std::remove_if(this->_instance->_multiSourceNodes.begin(),
+															this->_instance->_multiSourceNodes.end(),
+															[&](std::tuple<std::size_t, std::string> element) {
+
+																std::size_t _uid = std::get<0>(element);
+																std::string _name = std::get<1>(element);
+																if (_uid == uid)
+																	return true;
+																else return false;
+															}));
+}
+
 std::vector<std::tuple<std::size_t, std::string>> hv::v2::constNode::multipleSourceNode() {
 
 	return this->_instance->_multiSourceNodes;

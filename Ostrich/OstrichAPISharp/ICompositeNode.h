@@ -6,6 +6,7 @@
 #include "INode.h"
 #include "IRunable.h"
 #include "IConstNode.h"
+#include "SearchType.h"
 
 
 using namespace System::ComponentModel;
@@ -46,6 +47,11 @@ namespace HV {
 			}
 
 
+			virtual property bool IsCustomNode {
+				bool get();
+			}
+
+
 			virtual property System::Collections::Generic::List<HV::V2::IConstNode^>^ Inputs {
 				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
 			}
@@ -54,17 +60,40 @@ namespace HV {
 				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
 			}
 
+			virtual property System::Collections::Generic::List<HV::V2::IConstNode^>^ Results {
+				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
+			}
+
+
+
 			virtual HV::V2::IConstNode^ Input(System::String^ key);
 			virtual HV::V2::IConstNode^ Output(System::String^ key);
+			virtual HV::V2::IConstNode^ Result(System::String^ key);
 			
 
 			virtual void ReplaceInputs(System::Collections::Generic::List<HV::V2::IConstNode^>^ inputs);
 			virtual void ReplaceOutputs(System::Collections::Generic::List<HV::V2::IConstNode^>^ inputs);
+			virtual void ReplaceResults(System::Collections::Generic::List<HV::V2::IConstNode^>^ results);
+
+
+
+			virtual void AddConstNode(System::String^ key, int objectType, HV::V2::SearchType type);
+			virtual void AddConstMultipleNode(System::String^ key, int objectType, HV::V2::SearchType type);
+			virtual void AddConstExecutionNode(System::String^ key, int objectType, HV::V2::SearchType type);
+
+			virtual void RemoveConstNode(System::String^ key, HV::V2::SearchType type);
+
+
+
+
 
 			virtual property System::Collections::Generic::List<HV::V2::IConstNode^>^ InputClone {
 				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
 			}
 			virtual property System::Collections::Generic::List<HV::V2::IConstNode^>^ OutputClone {
+				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
+			}
+			virtual property System::Collections::Generic::List<HV::V2::IConstNode^>^ ResultClone {
 				System::Collections::Generic::List<HV::V2::IConstNode^>^ get();
 			}
 

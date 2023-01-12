@@ -139,14 +139,15 @@
     <ClInclude Include="IHandle.h" />
     <ClInclude Include="INode.h" />
     <ClInclude Include="IRunable.h" />
-    <ClInclude Include="IScript.h" />
+    <ClInclude Include="IDiagram.h" />
     <ClInclude Include="managed_shared_ptr.h" />
     <ClInclude Include="NodeInfo.h" />
     <ClInclude Include="OstrichAPISharp.h" />
     <ClInclude Include="CommonException.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="ResultType.h" />
-    <ClInclude Include="Script.h" />
+    <ClInclude Include="Diagram.h" />
+    <ClInclude Include="SearchType.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Addon.cpp" />
@@ -157,7 +158,7 @@
     <ClCompile Include="Context.cpp" />
     <ClCompile Include="NodeInfo.cpp" />
     <ClCompile Include="OstrichAPISharp.cpp" />
-    <ClCompile Include="Script.cpp" />
+    <ClCompile Include="Diagram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc" />

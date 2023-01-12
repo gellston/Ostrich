@@ -1,8 +1,8 @@
 #pragma once
 
 
-#ifndef OSTRICH_ISCRIPT_BUILDER
-#define OSTRICH_ISCRIPT_BUILDER
+#ifndef OSTRICH_IDIAGRAM_BUILDER
+#define OSTRICH_IDIAGRAM_BUILDER
 
 #include "icompositeNode.h"
 #include "icontext.h"
@@ -10,9 +10,9 @@
 
 namespace hv {
 	namespace v2 {
-		class iscript {
+		class idiagram {
 		public:
-			virtual ~iscript() {  }
+			virtual ~idiagram() {  }
 
 
 

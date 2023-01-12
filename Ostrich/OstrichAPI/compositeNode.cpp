@@ -20,12 +20,13 @@ namespace hv {
 			std::size_t _uid;
 			bool _isFreezed;
 			bool _isEventNode;
+			bool _isCustomNode;
 			bool _hasError;
 
 
 			std::unordered_map<std::string, std::shared_ptr<hv::v2::iconstNode>> _inputNodes;
 			std::unordered_map<std::string, std::shared_ptr<hv::v2::iconstNode>> _outputNodes;
-
+			std::unordered_map<std::string, std::shared_ptr<hv::v2::iconstNode>> _results;
 
 
 			hv::v2::icontext * _context;
@@ -38,6 +39,7 @@ namespace hv {
 
 				this->_isFreezed = false;
 				this->_isEventNode = false;
+				this->_isCustomNode = false;
 				this->_context = nullptr;
 
 				this->_hasError = false;
@@ -64,9 +66,11 @@ hv::v2::compositeNode::~compositeNode() {
 
 	this->_instance->_inputNodes.clear();
 	this->_instance->_outputNodes.clear();
+	this->_instance->_results.clear();
 
 	this->_instance->_inputNodes.rehash(0);
 	this->_instance->_outputNodes.rehash(0);
+	this->_instance->_results.rehash(0);
 
 }
 
@@ -110,6 +114,13 @@ void hv::v2::compositeNode::isEventNode(bool check) {
 	this->_instance->_isEventNode = check;
 }
 
+bool hv::v2::compositeNode::isCustomNode() {
+	return this->_instance->_isCustomNode;
+}
+
+void hv::v2::compositeNode::isCustomNode(bool check) {
+	this->_instance->_isCustomNode = check;
+}
 
 int hv::v2::compositeNode::depth() {
 	return this->_instance->_depth;
@@ -248,6 +259,10 @@ std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::inputs()
 	return nodes;
 
 }
+
+
+
+
 
 std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::outputs() {
 
@@ -517,7 +532,16 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::compositeNode::search(std::string ke
 			return constNode;
 			break;
 		}
+		case hv::v2::searchType::result: {
+			if (this->_instance->_results.find(key) == this->_instance->_results.end()) {
+				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Name is not exist");
+				throw hv::v2::oexception(message);
+			}
 
+			auto constNode = this->_instance->_results[key];
+			return constNode;
+			break;
+		}
 		default:
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid search type");
 			throw hv::v2::oexception(message);
@@ -578,6 +602,16 @@ void hv::v2::compositeNode::registerNode(std::string key, int objectType, hv::v2
 			auto node = this->_instance->_context->create(key, objectType, 9999);
 			node->index((int)this->_instance->_outputNodes.size() + 1);
 			this->_instance->_outputNodes[key] = node;
+			break;
+		}
+		case hv::v2::searchType::result: {
+			if (this->_instance->_results.find(key) != this->_instance->_results.end()) {
+				auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Exist node key");
+				throw hv::v2::oexception(message);
+			}
+			auto node = this->_instance->_context->create(key, objectType, 9999);
+			node->index((int)this->_instance->_results.size() + 1);
+			this->_instance->_results[key] = node;
 			break;
 		}
 		default:
@@ -740,3 +774,177 @@ std::shared_ptr<hv::v2::irunable> hv::v2::compositeNode::execution(std::string k
 
 }
 
+
+
+std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::results() {
+
+	std::vector<std::shared_ptr<hv::v2::iconstNode>> nodes;
+
+	for (auto& node : this->_instance->_results) {
+		nodes.push_back(node.second);
+	}
+
+	std::sort(nodes.begin(), nodes.end(), [](const std::shared_ptr<hv::v2::iconstNode>& first,
+		const std::shared_ptr<hv::v2::iconstNode>& second) {
+			return first->index() < second->index();
+	});
+
+	return nodes;
+
+}
+
+
+std::shared_ptr<hv::v2::iconstNode> hv::v2::compositeNode::result(std::string key) {
+	if (key.length() == 0) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid key");
+		throw hv::v2::oexception(message);
+	}
+
+	if (this->_instance->_results.find(key) == this->_instance->_results.end()) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid result key");
+		throw hv::v2::oexception(message);
+	}
+
+	auto constNode = this->_instance->_results[key];
+	return constNode;
+}
+
+
+void hv::v2::compositeNode::replaceResults(std::vector<std::shared_ptr<hv::v2::iconstNode>> result) {
+
+	std::vector<std::shared_ptr<hv::v2::iconstNode>> group;
+	for (auto& node : this->_instance->_results) {
+		group.push_back(node.second);
+	}
+	this->_instance->_context->removeConstNodeGroup(group, 9999);
+	this->_instance->_results.clear();
+	this->_instance->_results.rehash(0);
+
+	for (auto& input : result) {
+		this->_instance->_results[input->name()] = input;
+	}
+}
+
+std::vector<std::shared_ptr<hv::v2::iconstNode>> hv::v2::compositeNode::resultsClone() {
+	std::vector<std::shared_ptr<hv::v2::iconstNode>> group;
+	for (auto& constNode : this->_instance->_results) {
+		group.push_back(constNode.second->clone());
+	}
+
+	return group;
+}
+
+
+
+
+void hv::v2::compositeNode::removeConstNode(std::string key, hv::v2::searchType type) {
+
+
+
+	if (this->isCustomNode() == false) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "its not custom node.");
+		throw hv::v2::oexception(message);
+	}
+
+
+	try {
+
+		switch (type)
+		{
+		case hv::v2::searchType::input:{
+			auto constNode = this->input(key);
+			this->_instance->_context->removeConstNode(constNode, 9999);
+			this->_instance->_inputNodes.erase(key);
+			break;
+		}
+		case hv::v2::searchType::output:{
+			auto constNode = this->output(key);
+			this->_instance->_context->removeConstNode(constNode, 9999);
+			this->_instance->_outputNodes.erase(key);
+			break;
+		}
+		case hv::v2::searchType::result: {
+			auto constNode = this->result(key);
+			this->_instance->_context->removeConstNode(constNode, 9999);
+			this->_instance->_results.erase(key);
+
+			break;
+		}
+		default:
+			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid search type");
+			throw hv::v2::oexception(message);
+		}
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+
+
+
+void hv::v2::compositeNode::addConstNode(std::string key, int objectType, hv::v2::searchType type) {
+	try {
+
+		if (this->isCustomNode() == false) {
+			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "its not custom node.");
+			throw hv::v2::oexception(message);
+		}
+
+		this->registerNode(key, objectType, type);
+
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+void hv::v2::compositeNode::addConstMultipleNode(std::string key, int objectType, hv::v2::searchType type) {
+	try {
+
+
+		if (this->isCustomNode() == false) {
+			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "its not custom node.");
+			throw hv::v2::oexception(message);
+		}
+
+		this->registerMultipleNode(key, objectType, type);
+
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}
+void hv::v2::compositeNode::addConstExecutionNode(std::string key, int objecType, hv::v2::searchType type) {
+	try {
+
+		if (this->isCustomNode() == false) {
+			std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "its not custom node.");
+			throw hv::v2::oexception(message);
+		}
+
+		this->registerExecutionNode(key, type);
+
+	}
+	catch (hv::v2::oexception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+	catch (std::exception e) {
+		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, e.what());
+		throw hv::v2::oexception(message);
+	}
+}

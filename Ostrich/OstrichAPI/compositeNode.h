@@ -39,6 +39,8 @@ namespace hv {
 
 			OSTRICH_COMMON_API bool isEventNode() override;
 
+			OSTRICH_COMMON_API bool isCustomNode() override;
+
 			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> inputs() override;
 			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> outputs() override;
 
@@ -65,11 +67,24 @@ namespace hv {
 			OSTRICH_COMMON_API hv::v2::resultType call() override;
 			OSTRICH_COMMON_API void updateConst(int nodeType, std::size_t uid) override;
 
+			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> results() override;
+			OSTRICH_COMMON_API std::shared_ptr<hv::v2::iconstNode> result(std::string key) override;
+			OSTRICH_COMMON_API void replaceResults(std::vector<std::shared_ptr<hv::v2::iconstNode>> result) override;
+			OSTRICH_COMMON_API std::vector<std::shared_ptr<hv::v2::iconstNode>> resultsClone() override;
 
+
+
+			OSTRICH_COMMON_API void addConstNode(std::string key, int objectType, hv::v2::searchType type) override;
+			OSTRICH_COMMON_API void addConstMultipleNode(std::string key, int objectType, hv::v2::searchType type) override;
+			OSTRICH_COMMON_API void addConstExecutionNode(std::string key, int objecType, hv::v2::searchType type) override;
+
+
+			OSTRICH_COMMON_API void removeConstNode(std::string key,  hv::v2::searchType type) override;
 
 		protected:
 
 			OSTRICH_COMMON_API void isEventNode(bool check) override;
+			OSTRICH_COMMON_API void isCustomNode(bool check) override;
 
 			OSTRICH_COMMON_API std::shared_ptr<hv::v2::iconstNode> search(std::string key, int objectType, hv::v2::searchType type)override;
 			template<typename T> std::shared_ptr<T> search(std::string key, int objectType, hv::v2::searchType type) {

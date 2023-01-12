@@ -1,23 +1,23 @@
 #pragma once
 
 
-#ifndef OSTRICH_SCRIPT_BUILDER
-#define OSTRICH_SCRIPT_BUILDER
+#ifndef OSTRICH_DIAGRAM_BUILDER
+#define OSTRICH_DIAGRAM_BUILDER
 
-#include "iscript.h"
+#include "idiagram.h"
 
 namespace hv {
 	namespace v2 {
-		class impl_script;
-		class script : public hv::v2::iscript{
+		class impl_diagram;
+		class diagram : public hv::v2::idiagram{
 
 		private:
-			std::unique_ptr<hv::v2::impl_script> _instance;
+			std::unique_ptr<hv::v2::impl_diagram> _instance;
 		
 		public:
 
-			OSTRICH_COMMON_API script();
-			OSTRICH_COMMON_API ~script();
+			OSTRICH_COMMON_API diagram();
+			OSTRICH_COMMON_API ~diagram();
 
 
 			OSTRICH_COMMON_API void registerProcessCompleteEvent(std::string context_name, std::function<void(int nodeType, std::size_t composite_uid)> eventHandler);

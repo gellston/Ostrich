@@ -135,6 +135,18 @@ bool HV::V2::CompositeNode::IsEventNode::get() {
 	}
 }
 
+bool HV::V2::CompositeNode::IsCustomNode::get() {
+	try {
+		return this->_instance->isCustomNode();
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
 System::Collections::Generic::List<HV::V2::IConstNode^>^ HV::V2::CompositeNode::Inputs::get() {
 	try {
 		auto result = gcnew System::Collections::Generic::List<HV::V2::IConstNode^>();
@@ -169,6 +181,58 @@ System::Collections::Generic::List<HV::V2::IConstNode^>^ HV::V2::CompositeNode::
 	}
 }
 
+System::Collections::Generic::List<HV::V2::IConstNode^>^ HV::V2::CompositeNode::Results::get() {
+	try {
+		auto result = gcnew System::Collections::Generic::List<HV::V2::IConstNode^>();
+		auto nativeOutputs = this->_instance->results();
+		for (auto& node : nativeOutputs) {
+			result->Add(gcnew HV::V2::ConstNode(System::IntPtr(&node), true));
+		}
+		return result;
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+HV::V2::IConstNode^ HV::V2::CompositeNode::Result(System::String^ key) {
+	try {
+		auto nativeObject = this->_instance->result(msclr::interop::marshal_as<std::string>(key));
+		auto managedObject = gcnew HV::V2::ConstNode(System::IntPtr(&nativeObject), true);
+		return managedObject;
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::CompositeNode::ReplaceResults(System::Collections::Generic::List<HV::V2::IConstNode^>^ result) {
+	try {
+
+		std::vector<std::shared_ptr<hv::v2::iconstNode>> nativeGroup;
+
+		for (int index = 0; index < result->Count; index++) {
+			auto managedConstNode = result[index];
+			auto nativeConstNodePointer = (std::shared_ptr<hv::v2::iconstNode>*) managedConstNode->Handle.ToPointer();
+			nativeGroup.push_back(*nativeConstNodePointer);
+		}
+		this->_instance->replaceResults(nativeGroup);
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+
 System::Collections::Generic::List<HV::V2::IConstNode^>^ HV::V2::CompositeNode::InputClone::get() {
 	try {
 		auto result = gcnew System::Collections::Generic::List<HV::V2::IConstNode^>();
@@ -190,6 +254,23 @@ System::Collections::Generic::List<HV::V2::IConstNode^>^ HV::V2::CompositeNode::
 	try {
 		auto result = gcnew System::Collections::Generic::List<HV::V2::IConstNode^>();
 		auto nativeOutputs = this->_instance->outputClone();
+		for (auto& node : nativeOutputs) {
+			result->Add(gcnew HV::V2::ConstNode(System::IntPtr(&node), true));
+		}
+		return result;
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+System::Collections::Generic::List<HV::V2::IConstNode^>^ HV::V2::CompositeNode::ResultClone::get() {
+	try {
+		auto result = gcnew System::Collections::Generic::List<HV::V2::IConstNode^>();
+		auto nativeOutputs = this->_instance->resultsClone();
 		for (auto& node : nativeOutputs) {
 			result->Add(gcnew HV::V2::ConstNode(System::IntPtr(&node), true));
 		}
@@ -435,3 +516,55 @@ HV::V2::ResultType HV::V2::CompositeNode::Call() {
 		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
 	}
 }
+
+
+
+void HV::V2::CompositeNode::AddConstNode(System::String^ key, int objectType, HV::V2::SearchType type) {
+	try {
+		this->_instance->addConstNode(msclr::interop::marshal_as<std::string>(key), objectType, (hv::v2::searchType)type);
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::CompositeNode::AddConstMultipleNode(System::String^ key, int objectType, HV::V2::SearchType type) {
+	try {
+		this->_instance->addConstMultipleNode(msclr::interop::marshal_as<std::string>(key), objectType, (hv::v2::searchType)type);
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+void HV::V2::CompositeNode::AddConstExecutionNode(System::String^ key, int objectType, HV::V2::SearchType type) {
+	try {
+		this->_instance->addConstExecutionNode(msclr::interop::marshal_as<std::string>(key), objectType, (hv::v2::searchType)type);
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+
+
+void HV::V2::CompositeNode::RemoveConstNode(System::String^ key, HV::V2::SearchType type) {
+	try {
+		this->_instance->removeConstNode(msclr::interop::marshal_as<std::string>(key), (hv::v2::searchType)type);
+	}
+	catch (hv::v2::oexception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+	catch (std::exception e) {
+		throw gcnew HV::V2::OException(gcnew System::String(e.what()));
+	}
+}
+

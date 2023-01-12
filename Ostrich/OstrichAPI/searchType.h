@@ -9,7 +9,8 @@ namespace hv {
 	namespace v2 {
 		enum class searchType {
 			input,
-			output
+			output,
+			result
 		};
 	}
 }

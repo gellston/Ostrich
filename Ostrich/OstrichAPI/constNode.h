@@ -46,6 +46,7 @@ namespace hv {
 			OSTRICH_COMMON_API void registerMultipleSourceNode(std::size_t, std::string name) override;
 			OSTRICH_COMMON_API void clearMultipleSourceNode() override;
 			OSTRICH_COMMON_API void unRegisterMultipleSourceNode(std::size_t uid, std::string name) override;
+			OSTRICH_COMMON_API void unRegisterMultipleSourceNode(std::size_t uid) override;
 			OSTRICH_COMMON_API std::vector<std::tuple<std::size_t, std::string>> multipleSourceNode() override;
 			OSTRICH_COMMON_API void multipleSourceNode(std::vector<std::tuple<std::size_t, std::string>> nodes) override;
 

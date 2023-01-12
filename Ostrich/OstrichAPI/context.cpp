@@ -882,6 +882,17 @@ std::string hv::v2::context::serialization() {
 				};
 				composite_node["outputs"].push_back(output_json);
 			}
+			//Result Node Serialization
+			auto results = node.second->results();
+			for (auto& result : results) {
+				nlohmann::json result_json = {
+					{"name", result->name()},
+					{"type", result->type()},
+					{"uid", result->uid()},
+					{"index", result->index()}
+				};
+				composite_node["results"].push_back(result_json);
+			}
 			context.push_back(composite_node);
 		}
 
@@ -976,6 +987,26 @@ void hv::v2::context::deserialization(std::string value) {
 				outputs.push_back(createdConstNode);
 			}
 			createdNode->replaceOuputs(outputs);
+
+			//Results Replacement
+			std::vector<std::shared_ptr<hv::v2::iconstNode>> results;
+			for (auto& result : node["results"]) {
+				auto constNodeName = result["name"].get<std::string>();
+				auto constNodeType = result["type"].get<int>();
+				auto constNodeUID = result["uid"].get<std::size_t>();
+				auto constNodeIndex = result["index"].get<int>();
+
+				auto createdConstNode = this->create(constNodeName, constNodeType, 9999);
+				this->_instance->_const_node_loook_up_table.erase(createdConstNode->uid()); //기존 UID 삭제
+
+				createdConstNode->uid(constNodeUID); //UID 갱신
+				this->_instance->_const_node_loook_up_table[constNodeUID] = createdConstNode;
+
+				createdConstNode->index(constNodeIndex);
+
+				results.push_back(createdConstNode);
+			}
+			createdNode->replaceResults(results);
 		}
 
 
@@ -1371,9 +1402,11 @@ std::shared_ptr<hv::v2::icontext> hv::v2::context::clone() {
 			auto cloneNode = node.second->clone(_context.get());
 			auto cloneInput = cloneNode->inputs();
 			auto cloneOutput = cloneNode->outputs();
+			auto cloneResult = cloneNode->results();
 
 			_context->registerConstNodeGroup(cloneInput, 9999);
 			_context->registerConstNodeGroup(cloneOutput, 9999);
+			_context->registerConstNodeGroup(cloneResult, 9999);
 			_context->_instance->_composite_node_look_up_table[cloneNode->uid()] = cloneNode;
 			
 		}
@@ -1647,6 +1680,32 @@ void hv::v2::context::removeConstNodeGroup(std::vector<std::shared_ptr<hv::v2::i
 	for (auto& node : group) {
 		this->_instance->_const_node_loook_up_table.erase(node->uid());
 	}
+}
+
+void hv::v2::context::removeConstNode(std::shared_ptr<hv::v2::iconstNode> _node, int special_lock_key) {
+	if (special_lock_key != 9999) {
+		auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Invalid special key");
+		throw hv::v2::oexception(message);
+	}
+
+	for (auto& node : this->_instance->_const_node_loook_up_table) {
+		if (node.second->isConnected()) {
+
+
+			if (node.second->isMultiple()) {
+				node.second->unRegisterMultipleSourceNode(_node->uid());
+				if (node.second->multipleSourceNode().size() == 0)
+					node.second->isConnected(false);
+			}
+
+			if (node.second->sourceUID() == _node->uid()) {
+				node.second->isConnected(false);
+			}
+
+		}
+	}
+
+	this->_instance->_const_node_loook_up_table.erase(_node->uid());
 }
 
 

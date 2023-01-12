@@ -1,5 +1,5 @@
 
-#include "script.h"
+#include "diagram.h"
 #include "context.h"
 
 #include <unordered_map>
@@ -8,7 +8,7 @@
 
 namespace hv {
 	namespace v2 {
-		class impl_script {
+		class impl_diagram {
 
 
 		public:
@@ -19,7 +19,7 @@ namespace hv {
 
 			int _executionDelay;
 
-			impl_script() {
+			impl_diagram() {
 				this->_addon_path = "";
 				this->_executionDelay = 0;
 
@@ -32,22 +32,22 @@ namespace hv {
 
 
 
-hv::v2::script::script() {
+hv::v2::diagram::diagram() {
 	try {
-		_instance = std::make_unique<hv::v2::impl_script>();
+		_instance = std::make_unique<hv::v2::impl_diagram>();
 	}
 	catch (std::exception e) {
 		throw e;
 	}
 }
 
-hv::v2::script::~script() {
+hv::v2::diagram::~diagram() {
 	this->_instance->_contextes.clear();
 }
 
 
 
-void hv::v2::script::registerProcessCompleteEvent(std::string context_name, std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) {
+void hv::v2::diagram::registerProcessCompleteEvent(std::string context_name, std::function<void(int nodeType, std::size_t composite_uid)> eventHandler) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -66,7 +66,7 @@ void hv::v2::script::registerProcessCompleteEvent(std::string context_name, std:
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::registerConstChangedEvent(std::string context_name, std::function<void(int nodeType, std::size_t constUID)> eventHandler) {
+void hv::v2::diagram::registerConstChangedEvent(std::string context_name, std::function<void(int nodeType, std::size_t constUID)> eventHandler) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -86,7 +86,7 @@ void hv::v2::script::registerConstChangedEvent(std::string context_name, std::fu
 	}
 }
 
-void hv::v2::script::registerProcessStartEvent(std::string context_name, std::function<void(int nodeType, std::size_t constUID)> eventHandler) {
+void hv::v2::diagram::registerProcessStartEvent(std::string context_name, std::function<void(int nodeType, std::size_t constUID)> eventHandler) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -106,7 +106,7 @@ void hv::v2::script::registerProcessStartEvent(std::string context_name, std::fu
 	}
 }
 
-void hv::v2::script::registerErrorEvent(std::string context_name, std::function<void(int nodeType, std::size_t composuteUID, const char * message)> eventHandler) {
+void hv::v2::diagram::registerErrorEvent(std::string context_name, std::function<void(int nodeType, std::size_t composuteUID, const char * message)> eventHandler) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -128,7 +128,7 @@ void hv::v2::script::registerErrorEvent(std::string context_name, std::function<
 }
 
 
-void hv::v2::script::resetProcessStartEvent(std::string context_name) {
+void hv::v2::diagram::resetProcessStartEvent(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -149,7 +149,7 @@ void hv::v2::script::resetProcessStartEvent(std::string context_name) {
 }
 
 
-void hv::v2::script::resetProcessCompleteEvent(std::string context_name) {
+void hv::v2::diagram::resetProcessCompleteEvent(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -168,7 +168,7 @@ void hv::v2::script::resetProcessCompleteEvent(std::string context_name) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::resetConstChangedEvent(std::string context_name) {
+void hv::v2::diagram::resetConstChangedEvent(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -189,7 +189,7 @@ void hv::v2::script::resetConstChangedEvent(std::string context_name) {
 }
 
 
-void hv::v2::script::resetErrorEvent(std::string context_name) {
+void hv::v2::diagram::resetErrorEvent(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -208,7 +208,7 @@ void hv::v2::script::resetErrorEvent(std::string context_name) {
 	}
 }
 
-void hv::v2::script::updateAllConstNode(std::string context_name) {
+void hv::v2::diagram::updateAllConstNode(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -232,7 +232,7 @@ void hv::v2::script::updateAllConstNode(std::string context_name) {
 
 
 
-std::shared_ptr<hv::v2::icompositeNode> hv::v2::script::search(std::string context_name, std::size_t uid) {
+std::shared_ptr<hv::v2::icompositeNode> hv::v2::diagram::search(std::string context_name, std::size_t uid) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -250,7 +250,7 @@ std::shared_ptr<hv::v2::icompositeNode> hv::v2::script::search(std::string conte
 		throw hv::v2::oexception(message);
 	}
 }
-std::shared_ptr<hv::v2::icompositeNode> hv::v2::script::search(std::string context_name, std::string name) {
+std::shared_ptr<hv::v2::icompositeNode> hv::v2::diagram::search(std::string context_name, std::string name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -270,7 +270,7 @@ std::shared_ptr<hv::v2::icompositeNode> hv::v2::script::search(std::string conte
 }
 
 
-bool hv::v2::script::checkConnectability(std::string context_name, std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) {
+bool hv::v2::diagram::checkConnectability(std::string context_name, std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			return false;
@@ -287,7 +287,7 @@ bool hv::v2::script::checkConnectability(std::string context_name, std::size_t s
 }
 
 
-void hv::v2::script::connect(std::string context_name, std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) {
+void hv::v2::diagram::connect(std::string context_name, std::size_t sourceUID, std::string sourceName, std::size_t targetUID, std::string targetName) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -305,7 +305,7 @@ void hv::v2::script::connect(std::string context_name, std::size_t sourceUID, st
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::connect(std::string context_name, std::shared_ptr<hv::v2::icompositeNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::icompositeNode> targetNode, std::string targetName) {
+void hv::v2::diagram::connect(std::string context_name, std::shared_ptr<hv::v2::icompositeNode> sourceNode, std::string sourceName, std::shared_ptr<hv::v2::icompositeNode> targetNode, std::string targetName) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -324,7 +324,7 @@ void hv::v2::script::connect(std::string context_name, std::shared_ptr<hv::v2::i
 	}
 }
 
-void hv::v2::script::disconnect(std::string context_name, std::string name) {
+void hv::v2::diagram::disconnect(std::string context_name, std::string name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -342,7 +342,7 @@ void hv::v2::script::disconnect(std::string context_name, std::string name) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::disconnect(std::string context_name, std::size_t targetUID, std::string targetName) {
+void hv::v2::diagram::disconnect(std::string context_name, std::size_t targetUID, std::string targetName) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -360,7 +360,7 @@ void hv::v2::script::disconnect(std::string context_name, std::size_t targetUID,
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::disconnect(std::string context_name, std::shared_ptr<hv::v2::icompositeNode> targetNode, std::string targetName) {
+void hv::v2::diagram::disconnect(std::string context_name, std::shared_ptr<hv::v2::icompositeNode> targetNode, std::string targetName) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -378,7 +378,7 @@ void hv::v2::script::disconnect(std::string context_name, std::shared_ptr<hv::v2
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::disconnect(std::string context_name, std::size_t targetUID) {
+void hv::v2::diagram::disconnect(std::string context_name, std::size_t targetUID) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -396,7 +396,7 @@ void hv::v2::script::disconnect(std::string context_name, std::size_t targetUID)
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::disconnect(std::string context_name, std::shared_ptr<hv::v2::icompositeNode> targetNode) {
+void hv::v2::diagram::disconnect(std::string context_name, std::shared_ptr<hv::v2::icompositeNode> targetNode) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -415,7 +415,7 @@ void hv::v2::script::disconnect(std::string context_name, std::shared_ptr<hv::v2
 	}
 }
 
-std::shared_ptr<hv::v2::icompositeNode> hv::v2::script::addNode(std::string context_name, std::string name, int objetType) {
+std::shared_ptr<hv::v2::icompositeNode> hv::v2::diagram::addNode(std::string context_name, std::string name, int objetType) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -433,7 +433,7 @@ std::shared_ptr<hv::v2::icompositeNode> hv::v2::script::addNode(std::string cont
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::removeNode(std::string context_name, std::size_t uid) {
+void hv::v2::diagram::removeNode(std::string context_name, std::size_t uid) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -451,7 +451,7 @@ void hv::v2::script::removeNode(std::string context_name, std::size_t uid) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::removeNode(std::string context_name, std::shared_ptr<hv::v2::icompositeNode> node) {
+void hv::v2::diagram::removeNode(std::string context_name, std::shared_ptr<hv::v2::icompositeNode> node) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -469,7 +469,7 @@ void hv::v2::script::removeNode(std::string context_name, std::shared_ptr<hv::v2
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::removeNode(std::string context_name, std::string name) {
+void hv::v2::diagram::removeNode(std::string context_name, std::string name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -488,7 +488,7 @@ void hv::v2::script::removeNode(std::string context_name, std::string name) {
 	}
 }
 
-std::shared_ptr<hv::v2::iconstNode> hv::v2::script::constNode(std::string context_name, std::size_t uid) {
+std::shared_ptr<hv::v2::iconstNode> hv::v2::diagram::constNode(std::string context_name, std::size_t uid) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -507,7 +507,7 @@ std::shared_ptr<hv::v2::iconstNode> hv::v2::script::constNode(std::string contex
 	}
 }
 
-void hv::v2::script::verification(std::string context_name) {
+void hv::v2::diagram::verification(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -525,7 +525,7 @@ void hv::v2::script::verification(std::string context_name) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::clear(std::string context_name) {
+void hv::v2::diagram::clear(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -543,7 +543,7 @@ void hv::v2::script::clear(std::string context_name) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::loadLibrary(std::string context_name) {
+void hv::v2::diagram::loadLibrary(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -561,7 +561,7 @@ void hv::v2::script::loadLibrary(std::string context_name) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::unloadLibrary(std::string context_name) {
+void hv::v2::diagram::unloadLibrary(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -579,7 +579,7 @@ void hv::v2::script::unloadLibrary(std::string context_name) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::loadLibrary() {
+void hv::v2::diagram::loadLibrary() {
 	try {
 		for (auto& context : this->_instance->_contextes) {
 			context.second->loadLibrary();
@@ -594,7 +594,7 @@ void hv::v2::script::loadLibrary() {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::unloadLibrary() {
+void hv::v2::diagram::unloadLibrary() {
 	try {
 		for (auto& context : this->_instance->_contextes) {
 			context.second->unloadLibrary();
@@ -609,7 +609,7 @@ void hv::v2::script::unloadLibrary() {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::setAddonPath(std::string path) {
+void hv::v2::diagram::setAddonPath(std::string path) {
 
 	if (std::filesystem::exists(path) == false) {
 		std::string message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "Addon path is not exists");
@@ -620,7 +620,7 @@ void hv::v2::script::setAddonPath(std::string path) {
 }
 
 
-void hv::v2::script::executionDelay(int ms) {
+void hv::v2::diagram::executionDelay(int ms) {
 	this->_instance->_executionDelay = ms;
 
 	for (auto& context : this->_instance->_contextes) {
@@ -628,11 +628,11 @@ void hv::v2::script::executionDelay(int ms) {
 	}
 }
 
-int hv::v2::script::executionDelay() {
+int hv::v2::diagram::executionDelay() {
 	return this->_instance->_executionDelay;
 }
 
-std::vector<hv::v2::addon_info> hv::v2::script::addonInfo(std::string context_name) {
+std::vector<hv::v2::addon_info> hv::v2::diagram::addonInfo(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -650,7 +650,7 @@ std::vector<hv::v2::addon_info> hv::v2::script::addonInfo(std::string context_na
 	}
 }
 
-std::vector<std::shared_ptr<hv::v2::iaddon>> hv::v2::script::addons(std::string context_name) {
+std::vector<std::shared_ptr<hv::v2::iaddon>> hv::v2::diagram::addons(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -669,7 +669,7 @@ std::vector<std::shared_ptr<hv::v2::iaddon>> hv::v2::script::addons(std::string 
 	}
 }
 
-void hv::v2::script::load(std::string context_name, std::string path) {
+void hv::v2::diagram::load(std::string context_name, std::string path) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -687,7 +687,7 @@ void hv::v2::script::load(std::string context_name, std::string path) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::save(std::string context_name, std::string path) {
+void hv::v2::diagram::save(std::string context_name, std::string path) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -705,7 +705,7 @@ void hv::v2::script::save(std::string context_name, std::string path) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::initNodes(std::string context_name) {
+void hv::v2::diagram::initNodes(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -723,7 +723,7 @@ void hv::v2::script::initNodes(std::string context_name) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::run(std::string context_name, std::size_t uid) {
+void hv::v2::diagram::run(std::string context_name, std::size_t uid) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -741,7 +741,7 @@ void hv::v2::script::run(std::string context_name, std::size_t uid) {
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::run(std::string context_name, int objectType, std::string name) {
+void hv::v2::diagram::run(std::string context_name, int objectType, std::string name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -759,7 +759,7 @@ void hv::v2::script::run(std::string context_name, int objectType, std::string n
 		throw hv::v2::oexception(message);
 	}
 }
-void hv::v2::script::run(std::string context_name) {
+void hv::v2::diagram::run(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -778,7 +778,7 @@ void hv::v2::script::run(std::string context_name) {
 	}
 }
 
-void hv::v2::script::stop(std::string context_name) {
+void hv::v2::diagram::stop(std::string context_name) {
 	try {
 		if (this->_instance->_contextes.find(context_name) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -800,7 +800,7 @@ void hv::v2::script::stop(std::string context_name) {
 
 
 
-std::shared_ptr<hv::v2::icontext> hv::v2::script::context(std::string name) {
+std::shared_ptr<hv::v2::icontext> hv::v2::diagram::context(std::string name) {
 
 
 	try {
@@ -820,7 +820,7 @@ std::shared_ptr<hv::v2::icontext> hv::v2::script::context(std::string name) {
 	}
 }
 
-void hv::v2::script::createContext(std::string name) {
+void hv::v2::diagram::createContext(std::string name) {
 
 	try {
 
@@ -852,7 +852,7 @@ void hv::v2::script::createContext(std::string name) {
 	}
 }
 
-void hv::v2::script::renameContext(std::string sourceName, std::string targetName) {
+void hv::v2::diagram::renameContext(std::string sourceName, std::string targetName) {
 
 	try {
 
@@ -890,7 +890,7 @@ void hv::v2::script::renameContext(std::string sourceName, std::string targetNam
 
 }
 
-void hv::v2::script::removeContext(std::string name) {
+void hv::v2::diagram::removeContext(std::string name) {
 	try {
 
 		if (name.length() == 0) {
@@ -919,7 +919,7 @@ void hv::v2::script::removeContext(std::string name) {
 	}
 }
 
-void hv::v2::script::copyContext(std::string sourceName, std::string targetName) {
+void hv::v2::diagram::copyContext(std::string sourceName, std::string targetName) {
 	try {
 
 
@@ -950,7 +950,7 @@ void hv::v2::script::copyContext(std::string sourceName, std::string targetName)
 	}
 }
 
-std::string hv::v2::script::serialization(std::string context) {
+std::string hv::v2::diagram::serialization(std::string context) {
 	try {
 		if (this->_instance->_contextes.find(context) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");
@@ -970,7 +970,7 @@ std::string hv::v2::script::serialization(std::string context) {
 	}
 }
 
-void hv::v2::script::deserialization(std::string context, std::string jsonContext) {
+void hv::v2::diagram::deserialization(std::string context, std::string jsonContext) {
 	try {
 		if (this->_instance->_contextes.find(context) == this->_instance->_contextes.end()) {
 			auto message = hv::v2::generate_error_message(__FUNCTION__, __LINE__, "context is not exists");

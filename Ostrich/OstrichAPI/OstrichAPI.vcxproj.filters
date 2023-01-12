@@ -48,7 +48,7 @@
     <ClCompile Include="constNodeJson.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="script.cpp">
+    <ClCompile Include="diagram.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -146,10 +146,10 @@
     <ClInclude Include="constNodeJson.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="script.h">
+    <ClInclude Include="diagram.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="iscript.h">
+    <ClInclude Include="idiagram.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="raii.h">
